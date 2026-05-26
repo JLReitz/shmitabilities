@@ -1,0 +1,35 @@
+{
+  "name": "shmitabilities",
+  "version": "0.1.0+codex.20260526023153",
+  "description": "Shmitabilities repository plugin for Codex agents.",
+  "author": {
+    "name": "Jensen Reitz"
+  },
+  "keywords": [
+    "planning",
+    "presentation",
+    "skills",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Shmitabilities",
+    "shortDescription": "Productivity and presentation skills",
+    "longDescription": "Shmitabilities exposes the repository's local project workflow and presentation skills as a Codex plugin.",
+    "developerName": "Jensen Reitz",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Brainstorm this rough project idea into goals, audience, and scope",
+      "Refine these notes into concrete project directives and edge cases",
+      "Run a deep-dive on this topic and capture source-backed findings",
+      "Turn the current project direction into incremental implementation steps",
+      "Create a review artifact that presents the project state for feedback",
+      "Explore visual-board directions for this screen, flow, or concept",
+      "Create a polished presentation artifact from these notes or requirements"
+    ]
+  }
+}
