@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ECharts Local Example</title>
+</head>
+<body>
+  <h1>ECharts Local Example</h1>
+  <div id="chart" style="width: 480px; height: 320px;"></div>
+  <script src="/assets/vendor/echarts/echarts.min.js"></script>
+  <script>
+    var chart = echarts.init(document.getElementById("chart"));
+    chart.setOption({
+      title: { text: "Local Vendor Chart" },
+      xAxis: { data: ["A", "B", "C"] },
+      yAxis: {},
+      series: [{ type: "bar", data: [2, 4, 3] }],
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+ECharts License Notice
+======================
+
+This repository path contains a local shim at:
+  /assets/vendor/echarts/echarts.min.js
+
+The shim is project-authored for local testing/examples and is not the full upstream ECharts distribution.
+
+Upstream project:
+  https://github.com/apache/echarts
+
+Upstream ECharts is distributed under the Apache License 2.0.

@@ -1,0 +1,12 @@
+Mermaid License Notice
+======================
+
+This repository path contains a local shim at:
+  /assets/vendor/mermaid/mermaid.min.js
+
+The shim is project-authored for local testing/examples and is not the full upstream Mermaid distribution.
+
+Upstream project:
+  https://github.com/mermaid-js/mermaid
+
+Upstream Mermaid is distributed under the MIT License.

@@ -1,0 +1,11 @@
+.reveal {
+  font-family: system-ui, sans-serif;
+  padding: 24px;
+}
+
+.reveal .slides section {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  min-height: 120px;
+}

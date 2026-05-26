@@ -1,0 +1,14 @@
+Reveal.js License Notice
+========================
+
+This repository path contains local shims/styles at:
+  /assets/vendor/reveal/reveal.js
+  /assets/vendor/reveal/reveal.css
+  /assets/vendor/reveal/theme/simple.css
+
+These files are project-authored minimal compatibility assets, not the full upstream Reveal.js distribution.
+
+Upstream project:
+  https://github.com/hakimel/reveal.js
+
+Upstream Reveal.js is distributed under the MIT License.
