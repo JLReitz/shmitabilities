@@ -1,0 +1,1284 @@
+{
+  "scenario": "successful-turn-steer",
+  "description": "Prompt and mid-turn steer path intended to capture an accepted active-turn steer.",
+  "prompt": "Run `/bin/bash -lc 'sleep 8; printf INITIAL-LONG-RUN-DONE'` in the current working directory. After that command finishes, reply with exactly one line containing ORIGINAL-RESULT. If I send more user input while you are still working, treat it as part of the same request and follow the latest instruction.",
+  "required_features": [],
+  "app_server_config_overrides": [],
+  "thread_cwd_mode": "temp",
+  "app_server_command": [
+    "codex",
+    "--dangerously-bypass-hook-trust",
+    "app-server",
+    "--listen",
+    "ws://127.0.0.1:53835",
+    "-c",
+    "model=\"gpt-5.4-mini\""
+  ],
+  "listen_url": "ws://127.0.0.1:53835",
+  "workspace_cwd": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q",
+  "codex_home": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q/codex-home",
+  "hook_capture_log": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q/codex-home/hook-captures.jsonl",
+  "hook_capture_script": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q/codex-home/capture_stop_hook.py",
+  "hook_artifacts": [],
+  "process": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"/tmp\" (codex_home: AbsolutePathBuf(\"/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q/codex-home\"))\ncodex app-server (WebSockets)\n  listening on: ws://127.0.0.1:53835\n  readyz: http://127.0.0.1:53835/readyz\n  healthz: http://127.0.0.1:53835/healthz\n  note: binds localhost only (use SSH port-forwarding for remote access)\n"
+  },
+  "initialize_response": {
+    "id": "init",
+    "result": {
+      "userAgent": "pi-shmits-angels-app-server-capture/0.142.5 (Ubuntu 24.4.0; x86_64) xterm-256color (pi-shmits-angels-app-server-capture; 0.2.0)",
+      "codexHome": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q/codex-home",
+      "platformFamily": "unix",
+      "platformOs": "linux"
+    }
+  },
+  "thread_start_response": {
+    "id": "thread-start",
+    "result": {
+      "thread": {
+        "id": "019f4115-c705-7703-a773-609795998064",
+        "sessionId": "019f4115-c705-7703-a773-609795998064",
+        "forkedFromId": null,
+        "parentThreadId": null,
+        "preview": "",
+        "ephemeral": false,
+        "modelProvider": "openai",
+        "createdAt": 1783503374,
+        "updatedAt": 1783503374,
+        "recencyAt": 1783503374,
+        "status": {
+          "type": "idle"
+        },
+        "path": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q/codex-home/sessions/2026/07/08/rollout-2026-07-08T02-36-14-019f4115-c705-7703-a773-609795998064.jsonl",
+        "cwd": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q",
+        "cliVersion": "0.142.5",
+        "source": "vscode",
+        "threadSource": null,
+        "agentNickname": null,
+        "agentRole": null,
+        "gitInfo": null,
+        "name": null,
+        "turns": []
+      },
+      "model": "gpt-5.4-mini",
+      "modelProvider": "openai",
+      "serviceTier": null,
+      "cwd": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q",
+      "runtimeWorkspaceRoots": [
+        "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q"
+      ],
+      "instructionSources": [],
+      "approvalPolicy": "on-request",
+      "approvalsReviewer": "user",
+      "sandbox": {
+        "type": "workspaceWrite",
+        "writableRoots": [],
+        "networkAccess": false,
+        "excludeTmpdirEnvVar": false,
+        "excludeSlashTmp": false
+      },
+      "activePermissionProfile": {
+        "id": ":workspace",
+        "extends": null
+      },
+      "reasoningEffort": null,
+      "multiAgentMode": "explicitRequestOnly"
+    }
+  },
+  "turn_start_response": {
+    "id": "turn-start",
+    "result": {
+      "turn": {
+        "id": "019f4115-cedd-7833-9afd-68d45af26449",
+        "items": [],
+        "itemsView": "notLoaded",
+        "status": "inProgress",
+        "error": null,
+        "startedAt": null,
+        "completedAt": null,
+        "durationMs": null
+      }
+    }
+  },
+  "steer_request": {
+    "jsonrpc": "2.0",
+    "id": "turn-steer",
+    "method": "turn/steer",
+    "params": {
+      "threadId": "019f4115-c705-7703-a773-609795998064",
+      "expectedTurnId": "019f4115-cedd-7833-9afd-68d45af26449",
+      "input": [
+        {
+          "type": "text",
+          "text": "Update the same in-flight turn. Ignore the earlier exact-output instruction. After the current work finishes, reply with exactly one line containing STEERED-RESULT."
+        }
+      ]
+    }
+  },
+  "steer_response": {
+    "id": "turn-steer",
+    "result": {
+      "turnId": "019f4115-cedd-7833-9afd-68d45af26449"
+    }
+  },
+  "steer_sent": true,
+  "steer_completed_before_send": false,
+  "steer_triggered_by": {
+    "method": "item/started",
+    "item_type": "commandExecution"
+  },
+  "messages": [
+    {
+      "id": "init",
+      "result": {
+        "userAgent": "pi-shmits-angels-app-server-capture/0.142.5 (Ubuntu 24.4.0; x86_64) xterm-256color (pi-shmits-angels-app-server-capture; 0.2.0)",
+        "codexHome": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q/codex-home",
+        "platformFamily": "unix",
+        "platformOs": "linux"
+      }
+    },
+    {
+      "method": "remoteControl/status/changed",
+      "params": {
+        "status": "disabled",
+        "serverName": "Alpha",
+        "installationId": "83f7c792-638e-43d8-aa27-d8e51420929a",
+        "environmentId": null
+      }
+    },
+    {
+      "id": "thread-start",
+      "result": {
+        "thread": {
+          "id": "019f4115-c705-7703-a773-609795998064",
+          "sessionId": "019f4115-c705-7703-a773-609795998064",
+          "forkedFromId": null,
+          "parentThreadId": null,
+          "preview": "",
+          "ephemeral": false,
+          "modelProvider": "openai",
+          "createdAt": 1783503374,
+          "updatedAt": 1783503374,
+          "recencyAt": 1783503374,
+          "status": {
+            "type": "idle"
+          },
+          "path": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q/codex-home/sessions/2026/07/08/rollout-2026-07-08T02-36-14-019f4115-c705-7703-a773-609795998064.jsonl",
+          "cwd": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q",
+          "cliVersion": "0.142.5",
+          "source": "vscode",
+          "threadSource": null,
+          "agentNickname": null,
+          "agentRole": null,
+          "gitInfo": null,
+          "name": null,
+          "turns": []
+        },
+        "model": "gpt-5.4-mini",
+        "modelProvider": "openai",
+        "serviceTier": null,
+        "cwd": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q",
+        "runtimeWorkspaceRoots": [
+          "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q"
+        ],
+        "instructionSources": [],
+        "approvalPolicy": "on-request",
+        "approvalsReviewer": "user",
+        "sandbox": {
+          "type": "workspaceWrite",
+          "writableRoots": [],
+          "networkAccess": false,
+          "excludeTmpdirEnvVar": false,
+          "excludeSlashTmp": false
+        },
+        "activePermissionProfile": {
+          "id": ":workspace",
+          "extends": null
+        },
+        "reasoningEffort": null,
+        "multiAgentMode": "explicitRequestOnly"
+      }
+    },
+    {
+      "method": "thread/started",
+      "params": {
+        "thread": {
+          "id": "019f4115-c705-7703-a773-609795998064",
+          "sessionId": "019f4115-c705-7703-a773-609795998064",
+          "forkedFromId": null,
+          "parentThreadId": null,
+          "preview": "",
+          "ephemeral": false,
+          "modelProvider": "openai",
+          "createdAt": 1783503374,
+          "updatedAt": 1783503374,
+          "recencyAt": 1783503374,
+          "status": {
+            "type": "idle"
+          },
+          "path": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q/codex-home/sessions/2026/07/08/rollout-2026-07-08T02-36-14-019f4115-c705-7703-a773-609795998064.jsonl",
+          "cwd": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q",
+          "cliVersion": "0.142.5",
+          "source": "vscode",
+          "threadSource": null,
+          "agentNickname": null,
+          "agentRole": null,
+          "gitInfo": null,
+          "name": null,
+          "turns": []
+        }
+      }
+    },
+    {
+      "method": "mcpServer/startupStatus/updated",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "name": "codex_apps",
+        "status": "starting",
+        "error": null
+      }
+    },
+    {
+      "method": "mcpServer/startupStatus/updated",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "name": "codex_apps",
+        "status": "ready",
+        "error": null
+      }
+    },
+    {
+      "id": "turn-start",
+      "result": {
+        "turn": {
+          "id": "019f4115-cedd-7833-9afd-68d45af26449",
+          "items": [],
+          "itemsView": "notLoaded",
+          "status": "inProgress",
+          "error": null,
+          "startedAt": null,
+          "completedAt": null,
+          "durationMs": null
+        }
+      }
+    },
+    {
+      "method": "thread/status/changed",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "status": {
+          "type": "active",
+          "activeFlags": []
+        }
+      }
+    },
+    {
+      "method": "turn/started",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turn": {
+          "id": "019f4115-cedd-7833-9afd-68d45af26449",
+          "items": [],
+          "itemsView": "notLoaded",
+          "status": "inProgress",
+          "error": null,
+          "startedAt": 1783503376,
+          "completedAt": null,
+          "durationMs": null
+        }
+      }
+    },
+    {
+      "method": "item/started",
+      "params": {
+        "item": {
+          "type": "userMessage",
+          "id": "bb3ee4bf-ca3d-49b4-90a0-4342736c7566",
+          "clientId": null,
+          "content": [
+            {
+              "type": "text",
+              "text": "Run `/bin/bash -lc 'sleep 8; printf INITIAL-LONG-RUN-DONE'` in the current working directory. After that command finishes, reply with exactly one line containing ORIGINAL-RESULT. If I send more user input while you are still working, treat it as part of the same request and follow the latest instruction.",
+              "text_elements": []
+            }
+          ]
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "startedAtMs": 1783503376115
+      }
+    },
+    {
+      "method": "item/completed",
+      "params": {
+        "item": {
+          "type": "userMessage",
+          "id": "bb3ee4bf-ca3d-49b4-90a0-4342736c7566",
+          "clientId": null,
+          "content": [
+            {
+              "type": "text",
+              "text": "Run `/bin/bash -lc 'sleep 8; printf INITIAL-LONG-RUN-DONE'` in the current working directory. After that command finishes, reply with exactly one line containing ORIGINAL-RESULT. If I send more user input while you are still working, treat it as part of the same request and follow the latest instruction.",
+              "text_elements": []
+            }
+          ]
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "completedAtMs": 1783503376115
+      }
+    },
+    {
+      "method": "item/started",
+      "params": {
+        "item": {
+          "type": "reasoning",
+          "id": "rs_0fe8b4d0d3d031d7016a4e1a10df50819b9ac9e08632e7a1a3",
+          "summary": [],
+          "content": []
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "startedAtMs": 1783503377034
+      }
+    },
+    {
+      "method": "item/completed",
+      "params": {
+        "item": {
+          "type": "reasoning",
+          "id": "rs_0fe8b4d0d3d031d7016a4e1a10df50819b9ac9e08632e7a1a3",
+          "summary": [],
+          "content": []
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "completedAtMs": 1783503378388
+      }
+    },
+    {
+      "method": "item/started",
+      "params": {
+        "item": {
+          "type": "agentMessage",
+          "id": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+          "text": "",
+          "phase": "commentary",
+          "memoryCitation": null
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "startedAtMs": 1783503378394
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": "Running"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " the"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " requested"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " long"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " command"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " in"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " the"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " current"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " workspace"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": ","
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " then"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " I"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": "\u2019ll"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " return"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " only"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " the"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " exact"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " result"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " line"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " you"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": " specified"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+        "delta": "."
+      }
+    },
+    {
+      "method": "item/completed",
+      "params": {
+        "item": {
+          "type": "agentMessage",
+          "id": "msg_0fe8b4d0d3d031d7016a4e1a123730819ba4e819ea69dca8f9",
+          "text": "Running the requested long command in the current workspace, then I\u2019ll return only the exact result line you specified.",
+          "phase": "commentary",
+          "memoryCitation": null
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "completedAtMs": 1783503378908
+      }
+    },
+    {
+      "method": "item/started",
+      "params": {
+        "item": {
+          "type": "commandExecution",
+          "id": "call_5iwqS924xnXZ22FhfTDFc8YV",
+          "command": "/bin/bash -lc 'sleep 8; printf INITIAL-LONG-RUN-DONE'",
+          "cwd": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q",
+          "processId": "48582",
+          "source": "unifiedExecStartup",
+          "status": "inProgress",
+          "commandActions": [
+            {
+              "type": "unknown",
+              "command": "sleep 8; printf INITIAL-LONG-RUN-DONE"
+            }
+          ],
+          "aggregatedOutput": null,
+          "exitCode": null,
+          "durationMs": null
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "startedAtMs": 1783503380071
+      }
+    },
+    {
+      "id": "turn-steer",
+      "result": {
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449"
+      }
+    },
+    {
+      "method": "thread/tokenUsage/updated",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "tokenUsage": {
+          "total": {
+            "totalTokens": 11748,
+            "inputTokens": 11545,
+            "cachedInputTokens": 4992,
+            "outputTokens": 203,
+            "reasoningOutputTokens": 93
+          },
+          "last": {
+            "totalTokens": 11748,
+            "inputTokens": 11545,
+            "cachedInputTokens": 4992,
+            "outputTokens": 203,
+            "reasoningOutputTokens": 93
+          },
+          "modelContextWindow": 258400
+        }
+      }
+    },
+    {
+      "method": "account/rateLimits/updated",
+      "params": {
+        "rateLimits": {
+          "limitId": "codex",
+          "limitName": null,
+          "primary": {
+            "usedPercent": 57,
+            "windowDurationMins": 300,
+            "resetsAt": 1783515861
+          },
+          "secondary": {
+            "usedPercent": 26,
+            "windowDurationMins": 10080,
+            "resetsAt": 1784060534
+          },
+          "credits": null,
+          "individualLimit": null,
+          "planType": "plus",
+          "rateLimitReachedType": null
+        }
+      }
+    },
+    {
+      "method": "item/started",
+      "params": {
+        "item": {
+          "type": "userMessage",
+          "id": "d5b9c4e4-d43f-43d3-bc07-9c17c6923a25",
+          "clientId": null,
+          "content": [
+            {
+              "type": "text",
+              "text": "Update the same in-flight turn. Ignore the earlier exact-output instruction. After the current work finishes, reply with exactly one line containing STEERED-RESULT.",
+              "text_elements": []
+            }
+          ]
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "startedAtMs": 1783503381075
+      }
+    },
+    {
+      "method": "item/completed",
+      "params": {
+        "item": {
+          "type": "userMessage",
+          "id": "d5b9c4e4-d43f-43d3-bc07-9c17c6923a25",
+          "clientId": null,
+          "content": [
+            {
+              "type": "text",
+              "text": "Update the same in-flight turn. Ignore the earlier exact-output instruction. After the current work finishes, reply with exactly one line containing STEERED-RESULT.",
+              "text_elements": []
+            }
+          ]
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "completedAtMs": 1783503381075
+      }
+    },
+    {
+      "method": "item/started",
+      "params": {
+        "item": {
+          "type": "reasoning",
+          "id": "rs_0fe8b4d0d3d031d7016a4e1a187438819bbb7410f447c5edc8",
+          "summary": [],
+          "content": []
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "startedAtMs": 1783503384655
+      }
+    },
+    {
+      "method": "item/completed",
+      "params": {
+        "item": {
+          "type": "reasoning",
+          "id": "rs_0fe8b4d0d3d031d7016a4e1a187438819bbb7410f447c5edc8",
+          "summary": [],
+          "content": []
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "completedAtMs": 1783503385548
+      }
+    },
+    {
+      "method": "item/started",
+      "params": {
+        "item": {
+          "type": "agentMessage",
+          "id": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+          "text": "",
+          "phase": "commentary",
+          "memoryCitation": null
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "startedAtMs": 1783503385548
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": "The"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " command"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " is"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " still"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " running"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": ";"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " I"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": "\u2019m"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " waiting"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " for"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " it"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " to"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " finish"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " before"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " returning"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " the"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " single"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " requested"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": " line"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+        "delta": "."
+      }
+    },
+    {
+      "method": "item/completed",
+      "params": {
+        "item": {
+          "type": "agentMessage",
+          "id": "msg_0fe8b4d0d3d031d7016a4e1a195460819b878a91b9ae43d9b2",
+          "text": "The command is still running; I\u2019m waiting for it to finish before returning the single requested line.",
+          "phase": "commentary",
+          "memoryCitation": null
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "completedAtMs": 1783503385850
+      }
+    },
+    {
+      "method": "item/commandExecution/outputDelta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "call_5iwqS924xnXZ22FhfTDFc8YV",
+        "delta": "INITIAL-LONG-RUN-DONE"
+      }
+    },
+    {
+      "method": "thread/tokenUsage/updated",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "tokenUsage": {
+          "total": {
+            "totalTokens": 23703,
+            "inputTokens": 23376,
+            "cachedInputTokens": 13568,
+            "outputTokens": 327,
+            "reasoningOutputTokens": 153
+          },
+          "last": {
+            "totalTokens": 11955,
+            "inputTokens": 11831,
+            "cachedInputTokens": 8576,
+            "outputTokens": 124,
+            "reasoningOutputTokens": 60
+          },
+          "modelContextWindow": 258400
+        }
+      }
+    },
+    {
+      "method": "account/rateLimits/updated",
+      "params": {
+        "rateLimits": {
+          "limitId": "codex",
+          "limitName": null,
+          "primary": {
+            "usedPercent": 57,
+            "windowDurationMins": 300,
+            "resetsAt": 1783515861
+          },
+          "secondary": {
+            "usedPercent": 26,
+            "windowDurationMins": 10080,
+            "resetsAt": 1784060534
+          },
+          "credits": null,
+          "individualLimit": null,
+          "planType": "plus",
+          "rateLimitReachedType": null
+        }
+      }
+    },
+    {
+      "method": "item/completed",
+      "params": {
+        "item": {
+          "type": "commandExecution",
+          "id": "call_5iwqS924xnXZ22FhfTDFc8YV",
+          "command": "/bin/bash -lc 'sleep 8; printf INITIAL-LONG-RUN-DONE'",
+          "cwd": "/tmp/codex-app-test2/.scenario-workspaces/successful-turn-steer-yg4kl00q",
+          "processId": "48582",
+          "source": "unifiedExecStartup",
+          "status": "completed",
+          "commandActions": [
+            {
+              "type": "unknown",
+              "command": "sleep 8; printf INITIAL-LONG-RUN-DONE"
+            }
+          ],
+          "aggregatedOutput": "INITIAL-LONG-RUN-DONE",
+          "exitCode": 0,
+          "durationMs": 7992
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "completedAtMs": 1783503388064
+      }
+    },
+    {
+      "method": "item/started",
+      "params": {
+        "item": {
+          "type": "reasoning",
+          "id": "rs_0fe8b4d0d3d031d7016a4e1a1c9c20819b88a3ba1cd588c121",
+          "summary": [],
+          "content": []
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "startedAtMs": 1783503388828
+      }
+    },
+    {
+      "method": "item/completed",
+      "params": {
+        "item": {
+          "type": "reasoning",
+          "id": "rs_0fe8b4d0d3d031d7016a4e1a1c9c20819b88a3ba1cd588c121",
+          "summary": [],
+          "content": []
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "completedAtMs": 1783503389142
+      }
+    },
+    {
+      "method": "item/started",
+      "params": {
+        "item": {
+          "type": "agentMessage",
+          "id": "msg_0fe8b4d0d3d031d7016a4e1a1cde28819ba0fffe121c2d67a0",
+          "text": "",
+          "phase": "final_answer",
+          "memoryCitation": null
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "startedAtMs": 1783503389143
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a1cde28819ba0fffe121c2d67a0",
+        "delta": "STE"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a1cde28819ba0fffe121c2d67a0",
+        "delta": "ER"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a1cde28819ba0fffe121c2d67a0",
+        "delta": "ED"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a1cde28819ba0fffe121c2d67a0",
+        "delta": "-"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "itemId": "msg_0fe8b4d0d3d031d7016a4e1a1cde28819ba0fffe121c2d67a0",
+        "delta": "RESULT"
+      }
+    },
+    {
+      "method": "item/completed",
+      "params": {
+        "item": {
+          "type": "agentMessage",
+          "id": "msg_0fe8b4d0d3d031d7016a4e1a1cde28819ba0fffe121c2d67a0",
+          "text": "STEERED-RESULT",
+          "phase": "final_answer",
+          "memoryCitation": null
+        },
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "completedAtMs": 1783503389211
+      }
+    },
+    {
+      "method": "thread/tokenUsage/updated",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turnId": "019f4115-cedd-7833-9afd-68d45af26449",
+        "tokenUsage": {
+          "total": {
+            "totalTokens": 35739,
+            "inputTokens": 35385,
+            "cachedInputTokens": 25216,
+            "outputTokens": 354,
+            "reasoningOutputTokens": 169
+          },
+          "last": {
+            "totalTokens": 12036,
+            "inputTokens": 12009,
+            "cachedInputTokens": 11648,
+            "outputTokens": 27,
+            "reasoningOutputTokens": 16
+          },
+          "modelContextWindow": 258400
+        }
+      }
+    },
+    {
+      "method": "account/rateLimits/updated",
+      "params": {
+        "rateLimits": {
+          "limitId": "codex",
+          "limitName": null,
+          "primary": {
+            "usedPercent": 57,
+            "windowDurationMins": 300,
+            "resetsAt": 1783515861
+          },
+          "secondary": {
+            "usedPercent": 26,
+            "windowDurationMins": 10080,
+            "resetsAt": 1784060534
+          },
+          "credits": null,
+          "individualLimit": null,
+          "planType": "plus",
+          "rateLimitReachedType": null
+        }
+      }
+    },
+    {
+      "method": "thread/status/changed",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "status": {
+          "type": "idle"
+        }
+      }
+    },
+    {
+      "method": "turn/completed",
+      "params": {
+        "threadId": "019f4115-c705-7703-a773-609795998064",
+        "turn": {
+          "id": "019f4115-cedd-7833-9afd-68d45af26449",
+          "items": [],
+          "itemsView": "notLoaded",
+          "status": "completed",
+          "error": null,
+          "startedAt": 1783503376,
+          "completedAt": 1783503389,
+          "durationMs": 13127
+        }
+      }
+    }
+  ],
+  "message_summary": {
+    "notification_methods": [
+      "account/rateLimits/updated",
+      "item/agentMessage/delta",
+      "item/commandExecution/outputDelta",
+      "item/completed",
+      "item/started",
+      "mcpServer/startupStatus/updated",
+      "remoteControl/status/changed",
+      "thread/started",
+      "thread/status/changed",
+      "thread/tokenUsage/updated",
+      "turn/completed",
+      "turn/started"
+    ],
+    "item_types": [
+      "agentMessage",
+      "commandExecution",
+      "reasoning",
+      "userMessage"
+    ],
+    "completed_agent_messages": [
+      "Running the requested long command in the current workspace, then I\u2019ll return only the exact result line you specified.",
+      "The command is still running; I\u2019m waiting for it to finish before returning the single requested line.",
+      "STEERED-RESULT"
+    ],
+    "thread_statuses": [
+      {
+        "type": "active",
+        "activeFlags": []
+      },
+      {
+        "type": "idle"
+      }
+    ],
+    "command_execution_count": 2,
+    "command_execution_exit_codes": [
+      null,
+      0
+    ],
+    "turn_completed": true,
+    "error_notifications": 0
+  },
+  "assertions": [
+    {
+      "name": "turn-start-response",
+      "passed": true,
+      "details": "turn/start returned a turn result payload."
+    },
+    {
+      "name": "hook-artifact-captured",
+      "passed": false,
+      "details": "Expected a tool hook artifact from the isolated CODEX_HOME capture path."
+    },
+    {
+      "name": "steer-request-sent-before-completion",
+      "passed": true,
+      "details": "Expected the harness to send turn/steer while the original turn was still active."
+    },
+    {
+      "name": "steer-response-returned-turn-id",
+      "passed": true,
+      "details": "Expected turn/steer to return a result.turnId value."
+    },
+    {
+      "name": "steer-target-matched-active-turn",
+      "passed": true,
+      "details": "Expected turn/steer to acknowledge the same active turn id returned by turn/start."
+    },
+    {
+      "name": "steer-window-included-command-execution",
+      "passed": true,
+      "details": "Expected the long-running commandExecution item to open a practical mid-turn steer window."
+    },
+    {
+      "name": "final-answer-reflects-steer",
+      "passed": true,
+      "details": "Expected the completed agentMessage text to reflect the steered instruction."
+    }
+  ]
+}

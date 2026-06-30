@@ -1,0 +1,6 @@
+# Allow running all node unit tests
+prefix_rule(
+      pattern = ["npx", "vitest", "run"],
+      decision = "prompt",
+      justification = "Nested Node subprocess tests require sandbox escalation",
+  )

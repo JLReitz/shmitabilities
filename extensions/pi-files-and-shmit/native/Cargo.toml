@@ -1,0 +1,22 @@
+[package]
+name = "pi-files-and-shmit-native"
+version = "0.0.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+ast-grep-core = { version = "0.39", default-features = false, features = ["tree-sitter"] }
+napi = "3"
+napi-derive = "3"
+upstream-pi-ast = { package = "pi-ast", git = "https://github.com/can1357/oh-my-pi.git", rev = "3047c27c332c5629c8e063283d349384c10c9a56" }
+
+[build-dependencies]
+napi-build = "2"
+
+[profile.release]
+opt-level = 3
+lto = true

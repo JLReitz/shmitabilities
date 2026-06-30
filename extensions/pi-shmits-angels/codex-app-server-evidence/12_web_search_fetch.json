@@ -1,0 +1,650 @@
+{
+  "scenario": "web-search-fetch",
+  "description": "Prompt that should use the web/search tool path instead of a shell tool.",
+  "prompt": "Use web search or web fetch to find the current Codex CLI version. Return exactly two lines: the version number on the first line and one source URL on the second line.",
+  "required_features": [],
+  "app_server_config_overrides": [
+    "web_search=\"live\""
+  ],
+  "thread_cwd_mode": "temp",
+  "app_server_command": [
+    "codex",
+    "--dangerously-bypass-hook-trust",
+    "app-server",
+    "--listen",
+    "ws://127.0.0.1:40357",
+    "-c",
+    "model=\"gpt-5.4-mini\"",
+    "-c",
+    "web_search=\"live\""
+  ],
+  "listen_url": "ws://127.0.0.1:40357",
+  "workspace_cwd": "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8",
+  "codex_home": "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8/codex-home",
+  "hook_capture_log": "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8/codex-home/hook-captures.jsonl",
+  "hook_capture_script": "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8/codex-home/capture_stop_hook.py",
+  "hook_artifacts": [],
+  "process": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"/tmp\" (codex_home: AbsolutePathBuf(\"/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8/codex-home\"))\ncodex app-server (WebSockets)\n  listening on: ws://127.0.0.1:40357\n  readyz: http://127.0.0.1:40357/readyz\n  healthz: http://127.0.0.1:40357/healthz\n  note: binds localhost only (use SSH port-forwarding for remote access)\n"
+  },
+  "initialize_response": {
+    "id": "init",
+    "result": {
+      "userAgent": "pi-shmits-angels-app-server-capture/0.142.5 (Ubuntu 24.4.0; x86_64) xterm-256color (pi-shmits-angels-app-server-capture; 0.2.0)",
+      "codexHome": "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8/codex-home",
+      "platformFamily": "unix",
+      "platformOs": "linux"
+    }
+  },
+  "thread_start_response": {
+    "id": "thread-start",
+    "result": {
+      "thread": {
+        "id": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "sessionId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "forkedFromId": null,
+        "parentThreadId": null,
+        "preview": "",
+        "ephemeral": false,
+        "modelProvider": "openai",
+        "createdAt": 1783503479,
+        "updatedAt": 1783503479,
+        "recencyAt": 1783503479,
+        "status": {
+          "type": "idle"
+        },
+        "path": "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8/codex-home/sessions/2026/07/08/rollout-2026-07-08T02-37-59-019f4117-63f7-7d91-b1e2-a9880b304850.jsonl",
+        "cwd": "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8",
+        "cliVersion": "0.142.5",
+        "source": "vscode",
+        "threadSource": null,
+        "agentNickname": null,
+        "agentRole": null,
+        "gitInfo": null,
+        "name": null,
+        "turns": []
+      },
+      "model": "gpt-5.4-mini",
+      "modelProvider": "openai",
+      "serviceTier": null,
+      "cwd": "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8",
+      "runtimeWorkspaceRoots": [
+        "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8"
+      ],
+      "instructionSources": [],
+      "approvalPolicy": "on-request",
+      "approvalsReviewer": "user",
+      "sandbox": {
+        "type": "workspaceWrite",
+        "writableRoots": [],
+        "networkAccess": false,
+        "excludeTmpdirEnvVar": false,
+        "excludeSlashTmp": false
+      },
+      "activePermissionProfile": {
+        "id": ":workspace",
+        "extends": null
+      },
+      "reasoningEffort": null,
+      "multiAgentMode": "explicitRequestOnly"
+    }
+  },
+  "turn_start_response": {
+    "id": "turn-start",
+    "result": {
+      "turn": {
+        "id": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "items": [],
+        "itemsView": "notLoaded",
+        "status": "inProgress",
+        "error": null,
+        "startedAt": null,
+        "completedAt": null,
+        "durationMs": null
+      }
+    }
+  },
+  "steer_request": null,
+  "steer_response": null,
+  "steer_sent": false,
+  "steer_completed_before_send": false,
+  "steer_triggered_by": null,
+  "messages": [
+    {
+      "id": "init",
+      "result": {
+        "userAgent": "pi-shmits-angels-app-server-capture/0.142.5 (Ubuntu 24.4.0; x86_64) xterm-256color (pi-shmits-angels-app-server-capture; 0.2.0)",
+        "codexHome": "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8/codex-home",
+        "platformFamily": "unix",
+        "platformOs": "linux"
+      }
+    },
+    {
+      "method": "remoteControl/status/changed",
+      "params": {
+        "status": "disabled",
+        "serverName": "Alpha",
+        "installationId": "83f7c792-638e-43d8-aa27-d8e51420929a",
+        "environmentId": null
+      }
+    },
+    {
+      "id": "thread-start",
+      "result": {
+        "thread": {
+          "id": "019f4117-63f7-7d91-b1e2-a9880b304850",
+          "sessionId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+          "forkedFromId": null,
+          "parentThreadId": null,
+          "preview": "",
+          "ephemeral": false,
+          "modelProvider": "openai",
+          "createdAt": 1783503479,
+          "updatedAt": 1783503479,
+          "recencyAt": 1783503479,
+          "status": {
+            "type": "idle"
+          },
+          "path": "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8/codex-home/sessions/2026/07/08/rollout-2026-07-08T02-37-59-019f4117-63f7-7d91-b1e2-a9880b304850.jsonl",
+          "cwd": "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8",
+          "cliVersion": "0.142.5",
+          "source": "vscode",
+          "threadSource": null,
+          "agentNickname": null,
+          "agentRole": null,
+          "gitInfo": null,
+          "name": null,
+          "turns": []
+        },
+        "model": "gpt-5.4-mini",
+        "modelProvider": "openai",
+        "serviceTier": null,
+        "cwd": "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8",
+        "runtimeWorkspaceRoots": [
+          "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8"
+        ],
+        "instructionSources": [],
+        "approvalPolicy": "on-request",
+        "approvalsReviewer": "user",
+        "sandbox": {
+          "type": "workspaceWrite",
+          "writableRoots": [],
+          "networkAccess": false,
+          "excludeTmpdirEnvVar": false,
+          "excludeSlashTmp": false
+        },
+        "activePermissionProfile": {
+          "id": ":workspace",
+          "extends": null
+        },
+        "reasoningEffort": null,
+        "multiAgentMode": "explicitRequestOnly"
+      }
+    },
+    {
+      "method": "mcpServer/startupStatus/updated",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "name": "codex_apps",
+        "status": "starting",
+        "error": null
+      }
+    },
+    {
+      "method": "thread/started",
+      "params": {
+        "thread": {
+          "id": "019f4117-63f7-7d91-b1e2-a9880b304850",
+          "sessionId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+          "forkedFromId": null,
+          "parentThreadId": null,
+          "preview": "",
+          "ephemeral": false,
+          "modelProvider": "openai",
+          "createdAt": 1783503479,
+          "updatedAt": 1783503479,
+          "recencyAt": 1783503479,
+          "status": {
+            "type": "idle"
+          },
+          "path": "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8/codex-home/sessions/2026/07/08/rollout-2026-07-08T02-37-59-019f4117-63f7-7d91-b1e2-a9880b304850.jsonl",
+          "cwd": "/tmp/codex-app-test2/.scenario-workspaces/web-search-fetch-ne515rh8",
+          "cliVersion": "0.142.5",
+          "source": "vscode",
+          "threadSource": null,
+          "agentNickname": null,
+          "agentRole": null,
+          "gitInfo": null,
+          "name": null,
+          "turns": []
+        }
+      }
+    },
+    {
+      "method": "mcpServer/startupStatus/updated",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "name": "codex_apps",
+        "status": "ready",
+        "error": null
+      }
+    },
+    {
+      "id": "turn-start",
+      "result": {
+        "turn": {
+          "id": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+          "items": [],
+          "itemsView": "notLoaded",
+          "status": "inProgress",
+          "error": null,
+          "startedAt": null,
+          "completedAt": null,
+          "durationMs": null
+        }
+      }
+    },
+    {
+      "method": "thread/status/changed",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "status": {
+          "type": "active",
+          "activeFlags": []
+        }
+      }
+    },
+    {
+      "method": "turn/started",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turn": {
+          "id": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+          "items": [],
+          "itemsView": "notLoaded",
+          "status": "inProgress",
+          "error": null,
+          "startedAt": 1783503481,
+          "completedAt": null,
+          "durationMs": null
+        }
+      }
+    },
+    {
+      "method": "item/started",
+      "params": {
+        "item": {
+          "type": "userMessage",
+          "id": "bb837a6b-60f1-49bd-8435-508816fff09c",
+          "clientId": null,
+          "content": [
+            {
+              "type": "text",
+              "text": "Use web search or web fetch to find the current Codex CLI version. Return exactly two lines: the version number on the first line and one source URL on the second line.",
+              "text_elements": []
+            }
+          ]
+        },
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "startedAtMs": 1783503481663
+      }
+    },
+    {
+      "method": "item/completed",
+      "params": {
+        "item": {
+          "type": "userMessage",
+          "id": "bb837a6b-60f1-49bd-8435-508816fff09c",
+          "clientId": null,
+          "content": [
+            {
+              "type": "text",
+              "text": "Use web search or web fetch to find the current Codex CLI version. Return exactly two lines: the version number on the first line and one source URL on the second line.",
+              "text_elements": []
+            }
+          ]
+        },
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "completedAtMs": 1783503481663
+      }
+    },
+    {
+      "method": "item/started",
+      "params": {
+        "item": {
+          "type": "reasoning",
+          "id": "rs_0f4bed4fc474be68016a4e1a7a5fec8198906f6d47e0618c07",
+          "summary": [],
+          "content": []
+        },
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "startedAtMs": 1783503482558
+      }
+    },
+    {
+      "method": "item/completed",
+      "params": {
+        "item": {
+          "type": "reasoning",
+          "id": "rs_0f4bed4fc474be68016a4e1a7a5fec8198906f6d47e0618c07",
+          "summary": [],
+          "content": []
+        },
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "completedAtMs": 1783503483613
+      }
+    },
+    {
+      "method": "item/started",
+      "params": {
+        "item": {
+          "type": "agentMessage",
+          "id": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+          "text": "",
+          "phase": "commentary",
+          "memoryCitation": null
+        },
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "startedAtMs": 1783503483613
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": "I"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": "\u2019m"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " checking"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " the"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " current"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " Cod"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": "ex"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " CLI"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " version"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " from"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " a"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " live"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " source"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " and"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " will"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " return"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " only"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " the"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " version"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " and"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " one"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": " URL"
+      }
+    },
+    {
+      "method": "item/agentMessage/delta",
+      "params": {
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "itemId": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+        "delta": "."
+      }
+    },
+    {
+      "method": "item/completed",
+      "params": {
+        "item": {
+          "type": "agentMessage",
+          "id": "msg_0f4bed4fc474be68016a4e1a7b6d3c8198b4db4500cbeac06c",
+          "text": "I\u2019m checking the current Codex CLI version from a live source and will return only the version and one URL.",
+          "phase": "commentary",
+          "memoryCitation": null
+        },
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "completedAtMs": 1783503484082
+      }
+    },
+    {
+      "method": "item/started",
+      "params": {
+        "item": {
+          "type": "webSearch",
+          "id": "ws_0f4bed4fc474be68016a4e1a7be5c48198962a80bc53995ba6",
+          "query": "",
+          "action": {
+            "type": "other"
+          }
+        },
+        "threadId": "019f4117-63f7-7d91-b1e2-a9880b304850",
+        "turnId": "019f4117-6b34-7832-8fc4-a2f345e247c9",
+        "startedAtMs": 1783503484082
+      }
+    }
+  ],
+  "message_summary": {
+    "notification_methods": [
+      "item/agentMessage/delta",
+      "item/completed",
+      "item/started",
+      "mcpServer/startupStatus/updated",
+      "remoteControl/status/changed",
+      "thread/started",
+      "thread/status/changed",
+      "turn/started"
+    ],
+    "item_types": [
+      "agentMessage",
+      "reasoning",
+      "userMessage",
+      "webSearch"
+    ],
+    "completed_agent_messages": [
+      "I\u2019m checking the current Codex CLI version from a live source and will return only the version and one URL."
+    ],
+    "thread_statuses": [
+      {
+        "type": "active",
+        "activeFlags": []
+      }
+    ],
+    "command_execution_count": 0,
+    "command_execution_exit_codes": [],
+    "turn_completed": false,
+    "error_notifications": 0
+  },
+  "assertions": [
+    {
+      "name": "turn-start-response",
+      "passed": true,
+      "details": "turn/start returned a turn result payload."
+    },
+    {
+      "name": "hook-artifact-captured",
+      "passed": true,
+      "details": "Expected a tool hook artifact from the isolated CODEX_HOME capture path."
+    },
+    {
+      "name": "search-feature-enabled",
+      "passed": true,
+      "details": "App-server launch for this scenario enabled a web search mode."
+    },
+    {
+      "name": "non-shell-web-shape-observed",
+      "passed": true,
+      "details": "Expected a distinct structured web/search item type rather than only shell commandExecution or text references."
+    }
+  ]
+}

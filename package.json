@@ -1,0 +1,43 @@
+{
+	"name": "@jlreitz/shmitabilities",
+	"version": "0.0.0.69",
+	"description": "Personal extension/plugin/capabilities/whatever package -- the good stuff",
+	"keywords": [
+		"pi-package",
+		"pi-extension",
+		"pi",
+		"workflows",
+		"design",
+		"planning"
+	],
+	"type": "module",
+	"private": true,
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/jlreitz/shmitabilities"
+	},
+	"bin": {},
+	"bundledDependencies": [],
+	"devDependencies": {
+		"@types/node": "^20.0.0",
+		"@vitest/coverage-v8": "^1.6.1",
+		"typescript": "^5.0.0",
+		"vitest": "^1.0.0"
+	},
+	"pi": {
+		"extensions": [
+			"./extensions/pi-files-and-shmit",
+			"./extensions/pi-headroom"
+		],
+		"skills": [
+			"skills"
+		]
+	},
+	"scripts": {
+		"postinstall": "npm install --prefix ./extensions/pi-files-and-shmit --omit=dev",
+		"test": "vitest",
+		"test:coverage:headroom": "vitest run --coverage extensions/pi-headroom/test"
+	},
+	"bundleDependencies": []
+}

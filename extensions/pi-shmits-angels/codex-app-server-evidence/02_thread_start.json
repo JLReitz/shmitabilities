@@ -1,0 +1,127 @@
+[
+  {
+    "id": "2",
+    "result": {
+      "thread": {
+        "id": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+        "sessionId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+        "forkedFromId": null,
+        "parentThreadId": null,
+        "preview": "",
+        "ephemeral": false,
+        "modelProvider": "openai",
+        "createdAt": 1783365949,
+        "updatedAt": 1783365949,
+        "recencyAt": 1783365949,
+        "status": {
+          "type": "idle"
+        },
+        "path": "/home/jensen/.codex/sessions/2026/07/06/rollout-2026-07-06T12-25-49-019f38e4-d734-7e30-bca0-80ad9c2656ae.jsonl",
+        "cwd": "/home/jensen/workspace/shmitabilities",
+        "cliVersion": "0.142.5",
+        "source": "vscode",
+        "threadSource": null,
+        "agentNickname": null,
+        "agentRole": null,
+        "gitInfo": null,
+        "name": null,
+        "turns": []
+      },
+      "model": "gpt-5.4-mini",
+      "modelProvider": "openai",
+      "serviceTier": null,
+      "cwd": "/home/jensen/workspace/shmitabilities",
+      "runtimeWorkspaceRoots": [
+        "/home/jensen/workspace/shmitabilities"
+      ],
+      "instructionSources": [
+        "/home/jensen/.codex/AGENTS.md",
+        "/home/jensen/workspace/shmitabilities/AGENTS.md"
+      ],
+      "approvalPolicy": "on-request",
+      "approvalsReviewer": "auto_review",
+      "sandbox": {
+        "type": "workspaceWrite",
+        "writableRoots": [
+          "/home/jensen/workspace/shmitabilities/.agents",
+          "/home/jensen/workspace/shmitabilities/.agents/projects"
+        ],
+        "networkAccess": false,
+        "excludeTmpdirEnvVar": false,
+        "excludeSlashTmp": false
+      },
+      "activePermissionProfile": {
+        "id": "shmitabilities_workspace",
+        "extends": ":workspace"
+      },
+      "reasoningEffort": "medium",
+      "multiAgentMode": "explicitRequestOnly"
+    }
+  },
+  {
+    "method": "thread/started",
+    "params": {
+      "thread": {
+        "id": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+        "sessionId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+        "forkedFromId": null,
+        "parentThreadId": null,
+        "preview": "",
+        "ephemeral": false,
+        "modelProvider": "openai",
+        "createdAt": 1783365949,
+        "updatedAt": 1783365949,
+        "recencyAt": 1783365949,
+        "status": {
+          "type": "idle"
+        },
+        "path": "/home/jensen/.codex/sessions/2026/07/06/rollout-2026-07-06T12-25-49-019f38e4-d734-7e30-bca0-80ad9c2656ae.jsonl",
+        "cwd": "/home/jensen/workspace/shmitabilities",
+        "cliVersion": "0.142.5",
+        "source": "vscode",
+        "threadSource": null,
+        "agentNickname": null,
+        "agentRole": null,
+        "gitInfo": null,
+        "name": null,
+        "turns": []
+      }
+    }
+  },
+  {
+    "method": "mcpServer/startupStatus/updated",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "name": "codex-security",
+      "status": "starting",
+      "error": null
+    }
+  },
+  {
+    "method": "mcpServer/startupStatus/updated",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "name": "codex_apps",
+      "status": "starting",
+      "error": null
+    }
+  },
+  {
+    "method": "mcpServer/startupStatus/updated",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "name": "codex-security",
+      "status": "ready",
+      "error": null
+    }
+  },
+  {
+    "method": "mcpServer/startupStatus/updated",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "name": "codex_apps",
+      "status": "ready",
+      "error": null
+    }
+  }
+]

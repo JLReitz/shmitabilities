@@ -1,0 +1,762 @@
+{
+  "scenario": "thread-resume-turn-start",
+  "description": "Disconnect, resume the existing thread on a new connection, then deliver a resumed turn.",
+  "prompt": "Return exactly one line containing RESUMED-THREAD-RESULT. Do not add any other text.",
+  "required_features": [],
+  "app_server_config_overrides": [],
+  "app_server_command": [
+    "codex",
+    "--dangerously-bypass-hook-trust",
+    "app-server",
+    "--listen",
+    "ws://127.0.0.1:57905",
+    "-c",
+    "model=\"gpt-5.4-mini\""
+  ],
+  "listen_url": "ws://127.0.0.1:57905",
+  "workspace_cwd": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb",
+  "codex_home": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home",
+  "hook_capture_log": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home/hook-captures.jsonl",
+  "hook_capture_script": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home/capture_stop_hook.py",
+  "hook_artifacts": [],
+  "process": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"/tmp\" (codex_home: AbsolutePathBuf(\"/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home\"))\ncodex app-server (WebSockets)\n  listening on: ws://127.0.0.1:57905\n  readyz: http://127.0.0.1:57905/readyz\n  healthz: http://127.0.0.1:57905/healthz\n  note: binds localhost only (use SSH port-forwarding for remote access)\n"
+  },
+  "first_initialize_response": {
+    "id": "init",
+    "result": {
+      "userAgent": "pi-shmits-angels-app-server-capture/0.142.5 (Ubuntu 24.4.0; x86_64) xterm-256color (pi-shmits-angels-app-server-capture; 0.2.0)",
+      "codexHome": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home",
+      "platformFamily": "unix",
+      "platformOs": "linux"
+    }
+  },
+  "initial_thread_start_response": {
+    "id": "thread-start",
+    "result": {
+      "thread": {
+        "id": "019f4117-d861-7e10-ac41-89da6abe7881",
+        "sessionId": "019f4117-d861-7e10-ac41-89da6abe7881",
+        "forkedFromId": null,
+        "parentThreadId": null,
+        "preview": "",
+        "ephemeral": false,
+        "modelProvider": "openai",
+        "createdAt": 1783503509,
+        "updatedAt": 1783503509,
+        "recencyAt": 1783503509,
+        "status": {
+          "type": "idle"
+        },
+        "path": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home/sessions/2026/07/08/rollout-2026-07-08T02-38-29-019f4117-d861-7e10-ac41-89da6abe7881.jsonl",
+        "cwd": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb",
+        "cliVersion": "0.142.5",
+        "source": "vscode",
+        "threadSource": null,
+        "agentNickname": null,
+        "agentRole": null,
+        "gitInfo": null,
+        "name": null,
+        "turns": []
+      },
+      "model": "gpt-5.4-mini",
+      "modelProvider": "openai",
+      "serviceTier": null,
+      "cwd": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb",
+      "runtimeWorkspaceRoots": [
+        "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb"
+      ],
+      "instructionSources": [],
+      "approvalPolicy": "on-request",
+      "approvalsReviewer": "user",
+      "sandbox": {
+        "type": "workspaceWrite",
+        "writableRoots": [],
+        "networkAccess": false,
+        "excludeTmpdirEnvVar": false,
+        "excludeSlashTmp": false
+      },
+      "activePermissionProfile": {
+        "id": ":workspace",
+        "extends": null
+      },
+      "reasoningEffort": null,
+      "multiAgentMode": "explicitRequestOnly"
+    }
+  },
+  "second_initialize_response": {
+    "id": "init",
+    "result": {
+      "userAgent": "pi-shmits-angels-app-server-capture/0.142.5 (Ubuntu 24.4.0; x86_64) xterm-256color (pi-shmits-angels-app-server-capture; 0.2.0)",
+      "codexHome": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home",
+      "platformFamily": "unix",
+      "platformOs": "linux"
+    }
+  },
+  "thread_resume_response": {
+    "error": {
+      "code": -32600,
+      "message": "thread/resume.path requires experimentalApi capability"
+    },
+    "id": "thread-resume-by-path"
+  },
+  "thread_resume_attempts": [
+    {
+      "strategy": "thread_id",
+      "response": {
+        "error": {
+          "code": -32600,
+          "message": "no rollout found for thread id 019f4117-d861-7e10-ac41-89da6abe7881"
+        },
+        "id": "thread-resume-by-id"
+      }
+    },
+    {
+      "strategy": "thread_id_plus_path",
+      "path": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home/sessions/2026/07/08/rollout-2026-07-08T02-38-29-019f4117-d861-7e10-ac41-89da6abe7881.jsonl",
+      "response": {
+        "error": {
+          "code": -32600,
+          "message": "thread/resume.path requires experimentalApi capability"
+        },
+        "id": "thread-resume-by-path"
+      }
+    }
+  ],
+  "resumed_turn_start_response": {
+    "id": "turn-start",
+    "result": {
+      "turn": {
+        "id": "019f4118-0679-7c53-bc52-f3a9d13c430c",
+        "items": [],
+        "itemsView": "notLoaded",
+        "status": "inProgress",
+        "error": null,
+        "startedAt": null,
+        "completedAt": null,
+        "durationMs": null
+      }
+    }
+  },
+  "thread_read_response": {
+    "id": "thread-read",
+    "result": {
+      "thread": {
+        "id": "019f4117-d861-7e10-ac41-89da6abe7881",
+        "sessionId": "019f4117-d861-7e10-ac41-89da6abe7881",
+        "forkedFromId": null,
+        "parentThreadId": null,
+        "preview": "Return exactly one line containing RESUMED-THREAD-RESULT. Do not add any other text.",
+        "ephemeral": false,
+        "modelProvider": "openai",
+        "createdAt": 1783503509,
+        "updatedAt": 1783503509,
+        "recencyAt": 1783503521,
+        "status": {
+          "type": "idle"
+        },
+        "path": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home/sessions/2026/07/08/rollout-2026-07-08T02-38-29-019f4117-d861-7e10-ac41-89da6abe7881.jsonl",
+        "cwd": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb",
+        "cliVersion": "0.142.5",
+        "source": "vscode",
+        "threadSource": null,
+        "agentNickname": null,
+        "agentRole": null,
+        "gitInfo": null,
+        "name": null,
+        "turns": [
+          {
+            "id": "019f4118-0679-7c53-bc52-f3a9d13c430c",
+            "items": [
+              {
+                "type": "userMessage",
+                "id": "item-1",
+                "clientId": null,
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Return exactly one line containing RESUMED-THREAD-RESULT. Do not add any other text.",
+                    "text_elements": []
+                  }
+                ]
+              },
+              {
+                "type": "agentMessage",
+                "id": "item-2",
+                "text": "RESUMED-THREAD-RESULT",
+                "phase": "final_answer",
+                "memoryCitation": null
+              }
+            ],
+            "itemsView": "full",
+            "status": "completed",
+            "error": null,
+            "startedAt": 1783503521,
+            "completedAt": 1783503523,
+            "durationMs": 2097
+          }
+        ]
+      }
+    }
+  },
+  "first_connection_messages": [
+    {
+      "id": "init",
+      "result": {
+        "userAgent": "pi-shmits-angels-app-server-capture/0.142.5 (Ubuntu 24.4.0; x86_64) xterm-256color (pi-shmits-angels-app-server-capture; 0.2.0)",
+        "codexHome": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home",
+        "platformFamily": "unix",
+        "platformOs": "linux"
+      }
+    },
+    {
+      "method": "remoteControl/status/changed",
+      "params": {
+        "status": "disabled",
+        "serverName": "Alpha",
+        "installationId": "83f7c792-638e-43d8-aa27-d8e51420929a",
+        "environmentId": null
+      }
+    },
+    {
+      "id": "thread-start",
+      "result": {
+        "thread": {
+          "id": "019f4117-d861-7e10-ac41-89da6abe7881",
+          "sessionId": "019f4117-d861-7e10-ac41-89da6abe7881",
+          "forkedFromId": null,
+          "parentThreadId": null,
+          "preview": "",
+          "ephemeral": false,
+          "modelProvider": "openai",
+          "createdAt": 1783503509,
+          "updatedAt": 1783503509,
+          "recencyAt": 1783503509,
+          "status": {
+            "type": "idle"
+          },
+          "path": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home/sessions/2026/07/08/rollout-2026-07-08T02-38-29-019f4117-d861-7e10-ac41-89da6abe7881.jsonl",
+          "cwd": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb",
+          "cliVersion": "0.142.5",
+          "source": "vscode",
+          "threadSource": null,
+          "agentNickname": null,
+          "agentRole": null,
+          "gitInfo": null,
+          "name": null,
+          "turns": []
+        },
+        "model": "gpt-5.4-mini",
+        "modelProvider": "openai",
+        "serviceTier": null,
+        "cwd": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb",
+        "runtimeWorkspaceRoots": [
+          "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb"
+        ],
+        "instructionSources": [],
+        "approvalPolicy": "on-request",
+        "approvalsReviewer": "user",
+        "sandbox": {
+          "type": "workspaceWrite",
+          "writableRoots": [],
+          "networkAccess": false,
+          "excludeTmpdirEnvVar": false,
+          "excludeSlashTmp": false
+        },
+        "activePermissionProfile": {
+          "id": ":workspace",
+          "extends": null
+        },
+        "reasoningEffort": null,
+        "multiAgentMode": "explicitRequestOnly"
+      }
+    },
+    {
+      "method": "thread/started",
+      "params": {
+        "thread": {
+          "id": "019f4117-d861-7e10-ac41-89da6abe7881",
+          "sessionId": "019f4117-d861-7e10-ac41-89da6abe7881",
+          "forkedFromId": null,
+          "parentThreadId": null,
+          "preview": "",
+          "ephemeral": false,
+          "modelProvider": "openai",
+          "createdAt": 1783503509,
+          "updatedAt": 1783503509,
+          "recencyAt": 1783503509,
+          "status": {
+            "type": "idle"
+          },
+          "path": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home/sessions/2026/07/08/rollout-2026-07-08T02-38-29-019f4117-d861-7e10-ac41-89da6abe7881.jsonl",
+          "cwd": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb",
+          "cliVersion": "0.142.5",
+          "source": "vscode",
+          "threadSource": null,
+          "agentNickname": null,
+          "agentRole": null,
+          "gitInfo": null,
+          "name": null,
+          "turns": []
+        }
+      }
+    },
+    {
+      "method": "mcpServer/startupStatus/updated",
+      "params": {
+        "threadId": "019f4117-d861-7e10-ac41-89da6abe7881",
+        "name": "codex_apps",
+        "status": "starting",
+        "error": null
+      }
+    },
+    {
+      "method": "mcpServer/startupStatus/updated",
+      "params": {
+        "threadId": "019f4117-d861-7e10-ac41-89da6abe7881",
+        "name": "codex_apps",
+        "status": "ready",
+        "error": null
+      }
+    }
+  ],
+  "second_connection_messages": [
+    {
+      "id": "init",
+      "result": {
+        "userAgent": "pi-shmits-angels-app-server-capture/0.142.5 (Ubuntu 24.4.0; x86_64) xterm-256color (pi-shmits-angels-app-server-capture; 0.2.0)",
+        "codexHome": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home",
+        "platformFamily": "unix",
+        "platformOs": "linux"
+      }
+    },
+    {
+      "method": "remoteControl/status/changed",
+      "params": {
+        "status": "disabled",
+        "serverName": "Alpha",
+        "installationId": "83f7c792-638e-43d8-aa27-d8e51420929a",
+        "environmentId": null
+      }
+    },
+    {
+      "error": {
+        "code": -32600,
+        "message": "no rollout found for thread id 019f4117-d861-7e10-ac41-89da6abe7881"
+      },
+      "id": "thread-resume-by-id"
+    },
+    {
+      "error": {
+        "code": -32600,
+        "message": "thread/resume.path requires experimentalApi capability"
+      },
+      "id": "thread-resume-by-path"
+    },
+    {
+      "id": "turn-start",
+      "result": {
+        "turn": {
+          "id": "019f4118-0679-7c53-bc52-f3a9d13c430c",
+          "items": [],
+          "itemsView": "notLoaded",
+          "status": "inProgress",
+          "error": null,
+          "startedAt": null,
+          "completedAt": null,
+          "durationMs": null
+        }
+      }
+    },
+    {
+      "method": "thread/status/changed",
+      "params": {
+        "threadId": "019f4117-d861-7e10-ac41-89da6abe7881",
+        "status": {
+          "type": "active",
+          "activeFlags": []
+        }
+      }
+    },
+    {
+      "method": "thread/status/changed",
+      "params": {
+        "threadId": "019f4117-d861-7e10-ac41-89da6abe7881",
+        "status": {
+          "type": "idle"
+        }
+      }
+    },
+    {
+      "id": "thread-read",
+      "result": {
+        "thread": {
+          "id": "019f4117-d861-7e10-ac41-89da6abe7881",
+          "sessionId": "019f4117-d861-7e10-ac41-89da6abe7881",
+          "forkedFromId": null,
+          "parentThreadId": null,
+          "preview": "Return exactly one line containing RESUMED-THREAD-RESULT. Do not add any other text.",
+          "ephemeral": false,
+          "modelProvider": "openai",
+          "createdAt": 1783503509,
+          "updatedAt": 1783503509,
+          "recencyAt": 1783503521,
+          "status": {
+            "type": "idle"
+          },
+          "path": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home/sessions/2026/07/08/rollout-2026-07-08T02-38-29-019f4117-d861-7e10-ac41-89da6abe7881.jsonl",
+          "cwd": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb",
+          "cliVersion": "0.142.5",
+          "source": "vscode",
+          "threadSource": null,
+          "agentNickname": null,
+          "agentRole": null,
+          "gitInfo": null,
+          "name": null,
+          "turns": [
+            {
+              "id": "019f4118-0679-7c53-bc52-f3a9d13c430c",
+              "items": [
+                {
+                  "type": "userMessage",
+                  "id": "item-1",
+                  "clientId": null,
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Return exactly one line containing RESUMED-THREAD-RESULT. Do not add any other text.",
+                      "text_elements": []
+                    }
+                  ]
+                },
+                {
+                  "type": "agentMessage",
+                  "id": "item-2",
+                  "text": "RESUMED-THREAD-RESULT",
+                  "phase": "final_answer",
+                  "memoryCitation": null
+                }
+              ],
+              "itemsView": "full",
+              "status": "completed",
+              "error": null,
+              "startedAt": 1783503521,
+              "completedAt": 1783503523,
+              "durationMs": 2097
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "messages": [
+    {
+      "id": "init",
+      "result": {
+        "userAgent": "pi-shmits-angels-app-server-capture/0.142.5 (Ubuntu 24.4.0; x86_64) xterm-256color (pi-shmits-angels-app-server-capture; 0.2.0)",
+        "codexHome": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home",
+        "platformFamily": "unix",
+        "platformOs": "linux"
+      }
+    },
+    {
+      "method": "remoteControl/status/changed",
+      "params": {
+        "status": "disabled",
+        "serverName": "Alpha",
+        "installationId": "83f7c792-638e-43d8-aa27-d8e51420929a",
+        "environmentId": null
+      }
+    },
+    {
+      "id": "thread-start",
+      "result": {
+        "thread": {
+          "id": "019f4117-d861-7e10-ac41-89da6abe7881",
+          "sessionId": "019f4117-d861-7e10-ac41-89da6abe7881",
+          "forkedFromId": null,
+          "parentThreadId": null,
+          "preview": "",
+          "ephemeral": false,
+          "modelProvider": "openai",
+          "createdAt": 1783503509,
+          "updatedAt": 1783503509,
+          "recencyAt": 1783503509,
+          "status": {
+            "type": "idle"
+          },
+          "path": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home/sessions/2026/07/08/rollout-2026-07-08T02-38-29-019f4117-d861-7e10-ac41-89da6abe7881.jsonl",
+          "cwd": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb",
+          "cliVersion": "0.142.5",
+          "source": "vscode",
+          "threadSource": null,
+          "agentNickname": null,
+          "agentRole": null,
+          "gitInfo": null,
+          "name": null,
+          "turns": []
+        },
+        "model": "gpt-5.4-mini",
+        "modelProvider": "openai",
+        "serviceTier": null,
+        "cwd": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb",
+        "runtimeWorkspaceRoots": [
+          "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb"
+        ],
+        "instructionSources": [],
+        "approvalPolicy": "on-request",
+        "approvalsReviewer": "user",
+        "sandbox": {
+          "type": "workspaceWrite",
+          "writableRoots": [],
+          "networkAccess": false,
+          "excludeTmpdirEnvVar": false,
+          "excludeSlashTmp": false
+        },
+        "activePermissionProfile": {
+          "id": ":workspace",
+          "extends": null
+        },
+        "reasoningEffort": null,
+        "multiAgentMode": "explicitRequestOnly"
+      }
+    },
+    {
+      "method": "thread/started",
+      "params": {
+        "thread": {
+          "id": "019f4117-d861-7e10-ac41-89da6abe7881",
+          "sessionId": "019f4117-d861-7e10-ac41-89da6abe7881",
+          "forkedFromId": null,
+          "parentThreadId": null,
+          "preview": "",
+          "ephemeral": false,
+          "modelProvider": "openai",
+          "createdAt": 1783503509,
+          "updatedAt": 1783503509,
+          "recencyAt": 1783503509,
+          "status": {
+            "type": "idle"
+          },
+          "path": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home/sessions/2026/07/08/rollout-2026-07-08T02-38-29-019f4117-d861-7e10-ac41-89da6abe7881.jsonl",
+          "cwd": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb",
+          "cliVersion": "0.142.5",
+          "source": "vscode",
+          "threadSource": null,
+          "agentNickname": null,
+          "agentRole": null,
+          "gitInfo": null,
+          "name": null,
+          "turns": []
+        }
+      }
+    },
+    {
+      "method": "mcpServer/startupStatus/updated",
+      "params": {
+        "threadId": "019f4117-d861-7e10-ac41-89da6abe7881",
+        "name": "codex_apps",
+        "status": "starting",
+        "error": null
+      }
+    },
+    {
+      "method": "mcpServer/startupStatus/updated",
+      "params": {
+        "threadId": "019f4117-d861-7e10-ac41-89da6abe7881",
+        "name": "codex_apps",
+        "status": "ready",
+        "error": null
+      }
+    },
+    {
+      "id": "init",
+      "result": {
+        "userAgent": "pi-shmits-angels-app-server-capture/0.142.5 (Ubuntu 24.4.0; x86_64) xterm-256color (pi-shmits-angels-app-server-capture; 0.2.0)",
+        "codexHome": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home",
+        "platformFamily": "unix",
+        "platformOs": "linux"
+      }
+    },
+    {
+      "method": "remoteControl/status/changed",
+      "params": {
+        "status": "disabled",
+        "serverName": "Alpha",
+        "installationId": "83f7c792-638e-43d8-aa27-d8e51420929a",
+        "environmentId": null
+      }
+    },
+    {
+      "error": {
+        "code": -32600,
+        "message": "no rollout found for thread id 019f4117-d861-7e10-ac41-89da6abe7881"
+      },
+      "id": "thread-resume-by-id"
+    },
+    {
+      "error": {
+        "code": -32600,
+        "message": "thread/resume.path requires experimentalApi capability"
+      },
+      "id": "thread-resume-by-path"
+    },
+    {
+      "id": "turn-start",
+      "result": {
+        "turn": {
+          "id": "019f4118-0679-7c53-bc52-f3a9d13c430c",
+          "items": [],
+          "itemsView": "notLoaded",
+          "status": "inProgress",
+          "error": null,
+          "startedAt": null,
+          "completedAt": null,
+          "durationMs": null
+        }
+      }
+    },
+    {
+      "method": "thread/status/changed",
+      "params": {
+        "threadId": "019f4117-d861-7e10-ac41-89da6abe7881",
+        "status": {
+          "type": "active",
+          "activeFlags": []
+        }
+      }
+    },
+    {
+      "method": "thread/status/changed",
+      "params": {
+        "threadId": "019f4117-d861-7e10-ac41-89da6abe7881",
+        "status": {
+          "type": "idle"
+        }
+      }
+    },
+    {
+      "id": "thread-read",
+      "result": {
+        "thread": {
+          "id": "019f4117-d861-7e10-ac41-89da6abe7881",
+          "sessionId": "019f4117-d861-7e10-ac41-89da6abe7881",
+          "forkedFromId": null,
+          "parentThreadId": null,
+          "preview": "Return exactly one line containing RESUMED-THREAD-RESULT. Do not add any other text.",
+          "ephemeral": false,
+          "modelProvider": "openai",
+          "createdAt": 1783503509,
+          "updatedAt": 1783503509,
+          "recencyAt": 1783503521,
+          "status": {
+            "type": "idle"
+          },
+          "path": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb/codex-home/sessions/2026/07/08/rollout-2026-07-08T02-38-29-019f4117-d861-7e10-ac41-89da6abe7881.jsonl",
+          "cwd": "/tmp/codex-app-test2/.scenario-workspaces/thread-resume-turn-start-uyr_3_nb",
+          "cliVersion": "0.142.5",
+          "source": "vscode",
+          "threadSource": null,
+          "agentNickname": null,
+          "agentRole": null,
+          "gitInfo": null,
+          "name": null,
+          "turns": [
+            {
+              "id": "019f4118-0679-7c53-bc52-f3a9d13c430c",
+              "items": [
+                {
+                  "type": "userMessage",
+                  "id": "item-1",
+                  "clientId": null,
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Return exactly one line containing RESUMED-THREAD-RESULT. Do not add any other text.",
+                      "text_elements": []
+                    }
+                  ]
+                },
+                {
+                  "type": "agentMessage",
+                  "id": "item-2",
+                  "text": "RESUMED-THREAD-RESULT",
+                  "phase": "final_answer",
+                  "memoryCitation": null
+                }
+              ],
+              "itemsView": "full",
+              "status": "completed",
+              "error": null,
+              "startedAt": 1783503521,
+              "completedAt": 1783503523,
+              "durationMs": 2097
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "message_summary": {
+    "notification_methods": [
+      "mcpServer/startupStatus/updated",
+      "remoteControl/status/changed",
+      "thread/started",
+      "thread/status/changed"
+    ],
+    "item_types": [],
+    "completed_agent_messages": [],
+    "thread_statuses": [
+      {
+        "type": "active",
+        "activeFlags": []
+      },
+      {
+        "type": "idle"
+      }
+    ],
+    "command_execution_count": 0,
+    "command_execution_exit_codes": [],
+    "turn_completed": false,
+    "error_notifications": 0
+  },
+  "assertions": [
+    {
+      "name": "turn-start-response",
+      "passed": true,
+      "details": "turn/start returned a turn result payload."
+    },
+    {
+      "name": "hook-artifact-captured",
+      "passed": true,
+      "details": "Expected a tool hook artifact from the isolated CODEX_HOME capture path."
+    },
+    {
+      "name": "thread-resume-returned-same-thread-id",
+      "passed": false,
+      "details": "Expected thread/resume to reattach to the original thread id; final resume strategy was thread_id_plus_path."
+    },
+    {
+      "name": "resumed-turn-completed",
+      "passed": true,
+      "details": "Expected the resumed thread turn to complete on the second connection or in persisted turn history."
+    },
+    {
+      "name": "final-answer-reflects-resumed-turn",
+      "passed": true,
+      "details": "Expected the completed agentMessage text from the resumed turn to match the prompt."
+    },
+    {
+      "name": "thread-read-returned-turn-history",
+      "passed": true,
+      "details": "Expected thread/read includeTurns=true after resume to return at least one turn."
+    },
+    {
+      "name": "thread-read-preserved-resumed-agent-message",
+      "passed": true,
+      "details": "Expected thread/read output to preserve the resumed delivery in stored turn history."
+    }
+  ]
+}

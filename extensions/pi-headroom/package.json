@@ -1,0 +1,24 @@
+{
+  "name": "@jlreitz/pi-headroom",
+  "version": "0.0.1",
+  "description": "Pi extension for Headroom proxy routing and MCP tools.",
+  "keywords": [
+    "pi-package",
+    "pi-extension",
+    "headroom"
+  ],
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "pi": {
+    "extensions": [
+      "./src/index.ts"
+    ]
+  },
+  "files": [
+    "src/",
+    "README.md",
+    "AGENTS.md",
+    "DEFERRED.md"
+  ]
+}
