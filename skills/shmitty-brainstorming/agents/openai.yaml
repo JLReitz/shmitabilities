@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shmitty Brainstorming"
+  short_description: "Shape rough ideas into tracked open questions"
+  default_prompt: "Use $shmitty-brainstorming to shape this idea into tracked questions and tasks."
