@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shmitty Project Manager"
+  short_description: "Locate and set up projects in agent workspaces"
+  default_prompt: "Use $shmitty-project-manager to locate or set up this project."

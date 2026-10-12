@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shmitty Version Control"
+  short_description: "Manage task worktrees, branches, and commits"
+  default_prompt: "Use $shmitty-version-control to manage the Git worktree and commits for this task."
