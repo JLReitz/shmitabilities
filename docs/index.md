@@ -11,6 +11,7 @@ shared by Pi and DeepSeek Harness (DSH) through separate client interfaces.
 - [Codex Plugins](codex-plugins.md) describes the plugin manifest and packaged agents.
 - [Codex Bootstrap](codex-bootstrap.md) describes local installation and the bootstrap design.
 - [Validation](validation.md) gives checks for each changed component.
+- [Task Tracking](task-tracking.md) gives the project Beads configuration and epic entry point.
 - [Shmitty Knowledge](skills/shmitty-knowledge.md) describes the knowledge format and its local validation.
 
 The `skills/` directory contains skill instructions. Current harness packages are under

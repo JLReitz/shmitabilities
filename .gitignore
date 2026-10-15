@@ -1,4 +1,5 @@
 .agents/
+.beads/
 .codex-log/
 .pi/
 coverage/
