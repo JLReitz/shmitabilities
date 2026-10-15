@@ -1,0 +1,4 @@
+interface:
+  display_name: "Based Python Dev"
+  short_description: "Apply baseline Python project conventions"
+  default_prompt: "Use $based-python-dev to create or update this Python project."

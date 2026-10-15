@@ -1,0 +1,4 @@
+interface:
+  display_name: "Based Document Author"
+  short_description: "Apply the jlreitz house writing conventions"
+  default_prompt: "Use $based-document-author to write this content with the jlreitz house conventions."

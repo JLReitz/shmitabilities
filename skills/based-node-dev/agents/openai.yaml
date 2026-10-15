@@ -1,0 +1,4 @@
+interface:
+  display_name: "Based Node Dev"
+  short_description: "Apply baseline Node.js project conventions"
+  default_prompt: "Use $based-node-dev to create or update this Node.js project."

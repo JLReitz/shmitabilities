@@ -1,0 +1,4 @@
+interface:
+  display_name: "Based OOP Dev"
+  short_description: "Design APIs over rich object models"
+  default_prompt: "Use $based-oop-dev to design this object-oriented API."

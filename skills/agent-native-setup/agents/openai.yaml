@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Native Setup"
+  short_description: "Create and connect Agent Native workspaces"
+  default_prompt: "Use $agent-native-setup to create and connect this Agent Native workspace."

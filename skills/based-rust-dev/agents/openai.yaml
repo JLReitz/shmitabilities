@@ -1,0 +1,4 @@
+interface:
+  display_name: "Based Rust Dev"
+  short_description: "Apply baseline Rust project conventions"
+  default_prompt: "Use $based-rust-dev to create or update this Rust project."
