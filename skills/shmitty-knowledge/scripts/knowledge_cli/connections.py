@@ -36,7 +36,7 @@ def document_tags(document: Document) -> Tuple[str, ...]:
     return tuple(tags)
 
 
-def cluster_tags(root: Path, document: Document) -> Tuple[str, ...]:
+def topical_tags(root: Path, document: Document) -> Tuple[str, ...]:
     try:
         relative = document.path.resolve().relative_to(root.resolve())
     except ValueError as exc:
@@ -46,9 +46,9 @@ def cluster_tags(root: Path, document: Document) -> Tuple[str, ...]:
     return tuple(relative.parent.parts)
 
 
-def topical_tags(root: Path, document: Document) -> Tuple[str, ...]:
-    clusters = set(cluster_tags(root, document))
-    return tuple(tag for tag in document_tags(document) if tag not in clusters)
+def term_tags(root: Path, document: Document) -> Tuple[str, ...]:
+    topical = set(topical_tags(root, document))
+    return tuple(tag for tag in document_tags(document) if tag not in topical)
 
 
 def require_valid_tags(root: Path, document: Document) -> None:
@@ -57,14 +57,14 @@ def require_valid_tags(root: Path, document: Document) -> None:
         raise KnowledgeError(
             f"{document.path}: duplicate tags are not allowed"
         )
-    for tag in cluster_tags(root, document):
+    for tag in topical_tags(root, document):
         if tag not in tags:
             raise KnowledgeError(
-                f"{document.path}: missing required cluster tag: {tag}"
+                f"{document.path}: missing required topical tag: {tag}"
             )
-    if not topical_tags(root, document):
+    if not term_tags(root, document):
         raise KnowledgeError(
-            f"{document.path}: at least one topical tag is required"
+            f"{document.path}: at least one term tag is required"
         )
 
 

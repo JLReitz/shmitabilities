@@ -37,3 +37,20 @@ python3 scripts/codex-bootstrap.py --dry-run
 The dry run prints planned actions. Check the printed agent roster and marketplace target against
 [Codex Plugins](codex-plugins.md). The script requires the Codex CLI on `PATH` even during a full
 dry run unless `--skip-plugin` is set.
+
+## Knowledge ontology
+
+Install the Python and Java dependencies from [Dependencies](dependencies.md) in an isolated
+environment. Set `SHMIT_OWL_JAR` to the checked packaged HermiT JAR. Run the focused suite:
+
+```bash
+python3 -m unittest discover -s skills/shmitty-knowledge/scripts/tests
+```
+
+For a manual knowledge-root check, create `vocabulary.ttl`, `requirements.ttl`, and `axioms.ttl`
+at the root. Run `scripts/knowledge-cli verify <document> --root <root>` from the skill directory,
+then run `ontology terms`, `ontology facts`, `ontology requirements`, and `investment` with the
+same root. Check exact tag matches, authored-link provenance, open requirements with empty `link`,
+and `fulfilled`, `open`, `qualifying_links`, `target`, and `connection` values. The SOSA acceptance
+fixture in `skills/shmitty-knowledge/scripts/tests/fixtures/sosa/` exercises a published RL
+ontology and a companion EL requirement.

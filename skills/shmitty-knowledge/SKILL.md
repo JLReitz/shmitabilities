@@ -30,6 +30,9 @@ Organize concepts by subject. Organize references first by source domain and the
 ```text
 <tree-root>/
   index.md
+  vocabulary.ttl
+  requirements.ttl
+  axioms.ttl
   references/
     index.md
     <domain>/
@@ -60,6 +63,25 @@ The reserved filenames are:
 
 `index.md` is a consumable `Concept` or `Reference` knowledge document according to its tree location. The root `index.md`, `references/index.md`, `references/packages/index.md`, and `log.md` are support documents.
 
+## Ontology files
+
+Every knowledge root contains `vocabulary.ttl`, `requirements.ttl`, and
+`axioms.ttl`. Empty files are valid. Define shared ontology terms in
+`vocabulary.ttl`, EL existence requirements in `requirements.ttl`, and RL
+inference axioms in `axioms.ttl`. The CLI checks vocabulary plus requirements
+against OWL 2 EL and vocabulary plus axioms against OWL 2 RL. Keep generated
+tag and link assertions separate from these authored files. The root table of
+contents omits the Turtle support files.
+
+Authored tags match ontology terms by exact, case-sensitive `rdfs:label` first
+and IRI local name second. Match topical tags too. Named individuals use the
+same rule. Ambiguous names are verification errors. Explicit Concept body links
+assert matching directed property relationships. RL facts can add class and
+property context; inverse and chain-derived facts do not fulfill a required
+authored link. Report requirements with `knowledge-cli ontology requirements`.
+An open requirement affects connection investment and does not invalidate a
+Concept.
+
 ## Knowledge documents
 
 Every knowledge document starts with parseable YAML frontmatter and contains a non-empty `type`. Use only `Reference` and `Concept` as the top-level document classes. Use `reference_type` or `concept_type` when a document needs a more specific kind.
@@ -86,7 +108,7 @@ All timestamp values use ISO 8601 datetimes with an explicit UTC offset.
 | `type` | Required | `Reference` or `Concept`. |
 | `title` | Required | Human-readable display name. |
 | `description` | Required | One sentence that identifies the document's knowledge. |
-| `tags` | Required | Unique, case-sensitive strings containing every parent-directory name and at least one topical tag. |
+| `tags` | Required | Unique, case-sensitive strings containing every parent-directory name as a topical tag and at least one other term tag. |
 
 Producers can add fields. Consumers preserve unknown fields when they rewrite a document and accept unknown values in extension fields such as `reference_type` and `concept_type`.
 
@@ -114,7 +136,7 @@ Set `timestamp` to the source's last-modified time. When that time is unavailabl
 
 One tree contains at most one ordinary source reference for a given normalized `resource` URL. Every Package and sanctioned execution `resource` MUST match the normalized `resource` of an ordinary source Reference. Packages and sanctioned executions MAY share that URL. Normalize scheme and host casing, remove fragments, and preserve query parameters that select distinct content. A resource collision between ordinary source references means the existing reference is the update target. Keep source-faithful detail in that reference and move analysis to a concept.
 
-Every parent-directory name between a Reference and the knowledge root is a required cluster tag. At least one additional topical tag is required. Cluster tags identify progressively narrower groups as the tree deepens; they do not represent source coverage.
+Every parent-directory name between a Reference and the knowledge root is a required topical tag. At least one additional term tag is required. Topical tags identify progressively narrower groups as the tree deepens; they do not represent source coverage.
 
 ```yaml
 ---
@@ -142,11 +164,11 @@ A concept combines supported claims into useful knowledge. Its body links are it
 
 A Concept MAY link to any document whose top-level `type` is `Reference`, including an ordinary source Reference and the `Package`, `Command`, and `Computation` subtypes. `reference_type` does not change linkability, evidence treatment, or path rules.
 
-Every parent-directory name between a Concept and the knowledge root is a required cluster tag. At least one additional topical tag is required. A tag exactly equal to any parent-directory name is always a cluster tag and never contributes to citation coverage.
+Every parent-directory name between a Concept and the knowledge root is a required topical tag. At least one additional term tag is required. A tag exactly equal to any parent-directory name is always a topical tag and never contributes to citation coverage.
 
 Every Concept topic directory contains an `index.md` Concept. The index is implicitly connected to every consumable child document and each child topic's `index.md` in its directory. These implicit links behave like body links: recursive collection follows Concepts and stops at References.
 
-Every direct body link whose resolved target has `type: Reference`, including `index.md` and every Reference subtype, counts as local evidence. For each linked Reference, the tags it shares with the Concept cover those topical tags. Citation coverage is the size of the union of all covered topical tags divided by the Concept's total number of topical tags. Linked Concepts never contribute to local citation coverage; they contribute through recursive confidence.
+Every direct body link whose resolved target has `type: Reference`, including `index.md` and every Reference subtype, counts as local evidence. For each linked Reference, the original-text tags it shares with the Concept cover those term tags. Citation coverage is the size of the union of all covered term tags divided by the Concept's total number of term tags. Linked Concepts contribute through recursive confidence.
 
 Use prose near each link to identify the claim it supports. Use Markdown footnotes when claim-level attribution is repeated or would otherwise be ambiguous; keep the footnote target as the reference document path.
 
@@ -191,9 +213,14 @@ confidence = citation coverage + average recursive linked-concept confidence
 if both confidence inputs are nonzero, confidence = confidence / 2
 consistency = ((beta + exposure) / (beta + exposure + horizon)) ^ (alpha + updates)
 investment = confidence * consistency
+when investment.connection.target is set:
+  coverage = F / (F + G), or 1 when F + G = 0
+  breadth = (F + Q) / (F + Q + max(T - Q, 0))
+  connection = coverage * breadth
+  investment = confidence * consistency * connection
 ```
 
-Confidence is the evidence gate for usable knowledge. A non-open Concept MUST have confidence greater than `0.0`; treat zero confidence as an unresolved knowledge gap and either add support or make the Concept open. Confidence scores the support that directly linked References and linked Concepts provide. Citation coverage is the local union coverage of topical tags. Linked-concept confidence is the average confidence of outbound Concept links, evaluated recursively. Divide their sum by two only when both values are nonzero. An empty average is `0.0`.
+Confidence is the evidence gate for usable knowledge. A non-open Concept MUST have confidence greater than `0.0`; treat zero confidence as an unresolved knowledge gap and either add support or make the Concept open. Confidence scores the support that directly linked References and linked Concepts provide. Citation coverage is the local union coverage of original-text term tags. Linked-concept confidence is the average confidence of outbound Concept links, evaluated recursively. Divide their sum by two only when both values are nonzero. An empty average is `0.0`.
 
 Evaluate each Concept once per command. Cache completed confidence values and reuse them when another link reaches the same Concept. When a link reaches a Concept that is currently being evaluated, exclude that link from the linked-confidence average to stop the cycle. Use `knowledge-cli confidence` to inspect these scores.
 
@@ -211,12 +238,16 @@ investment:
     alpha: 1.0
     beta: 365.0
     horizon: 30.0
+  connection:
+    target: 3
 ---
 ```
 
 Set `confidence.required` to `true` to make verification reject a non-open Concept with confidence `0.0`. An absent or false value leaves this gate disabled.
 
 Use `second`, `minute`, `hour`, or `day` as `time_unit`. Set `alpha`, `beta`, and `horizon` to positive numbers. Interpret `beta` and `horizon` in `time_unit`.
+
+Set `investment.connection.target` to a positive integer to activate connection investment for every Concept. `F` counts fulfilled normalized existence requirements, `G` counts open requirements, `Q` counts distinct explicit Concept links incident to the Concept that fulfill a requirement at either endpoint, and `T` is the target. A requirement needs an explicit link in its property's direction from the Concept to count as fulfilled. When `Q >= T` and `G = 0`, connection is `1`. Without this setting, investment uses confidence and consistency alone.
 
 Connections are the recursive document links from a concept. Use `knowledge-cli connections` to list them with each document's `type` and the `tags` it shares with the requested concept.
 
@@ -267,7 +298,7 @@ Record changes within a directory scope to `log.md`. Use date groups in descendi
 ## Conformance
 
 1. Each `.md` file other than root navigation indexes and `log.md` is a valid `Reference` or `Concept` knowledge document.
-2. Each knowledge document has all common required fields, its class-specific required fields and body content, every ancestor cluster tag, and at least one topical tag.
+2. Each knowledge document has all common required fields, its class-specific required fields and body content, every ancestor topical tag, and at least one term tag.
 3. Each reference `resource` identifies a persistent source; ordinary source references are unique after normalization; each Package and sanctioned execution resource matches an ordinary source Reference.
 4. Each Concept or Reference body and table-of-contents link resolves to a consumable Concept or Reference document; neither type links to external URLs or infrastructure, Reference links remain below `references/`, and each internal filepath has one destination declaration per document.
 5. Each `index.md` and `log.md` follows its defined form, each Topic directory contains a Concept `index.md`, and each Source or Package directory contains one correctly scoped Reference `index.md`. Every index-abstract link targets a consumable document outside the index directory. Each index table of contents links every file and child directory at that level except `index.md` and `log.md`.

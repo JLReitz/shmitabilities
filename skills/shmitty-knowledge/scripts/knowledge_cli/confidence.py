@@ -6,7 +6,7 @@ from .connections import (
     ConnectionGraph,
     collect_connections,
     document_tags,
-    topical_tags,
+    term_tags,
     tree_path,
 )
 from .document import Document, load_document
@@ -34,10 +34,10 @@ class ConfidenceEvaluation:
 def citation_coverage(
     root: Path, concept: Document, graph: ConnectionGraph
 ) -> float:
-    topics = set(topical_tags(root, concept))
+    topics = set(term_tags(root, concept))
     if not topics:
         raise KnowledgeError(
-            f"{concept.path}: at least one topical tag is required"
+            f"{concept.path}: at least one term tag is required"
         )
     covered: Set[str] = set()
     for path in graph.reference_links.get(concept.path.resolve(), ()):

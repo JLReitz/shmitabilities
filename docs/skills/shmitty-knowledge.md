@@ -23,6 +23,9 @@ a bundle, and links may connect Concepts across bundles within the same tree.
 ```text
 <tree-root>/
   index.md
+  vocabulary.ttl
+  requirements.ttl
+  axioms.ttl
   references/
     index.md
     <domain>/
@@ -40,7 +43,7 @@ a bundle, and links may connect Concepts across bundles within the same tree.
 Each knowledge document has YAML frontmatter with `type`, `title`, `description`, and unique,
 case-sensitive `tags`. Its `type` is `Concept` or `Reference`; `concept_type` and `reference_type`
 name more specific kinds without changing those top-level classes. Tags include every parent
-directory name and at least one topical tag. Timestamps use ISO 8601 with an explicit UTC offset.
+directory name as a topical tag and at least one other term tag. Timestamps use ISO 8601 with an explicit UTC offset.
 Producers may add fields, and consumers preserve fields they do not recognize.
 
 A document ID is its path relative to the tree root, without `.md`. Directories resolve to their
@@ -90,6 +93,46 @@ The tree root `index.md`, `references/index.md`, and `references/packages/index.
 and navigation rather than knowledge claims. A directory's `log.md` records changes in descending
 ISO date groups. These support files are not citation targets.
 
+## Ontology terms and connections
+
+The required root Turtle files give ontology statements distinct roles. `vocabulary.ttl` declares
+shared classes, properties, named individuals, labels, and hierarchies. `requirements.ttl` defines
+OWL 2 EL existence requirements. `axioms.ttl` defines OWL 2 RL inference rules. Each file may be
+empty. The CLI checks vocabulary with requirements against EL and vocabulary with axioms against
+RL. The root index sets only the optional `investment.connection.target`; it does not list ontology
+files. The three Turtle files are support files, so the root table of contents omits them. The
+self-contained tree requires terms to be present in these files; the CLI rejects `owl:imports`.
+
+A Concept's authored tags match ontology terms by exact, case-sensitive `rdfs:label` first and IRI
+local name second. This includes topical tags and tags that match named individuals. An ambiguous
+match is a verification error. The CLI derives property facts only from explicit directed Concept
+body links whose endpoint terms match a defined property relationship. Index table-of-contents
+links provide navigation and do not assert ontology relationships. It reports RL-derived facts
+separately. A derived inverse or property-chain fact does not supply a missing authored link.
+
+Each applicable EL existence requirement asks for at least one explicit Concept link in the
+property's direction. A same-direction subproperty or equivalent property qualifies. Equivalent
+and implied requirements are counted once. An open requirement is a documentation gap; `verify`
+still accepts the Concept. `ontology requirements` reports a row with an empty `link` for the gap
+and one row per fulfilling link when it is satisfied. `ontology terms` and `ontology facts` expose
+the matches and assertions that explain the result. The full command and column contract is in
+[Evaluate and verify knowledge](../../skills/shmitty-knowledge/references/knowledge-cli.md).
+
+The requirement extractor accepts object existential restrictions with named properties,
+including anonymous conjunction sources, nested existential fillers, and an individual named by
+`owl:hasValue`. It reports an error for EL class expressions that the document-link requirement
+model cannot interpret, including data restrictions and self restrictions. OWL API still checks
+the complete authored EL role profile before extraction.
+
+The acceptance fixture uses the published [W3C SOSA ontology](https://www.w3.org/ns/sosa/)
+retrieved as Turtle on 2026-10-21. Its local `axioms.ttl` copy has trailing
+whitespace removed and SHA-256
+`e50ebca51aa4af6d11d281e32c6c6101a74e9fa76792eeae6b0f3aae00aa683b`.
+The ontology declares W3C and OGC software licenses. A shared vocabulary selects its Sensor,
+Observation, and relationship terms; a small authored EL companion adds a documentation
+requirement that SOSA itself does not assert. The test checks an explicit Sensor to Observation
+link and the inverse fact inferred from SOSA.
+
 ## Package and execution References
 
 `reference_type: Package` gives a package its own `references/packages/<package>/index.md`.
@@ -113,9 +156,10 @@ their field contracts.
 
 ## Confidence and investment
 
-Confidence measures a Concept's support. Direct Reference links cover the Concept's topical tags
-that they share; the union of covered tags divided by all topical tags gives **citation coverage**.
-Ancestor directory tags are cluster tags and do not count as topical coverage. Linked Concepts
+Confidence measures a Concept's support. Direct Reference links cover the Concept's authored term
+tags that they share by exact original text. The union of covered tags divided by all term tags
+gives **citation coverage**. Directory ancestor tags are topical tags and do not count in citation
+coverage. Linked Concepts
 contribute their average recursive confidence. When both inputs are positive, confidence averages
 them; when only one is positive, it uses that input. Evaluation caches completed Concepts and
 excludes a link back to a Concept currently being evaluated, so cycles terminate. An open Concept
@@ -135,12 +179,25 @@ confidence = citation coverage + average recursive linked-concept confidence
 if both inputs are positive, confidence = confidence / 2
 consistency = ((beta + exposure) / (beta + exposure + horizon)) ^ (alpha + updates)
 investment = confidence * consistency
+when investment.connection.target is set:
+  coverage = F / (F + G), or 1 when F + G = 0
+  breadth = (F + Q) / (F + Q + max(T - Q, 0))
+  connection = coverage * breadth
+  investment = confidence * consistency * connection
 ```
 
 `exposure` is the elapsed time from creation in the configured time unit; `updates` counts
 meaningful revisions through the evaluation time. The root policy accepts `second`, `minute`,
 `hour`, or `day` and positive `alpha`, `beta`, and `horizon` values. `beta` and `horizon` use the
 same unit. See [Knowledge Format](../../skills/shmitty-knowledge/SKILL.md) for the exact schema.
+
+`F` counts fulfilled normalized existence requirements, `G` counts open ones, `Q` counts distinct
+explicit Concept links incident to the Concept that fulfill a requirement at either endpoint,
+and `T` is the positive integer root `investment.connection.target`. A requirement needs an
+explicit link in its property's direction from the Concept to count as fulfilled. When the target
+is set, the connection multiplier applies to every Concept. It reaches `1` when `Q >= T` and
+`G = 0`, including Concepts with no requirements. Without the target, investment uses confidence
+and consistency alone.
 
 ## Working with the tree
 

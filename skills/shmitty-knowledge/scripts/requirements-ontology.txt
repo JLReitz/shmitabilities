@@ -1,0 +1,4 @@
+PyYAML==6.0.3
+rdflib==7.6.0
+owlrl==7.6.2
+JPype1==1.5.2

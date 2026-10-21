@@ -1,0 +1,8 @@
+# Documentation requirement for the fixture; SOSA itself does not require it.
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+sosa:Sensor rdfs:subClassOf [ a owl:Restriction ;
+    owl:onProperty sosa:madeObservation ;
+    owl:someValuesFrom sosa:Observation ] .

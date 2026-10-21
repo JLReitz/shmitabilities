@@ -5,6 +5,7 @@ from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime, timezone
 from io import StringIO
 from pathlib import Path
+from unittest.mock import patch
 
 
 SCRIPT_DIR = Path(__file__).resolve().parents[1]
@@ -19,7 +20,7 @@ from knowledge_cli.confidence import (
 )
 from knowledge_cli.connections import collect_connections, render_connections
 from knowledge_cli.document import load_document
-from knowledge_cli.investment import evaluate
+from knowledge_cli.investment import connection_score, evaluate, load_policy
 from knowledge_cli.paths import markdown_targets
 from knowledge_cli.reading import expand_read, render_read
 from knowledge_cli.validation import verify
@@ -29,6 +30,8 @@ class KnowledgeCliTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)
+        for name in ("vocabulary.ttl", "requirements.ttl", "axioms.ttl"):
+            (self.root / name).write_text("", encoding="utf-8")
         self.write(
             "index.md",
             """---
@@ -251,6 +254,63 @@ history:
         self.assertAlmostEqual(score.consistency, expected_consistency)
         self.assertAlmostEqual(score.total, expected_consistency)
 
+    def test_connection_score_requires_breadth_and_requirement_coverage(self):
+        self.assertEqual(connection_score(0, 0, 3, 3), 1.0)
+        self.assertEqual(connection_score(4, 0, 3, 3), 1.0)
+        self.assertAlmostEqual(connection_score(4, 1, 3, 3), 0.8)
+        self.assertAlmostEqual(connection_score(1, 2, 1, 3), 1 / 6)
+        self.assertEqual(connection_score(0, 0, 0, 3), 0.0)
+
+    def test_connection_target_requires_positive_integer(self):
+        index = self.root / "index.md"
+        original = index.read_text(encoding="utf-8")
+        for invalid in ("0", "-1", "true", "2.5", '"3"'):
+            with self.subTest(invalid=invalid):
+                index.write_text(
+                    original.replace(
+                        "  consistency:\n",
+                        f"  connection:\n    target: {invalid}\n"
+                        "  consistency:\n",
+                    ),
+                    encoding="utf-8",
+                )
+                with self.assertRaisesRegex(
+                    Exception, "investment.connection.target"
+                ):
+                    load_policy(self.root)
+        index.write_text(
+            original.replace(
+                "  consistency:\n",
+                "  connection:\n    target: 3\n  consistency:\n",
+            ),
+            encoding="utf-8",
+        )
+        self.assertEqual(load_policy(self.root).connection_target, 3)
+
+    def test_target_activates_full_connection_multiplier(self):
+        index = self.root / "index.md"
+        index.write_text(
+            index.read_text(encoding="utf-8").replace(
+                "  consistency:\n",
+                "  connection:\n    target: 3\n  consistency:\n",
+            ),
+            encoding="utf-8",
+        )
+        document = load_document(self.concept())
+        as_of = datetime(2024, 1, 11, tzinfo=timezone.utc)
+        with patch(
+            "knowledge_cli.ontology.connection_counts", return_value=(4, 1, 3)
+        ):
+            score = evaluate(self.root, document, as_of)
+        self.assertEqual(score.connection, 0.8)
+        self.assertEqual(
+            (score.fulfilled, score.open, score.qualifying_links),
+            (4, 1, 3),
+        )
+        self.assertAlmostEqual(
+            score.total, score.confidence * score.consistency * 0.8
+        )
+
     def test_verify_requires_history_created(self):
         path = self.concept()
         path.write_text(
@@ -268,7 +328,7 @@ history:
             )
         )
 
-    def test_citation_coverage_is_union_of_shared_topical_tags(self):
+    def test_citation_coverage_is_union_of_shared_original_term_tags(self):
         document = load_document(
             self.concept(tags="bundle-a, test, uncovered")
         )
@@ -1363,7 +1423,7 @@ Computation reference.
         messages = [finding.message for finding in findings]
         self.assertTrue(
             any(
-                "missing required cluster tag" in message
+                "missing required topical tag" in message
                 for message in messages
             )
         )
@@ -1380,6 +1440,8 @@ class TypedIndexTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)
+        for name in ("vocabulary.ttl", "requirements.ttl", "axioms.ttl"):
+            (self.root / name).write_text("", encoding="utf-8")
         self.index = self.root / "topic/index.md"
         self.index.parent.mkdir()
         self.index.write_text(

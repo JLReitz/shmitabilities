@@ -81,6 +81,39 @@ and opt-out environment variable.
 
 ## Manual installation
 
+### Knowledge ontology tooling
+
+The ontology commands use the Python packages in
+`skills/shmitty-knowledge/scripts/requirements-ontology.txt`, a Java runtime,
+and the packaged HermiT OWL API JAR. Install the Python packages in the
+environment that runs `knowledge-cli`. Use JPype1 1.5.2 with Java 8.
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r skills/shmitty-knowledge/scripts/requirements-ontology.txt
+```
+
+Activate the environment before using the `knowledge-cli` launcher, or run the
+launcher with `.venv/bin/python`.
+
+Download the [packaged HermiT JAR](https://github.com/owlcs/hermit-reasoner/wiki/HermiT-FAQ)
+to a stable local location and set `SHMIT_OWL_JAR` to its absolute path. The
+tested artifact is `org.semanticweb.hermit-packaged-1.4.6.519-SNAPSHOT.jar`
+from `https://raw.githubusercontent.com/owlcs/releases/master/HermiT/`.
+Its SHA-256 is
+`420d504d163ee1ce1a0082b212308344b018cc07c02195c8bc19218753e418be`.
+Check the digest before use because the upstream artifact is labeled a snapshot.
+The runtime fails with a clear error when the JAR or Python packages are absent.
+
+```bash
+curl -fL https://raw.githubusercontent.com/owlcs/releases/master/HermiT/org.semanticweb.hermit-packaged-1.4.6.519-SNAPSHOT.jar -o .venv/hermit-packaged.jar
+sha256sum .venv/hermit-packaged.jar
+export SHMIT_OWL_JAR="$PWD/.venv/hermit-packaged.jar"
+```
+
+Compare the printed digest with the value above before running the CLI.
+
+
 1. Install a Node.js version that satisfies each package's `engines.node` declaration and
    install npm. Install a Rust toolchain that provides `cargo` for the native build.
 2. From the repository root, run `npm install`. For package development, install each package's

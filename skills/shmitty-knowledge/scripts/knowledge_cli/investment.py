@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from math import isfinite
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 from .confidence import evaluate_confidence
 from .document import Document, load_document
@@ -23,16 +23,39 @@ class Policy:
     alpha: float
     beta: float
     horizon: float
+    connection_target: Optional[int] = None
 
 
 @dataclass(frozen=True)
 class Investment:
     confidence: float
     consistency: float
+    connection: Optional[float] = None
+    fulfilled: int = 0
+    open: int = 0
+    qualifying_links: int = 0
 
     @property
     def total(self) -> float:
-        return self.confidence * self.consistency
+        result = self.confidence * self.consistency
+        return result if self.connection is None else result * self.connection
+
+
+def connection_score(
+    fulfilled: int, open_count: int, links: int, target: int
+) -> float:
+    if any(value < 0 for value in (fulfilled, open_count, links)):
+        raise KnowledgeError("connection counts must be nonnegative")
+    if target <= 0:
+        raise KnowledgeError("investment.connection.target must be positive")
+    coverage = (
+        fulfilled / (fulfilled + open_count)
+        if fulfilled + open_count else 1.0
+    )
+    breadth = (fulfilled + links) / (
+        fulfilled + links + max(target - links, 0)
+    )
+    return coverage * breadth
 
 
 def as_datetime(value: Any, field: str) -> datetime:
@@ -77,7 +100,21 @@ def load_policy(root: Path) -> Policy:
         raise KnowledgeError(
             f"{index.path}: alpha, beta, and horizon must be positive"
         )
-    return Policy(unit, alpha, beta, horizon)
+    investment_policy = index.metadata["investment"]
+    target = None
+    if "connection" in investment_policy:
+        connection = investment_policy["connection"]
+        if not isinstance(connection, dict):
+            raise KnowledgeError(
+                f"{index.path}: investment.connection must be a mapping"
+            )
+        target = connection.get("target")
+        if type(target) is not int or target <= 0:
+            raise KnowledgeError(
+                f"{index.path}: investment.connection.target must be "
+                "a positive integer"
+            )
+    return Policy(unit, alpha, beta, horizon, target)
 
 
 def history_inputs(
@@ -128,4 +165,14 @@ def evaluate(root: Path, document: Document, as_of: datetime) -> Investment:
         / (policy.beta + exposure + policy.horizon)
     ) ** (policy.alpha + updates)
     confidence = evaluate_confidence(root, document).score(document)
-    return Investment(confidence, consistency)
+    if policy.connection_target is None:
+        return Investment(confidence, consistency)
+    from .ontology import connection_counts
+
+    fulfilled, open_count, links = connection_counts(root, document)
+    connection = connection_score(
+        fulfilled, open_count, links, policy.connection_target
+    )
+    return Investment(
+        confidence, consistency, connection, fulfilled, open_count, links
+    )

@@ -6,15 +6,20 @@ from urllib.parse import urlsplit
 
 from .confidence import evaluate_confidence
 from .connections import (
-    cluster_tags,
     document_tags,
     implicit_index_targets,
+    term_tags,
     topical_tags,
 )
 from .document import Document, load_document
 from .errors import KnowledgeError
 from .investment import as_datetime, history_inputs, load_policy
-from .paths import markdown_path_destinations, markdown_targets, resolve_internal
+from .ontology import build_snapshot
+from .paths import (
+    markdown_path_destinations,
+    markdown_targets,
+    resolve_internal,
+)
 from .reading import concept_indexes, reference_indexes
 
 
@@ -58,8 +63,8 @@ def reference_root(root: Path, path: Path) -> Path:
 def tag_findings(root: Path, document: Document) -> List[Finding]:
     try:
         tags = document_tags(document)
-        required = cluster_tags(root, document)
-        topics = topical_tags(root, document)
+        required = topical_tags(root, document)
+        terms = term_tags(root, document)
     except KnowledgeError as exc:
         return [Finding("tags", str(exc))]
     findings = []
@@ -68,11 +73,11 @@ def tag_findings(root: Path, document: Document) -> List[Finding]:
     for tag in required:
         if tag not in tags:
             findings.append(
-                Finding("tags", f"missing required cluster tag: {tag}")
+                Finding("tags", f"missing required topical tag: {tag}")
             )
-    if not topics:
+    if not terms:
         findings.append(
-            Finding("tags", "at least one topical tag is required")
+            Finding("tags", "at least one term tag is required")
         )
     return findings
 
@@ -364,7 +369,12 @@ def index_contents_findings(root: Path, document: Document) -> List[Finding]:
 
     findings = []
     for child in sorted(document.path.parent.iterdir()):
-        if child.name in {"index.md", "log.md"}:
+        if child.name in {"index.md", "log.md"} or (
+            document.path.parent.resolve() == root.resolve()
+            and child.name in {
+                "vocabulary.ttl", "requirements.ttl", "axioms.ttl"
+            }
+        ):
             continue
         target = child / "index.md" if child.is_dir() else child
         if target.resolve() not in linked:
@@ -382,6 +392,15 @@ def verify(root: Path, document: Document, as_of: datetime) -> List[Finding]:
     findings: List[Finding] = metadata_findings(document) + tag_findings(
         root, document
     )
+    try:
+        build_snapshot(root)
+    except KnowledgeError as exc:
+        findings.append(Finding("ontology", str(exc)))
+    try:
+        load_policy(root)
+    except KnowledgeError as exc:
+        if document.metadata.get("type") == "Reference":
+            findings.append(Finding("investment", str(exc)))
     findings.extend(duplicate_path_findings(root, document))
     document_type = document.metadata.get("type")
     is_index = document.path.name == "index.md"
