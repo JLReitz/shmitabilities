@@ -293,15 +293,17 @@ def _restriction_candidates(graph, rdf) -> List[Tuple[object, str, object]]:
     return candidates
 
 
-def _normalize(session, candidates: List[Tuple[str, str, str]],
-               implication_cache: Dict[Tuple[Tuple[str, str, str],
-                                             Tuple[str, str, str]], bool]
-               ) -> List[Tuple[str, str, str]]:
-    def implies(left, right):
-        key = (left, right)
-        if key not in implication_cache:
-            implication_cache[key] = session.entails(left, right)
-        return implication_cache[key]
+def _normalize(session, candidates: List[Tuple[object, str, object]],
+               property_supers: Dict[str, Set[str]],
+               filler_cache: Dict[Tuple[object, object], bool]
+               ) -> List[Tuple[object, str, object]]:
+    def same_link_fulfills(stronger, weaker):
+        if weaker[1] not in property_supers.get(stronger[1], {stronger[1]}):
+            return False
+        key = (stronger[2], weaker[2])
+        if key not in filler_cache:
+            filler_cache[key] = session.expression_subclass(*key)
+        return filler_cache[key]
 
     retained = []
     for candidate in candidates:
@@ -309,13 +311,13 @@ def _normalize(session, candidates: List[Tuple[str, str, str]],
         for other in candidates:
             if candidate == other:
                 continue
-            # Candidates are selected for one Concept before normalization.
-            # HermiT tests EL restriction implication across the full role
-            # ontology, including subclass and property axioms.
-            other_implies = implies(other, candidate)
-            this_implies = implies(candidate, other)
-            if other_implies and (
-                not this_implies or str(other) < str(candidate)
+            # Candidates already apply to the same Concept. Remove a weaker
+            # requirement only if an authored link that fulfills the stronger
+            # also fulfills the weaker under the link-matching rules.
+            other_covers = same_link_fulfills(other, candidate)
+            this_covers = same_link_fulfills(candidate, other)
+            if other_covers and (
+                not this_covers or str(other) < str(candidate)
             ):
                 duplicate = True
                 break
@@ -357,15 +359,10 @@ def build_snapshot(root: Path) -> OntologySnapshot:
                                          ", ".join(sorted(kinds[iri])), tier))
         tags_by_path[path] = terms
     class_edges = _hierarchy(el_graph, rdf.RDFS.subClassOf)
-    prop_edges = _hierarchy(el_graph, rdf.RDFS.subPropertyOf)
     for left, right in el_graph.subject_objects(rdf.OWL.equivalentClass):
         class_edges.setdefault(str(left), {str(left)}).add(str(right))
         class_edges.setdefault(str(right), {str(right)}).add(str(left))
     class_edges = _closure(class_edges)
-    for left, right in el_graph.subject_objects(rdf.OWL.equivalentProperty):
-        prop_edges.setdefault(str(left), {str(left)}).add(str(right))
-        prop_edges.setdefault(str(right), {str(right)}).add(str(left))
-    prop_edges = _closure(prop_edges)
     restrictions = _restriction_candidates(el_graph, rdf)
     assertions = rdf.Graph()
     for terms in tags_by_path.values():
@@ -506,8 +503,7 @@ def build_snapshot(root: Path) -> OntologySnapshot:
                                            item.object)))
     records = []
     qualifying: Dict[Path, Set[Tuple[Path, Path]]] = {}
-    implication_cache: Dict[Tuple[Tuple[str, str, str],
-                                  Tuple[str, str, str]], bool] = {}
+    filler_cache: Dict[Tuple[object, object], bool] = {}
     with ontology_helper.EntailmentSession(root) as session:
         for path, terms in tags_by_path.items():
             applicable = set()
@@ -528,7 +524,7 @@ def build_snapshot(root: Path) -> OntologySnapshot:
                      (term for term in terms
                       if "individual" in kinds[term]),
                      item[0])],
-                implication_cache)
+                rl_prop_edges, filler_cache)
             for source_class, prop, target_class in selected:
                 links = []
                 for target in explicit[path]:

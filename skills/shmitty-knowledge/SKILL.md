@@ -248,7 +248,7 @@ Set `confidence.required` to `true` to make verification reject a non-open Conce
 
 Use `second`, `minute`, `hour`, or `day` as `time_unit`. Set `alpha`, `beta`, and `horizon` to positive numbers. Interpret `beta` and `horizon` in `time_unit`.
 
-Set `investment.connection.target` to a positive integer to activate connection investment for every Concept. `F` counts fulfilled normalized existence requirements, `G` counts open requirements, `Q` counts distinct explicit Concept links incident to the Concept that fulfill a requirement at either endpoint, and `T` is the target. A requirement needs an explicit link in its property's direction from the Concept to count as fulfilled. When `Q >= T` and `G = 0`, connection is `1`. Without this setting, investment uses confidence and consistency alone.
+Set `investment.connection.target` to a positive integer to activate connection investment for every Concept. `F` counts fulfilled normalized existence requirements, `G` counts open requirements, `Q` counts distinct explicit Concept links incident to the Concept that fulfill a requirement at either endpoint, and `T` is the target. Normalize requirements only when a link fulfilling one necessarily fulfills the other through the same-direction property hierarchy and filler subclass relation; a property domain alone never removes a separate link obligation. A requirement needs an explicit link in its property's direction from the Concept to count as fulfilled. When `Q >= T` and `G = 0`, connection is `1`. Without this setting, investment uses confidence and consistency alone.
 
 Connections are the recursive document links from a concept. Use `knowledge-cli connections` to list them with each document's `type` and the `tags` it shares with the requested concept.
 

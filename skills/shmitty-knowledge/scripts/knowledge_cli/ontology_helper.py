@@ -92,7 +92,7 @@ def validate(root: Path) -> None:
 
 
 class EntailmentSession:
-    """Reuse one EL reasoner for requirement implication and applicability."""
+    """Reuse one EL reasoner for class and filler subsumption."""
 
     def __init__(self, root: Path):
         paths = (root / "vocabulary.ttl", root / "requirements.ttl")
@@ -136,20 +136,17 @@ class EntailmentSession:
             return self.factory.getOWLObjectOneOf(individual)
         raise KnowledgeError(f"unsupported EL expression: {item}")
 
-    def entails(self, left: Tuple[str, str, object],
-                right: Tuple[str, str, object]) -> bool:
-        def expression(item):
-            _, property_iri, filler = item
-            return self.class_expression(("some", property_iri, filler))
-
+    def expression_subclass(self, child_expr, parent_expr) -> bool:
+        """Check whether a target satisfying one filler satisfies another."""
         try:
-            axiom = self.factory.getOWLSubClassOfAxiom(
-                expression(left), expression(right)
-            )
-            return bool(self.reasoner.isEntailed(axiom))
+            child = self.class_expression(child_expr)
+            parent = self.class_expression(parent_expr)
+            return bool(self.reasoner.isEntailed(
+                self.factory.getOWLSubClassOfAxiom(child, parent)
+            ))
         except Exception as exc:
             raise KnowledgeError(
-                f"EL subsumption check failed: {exc}"
+                f"EL filler subsumption check failed: {exc}"
             ) from exc
 
     def subclass(self, child_iri: str, parent_iri: str) -> bool:
@@ -202,13 +199,6 @@ class EntailmentSession:
             raise KnowledgeError(
                 f"EL individual qualification failed: {exc}"
             ) from exc
-
-
-def entails(root: Path, left: Tuple[str, str, str],
-            right: Tuple[str, str, str]) -> bool:
-    """Test whether one existential restriction implies another."""
-    with EntailmentSession(root) as session:
-        return session.entails(left, right)
 
 
 def subclass(root: Path, child_iri: str, parent_iri: str) -> bool:

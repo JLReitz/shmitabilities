@@ -174,6 +174,35 @@ ex:Rover owl:equivalentClass [ owl:complementOf ex:Sensor ] .
         self.assertIn("fulfilled\t1", investment)
         self.assertIn("qualifying_links\t2", investment)
 
+    def test_domain_inference_keeps_two_reported_link_obligations(self):
+        with (self.root / "vocabulary.ttl").open("a") as output:
+            output.write('''\
+ex:Terrain a owl:Class .
+ex:explores a owl:ObjectProperty ; rdfs:domain ex:Rover ;
+    rdfs:range ex:Terrain .
+''')
+        with (self.root / "requirements.ttl").open("a") as output:
+            output.write('''\
+ex:Rover rdfs:subClassOf [ a owl:Restriction ;
+    owl:onProperty ex:explores ; owl:someValuesFrom ex:Terrain ] .
+''')
+        terrain = self.root / "topic" / "terrain.md"
+        self._concept(terrain, ["topic", "Terrain"], "")
+        self._concept(self.rover, ["topic", "Rover"],
+                      "[Sensor](sensor.md)\n")
+        code, output, _ = self._run("ontology", "requirements")
+        self.assertEqual(code, 0)
+        rover_rows = [line for line in output.splitlines()
+                      if line.startswith("/topic/rover.md\t")]
+        self.assertEqual(len(rover_rows), 2)
+        self.assertEqual(sum(row.endswith("\t") for row in rover_rows), 1)
+        code, investment, _ = self._run(
+            "investment", "topic/rover.md", "--as-of", "2024-01-11T00:00:00Z"
+        )
+        self.assertEqual(code, 0)
+        self.assertIn("fulfilled\t1", investment)
+        self.assertIn("open\t1", investment)
+
 
 if __name__ == "__main__":
     unittest.main()

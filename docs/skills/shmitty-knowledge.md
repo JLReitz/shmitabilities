@@ -116,11 +116,15 @@ reports RL-derived facts separately. A derived inverse or property-chain fact do
 missing authored link.
 
 Each applicable EL existence requirement asks for at least one explicit Concept link in the
-property's direction. A same-direction subproperty or equivalent property qualifies. Equivalent
-and implied requirements are counted once. An open requirement is a documentation gap; `verify`
-still accepts the Concept. `ontology requirements` reports a row with an empty `link` for the gap
-and one row per fulfilling link when it is satisfied. `ontology terms` and `ontology facts` expose
-the matches and assertions that explain the result. The full command and column contract is in
+property's direction. A same-direction subproperty or equivalent property qualifies. Requirements
+for one Concept are counted once when every authored link fulfilling a stronger requirement also
+fulfills the weaker one: the stronger property's RL hierarchy includes the weaker property, and
+its EL filler is a subclass of the weaker filler. Property domains can imply other existential
+restrictions in OWL, but do not remove separate authored-link requirements. An open requirement
+is a documentation gap; `verify` still accepts the Concept. `ontology requirements` reports a row
+with an empty `link` for the gap and one row per fulfilling link when it is satisfied. The
+`ontology terms` and `ontology facts` reports expose the matches and assertions that explain the
+result. The full command and column contract is in
 [Evaluate and verify knowledge](../../skills/shmitty-knowledge/references/knowledge-cli.md).
 
 The requirement extractor accepts object existential restrictions with named properties,

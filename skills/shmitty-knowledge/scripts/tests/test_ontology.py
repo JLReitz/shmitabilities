@@ -295,6 +295,92 @@ ex:Rover rdfs:subClassOf [ a owl:Restriction ;
         self.assertTrue(snapshot.requirements[0].property.endswith(
             "specialUses"))
 
+    def test_property_domain_does_not_remove_other_link_requirement(self):
+        with (self.root / "vocabulary.ttl").open("a") as output:
+            output.write('''\
+ex:Terrain a owl:Class .
+ex:explores a owl:ObjectProperty ; rdfs:domain ex:Rover ;
+    rdfs:range ex:Terrain .
+''')
+        with (self.root / "requirements.ttl").open("a") as output:
+            output.write('''\
+ex:Rover rdfs:subClassOf [ a owl:Restriction ;
+    owl:onProperty ex:explores ; owl:someValuesFrom ex:Terrain ] .
+''')
+        rover = self.root / "rover.md"
+        concept(rover, ["Rover"], "[sensor](sensor.md)\n")
+        concept(self.root / "sensor.md", ["Sensor"])
+        concept(self.root / "terrain.md", ["Terrain"])
+        snapshot = build_snapshot(self.root)
+        self.assertEqual(snapshot.connection_counts(rover), (1, 1, 1))
+        self.assertEqual({item.property.rsplit("/", 1)[-1]
+                          for item in snapshot.requirements},
+                         {"uses", "explores"})
+        concept(rover, ["Rover"],
+                "[sensor](sensor.md)\n[terrain](terrain.md)\n")
+        self.assertEqual(build_snapshot(self.root).connection_counts(rover),
+                         (2, 0, 2))
+
+    def test_narrower_filler_removes_broader_filler_requirement(self):
+        with (self.root / "vocabulary.ttl").open("a") as output:
+            output.write('''\
+ex:Device a owl:Class .
+ex:Sensor rdfs:subClassOf ex:Device .
+''')
+        with (self.root / "requirements.ttl").open("a") as output:
+            output.write('''\
+ex:Rover rdfs:subClassOf [ a owl:Restriction ;
+    owl:onProperty ex:uses ; owl:someValuesFrom ex:Device ] .
+''')
+        rover = self.root / "rover.md"
+        concept(rover, ["Rover"])
+        snapshot = build_snapshot(self.root)
+        self.assertEqual(snapshot.connection_counts(rover), (0, 1, 0))
+        self.assertEqual(snapshot.requirements[0].target_class,
+                         "https://example.org/Sensor")
+
+    def test_el_only_subproperty_does_not_remove_rl_link_obligation(self):
+        vocabulary = (self.root / "vocabulary.ttl").read_text()
+        vocabulary = vocabulary.replace(
+            "ex:specialUses a owl:ObjectProperty ; "
+            "rdfs:subPropertyOf ex:uses ;",
+            "ex:specialUses a owl:ObjectProperty ;")
+        (self.root / "vocabulary.ttl").write_text(vocabulary)
+        with (self.root / "requirements.ttl").open("a") as output:
+            output.write('''\
+ex:specialUses rdfs:subPropertyOf ex:uses .
+ex:Rover rdfs:subClassOf [ a owl:Restriction ;
+    owl:onProperty ex:specialUses ; owl:someValuesFrom ex:Sensor ] .
+''')
+        rover = self.root / "rover.md"
+        concept(rover, ["Rover"])
+        snapshot = build_snapshot(self.root)
+        self.assertEqual(snapshot.connection_counts(rover), (0, 2, 0))
+
+    def test_rl_only_subproperty_removes_weaker_link_obligation(self):
+        vocabulary = (self.root / "vocabulary.ttl").read_text()
+        vocabulary = vocabulary.replace(
+            "ex:specialUses a owl:ObjectProperty ; "
+            "rdfs:subPropertyOf ex:uses ;",
+            "ex:specialUses a owl:ObjectProperty ;")
+        (self.root / "vocabulary.ttl").write_text(vocabulary)
+        (self.root / "axioms.ttl").write_text('''\
+@prefix ex: <https://example.org/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+ex:specialUses rdfs:subPropertyOf ex:uses .
+''')
+        with (self.root / "requirements.ttl").open("a") as output:
+            output.write('''\
+ex:Rover rdfs:subClassOf [ a owl:Restriction ;
+    owl:onProperty ex:specialUses ; owl:someValuesFrom ex:Sensor ] .
+''')
+        rover = self.root / "rover.md"
+        concept(rover, ["Rover"])
+        snapshot = build_snapshot(self.root)
+        self.assertEqual(snapshot.connection_counts(rover), (0, 1, 0))
+        self.assertTrue(snapshot.requirements[0].property.endswith(
+            "specialUses"))
+
     def test_requirement_patterns_do_not_cross_pair_endpoints(self):
         (self.root / "vocabulary.ttl").write_text('''\
 @prefix ex: <https://example.org/> .
