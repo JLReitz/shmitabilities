@@ -178,7 +178,7 @@ ex:A rdfs:subClassOf [ a owl:Restriction ;
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(rover), (1, 0, 1))
 
-    def test_implicit_index_link_does_not_fulfill(self):
+    def test_topic_contents_link_fulfills_and_asserts_property(self):
         folder = self.root / "Rover"
         folder.mkdir()
         concept(folder / "index.md", ["Rover"],
@@ -187,7 +187,30 @@ ex:A rdfs:subClassOf [ a owl:Restriction ;
         concept(folder / "sensor.md", ["Sensor"])
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(folder / "index.md"),
-                         (0, 1, 0))
+                         (1, 0, 1))
+        self.assertTrue(any(
+            fact.subject == "https://example.org/Rover"
+            and fact.predicate == "https://example.org/uses"
+            and fact.object == "https://example.org/Sensor"
+            and not fact.derived
+            for fact in snapshot.facts
+        ))
+
+    def test_topic_abstract_and_contents_both_supply_links(self):
+        folder = self.root / "Rover"
+        folder.mkdir()
+        concept(folder / "index.md", ["Rover"],
+                "See [outside](../outside.md).\n\n---\n\n"
+                "# Contents\n\n- [inside](sensor.md)\n")
+        concept(self.root / "outside.md", ["Sensor"])
+        concept(folder / "sensor.md", ["Sensor"])
+        snapshot = build_snapshot(self.root)
+        self.assertEqual(snapshot.connection_counts(folder / "index.md"),
+                         (1, 0, 2))
+        self.assertEqual(len(next(
+            item.links for item in snapshot.requirements
+            if item.concept == (folder / "index.md").resolve()
+        )), 2)
 
     def test_individual_cotags_assert_membership_and_link(self):
         with (self.root / "vocabulary.ttl").open("a") as output:

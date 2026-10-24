@@ -11,7 +11,8 @@ This format stores knowledge as UTF-8 Markdown files with YAML frontmatter. A kn
 ## Terms
 
 - **Tree root**: The top directory of a knowledge tree and the boundary for knowledge-document paths.
-- **Topic**: A Concept `index.md` or its parent directory.
+- **Topic directory**: A directory whose `index.md` is a Concept and whose name is a topical tag of descendants.
+- **Topic Concept**: The Concept `index.md` representing a topic directory. Its abstract and table of contents form one Concept body for connections, ontology facts, and investment.
 - **Package**: A Package Reference `index.md` or its parent directory.
 - **Source**: A standard Reference `index.md` or its parent domain.
 - **Bundle**: A top-level subject directory within a knowledge tree that contains related concepts and support documents.
@@ -58,7 +59,7 @@ The reserved filenames are:
 
 | Filename | Meaning |
 |---|---|
-| `index.md` | Concept topic, Package, or standard Reference abstract followed by a horizontal separator and a table of contents. |
+| `index.md` | Topic Concept, Package, or standard Reference abstract followed by a horizontal separator and a table of contents. |
 | `log.md` | Chronological update history. |
 
 `index.md` is a consumable `Concept` or `Reference` knowledge document according to its tree location. The root `index.md`, `references/index.md`, `references/packages/index.md`, and `log.md` are support documents.
@@ -166,13 +167,13 @@ A Concept MAY link to any document whose top-level `type` is `Reference`, includ
 
 Every parent-directory name between a Concept and the knowledge root is a required topical tag. At least one additional term tag is required. A tag exactly equal to any parent-directory name is always a topical tag and never contributes to citation coverage.
 
-Every Concept topic directory contains an `index.md` Concept. The index is implicitly connected to every consumable child document and each child topic's `index.md` in its directory. These implicit links behave like body links: recursive collection follows Concepts and stops at References.
+Every topic directory contains a topic Concept. It is implicitly connected to every consumable child document and each child topic Concept in its directory. These implicit links behave like body links: recursive collection follows Concepts and stops at References. Explicit table-of-contents links also participate in its connections and ontology property assertions.
 
 Every direct body link whose resolved target has `type: Reference`, including `index.md` and every Reference subtype, counts as local evidence. For each linked Reference, the original-text tags it shares with the Concept cover those term tags. Citation coverage is the size of the union of all covered term tags divided by the Concept's total number of term tags. Linked Concepts contribute through recursive confidence.
 
 Use prose near each link to identify the claim it supports. Use Markdown footnotes when claim-level attribution is repeated or would otherwise be ambiguous; keep the footnote target as the reference document path.
 
-An open concept has valid frontmatter and an empty body. Only an open concept may have confidence `0.0`; implicit child connections can give an open topic index positive confidence. Every non-open Concept MUST have positive confidence from direct Reference coverage, linked Concepts, or both.
+An open concept has valid frontmatter and an empty body. A topic Concept's body includes its abstract and table of contents. Only an open concept may have confidence `0.0`; implicit child connections can give an open topic Concept positive confidence. Every non-open Concept MUST have positive confidence from direct Reference coverage, linked Concepts, or both.
 
 Concept frontmatter also requires `history`:
 
@@ -253,7 +254,7 @@ Connections are the recursive document links from a concept. Use `knowledge-cli 
 
 ## Indexes
 
-Each Topic, Package, and Source directory has an `index.md`. Its frontmatter identifies the Concept or Reference. Put its abstract above a horizontal separator (`---`) and its table of contents below. Put a blank line before and after the separator. Keep links to documents in the index directory or below it in the table of contents. The table of contents MUST link every file and child directory directly beside the index, excluding `index.md` and `log.md`. A directory link resolves to its child `index.md`. Use a relative path and short description for each link. Apply the document's link rules to its table of contents.
+Each topic, Package, and Source directory has an `index.md`. Its frontmatter identifies the Concept or Reference. Put its abstract above a horizontal separator (`---`) and its table of contents below. Put a blank line before and after the separator. Keep links to documents in the index directory or below it in the table of contents. The table of contents MUST link every file and child directory directly beside the index, excluding `index.md` and `log.md`. A directory link resolves to its child `index.md`. Use a relative path and short description for each link. Apply the document's link rules to its table of contents. Validation checks the abstract and table of contents separately. When `read` appends a topic Concept as ancestor context, it shows only its abstract; an explicitly requested topic Concept includes the table of contents.
 
 ```markdown
 ---
@@ -274,9 +275,9 @@ API concepts describe service interfaces.
 - [Widget API](widget-api.md) - Authentication and request limits.
 ```
 
-The root `index.md` contains tree policies and navigation. The `references/index.md` lists reference domains and packages. The `references/packages/index.md` lists packages. These navigation indexes do not represent a Topic, Package, or Source.
+The root `index.md` contains tree policies and navigation. The `references/index.md` lists reference domains and packages. The `references/packages/index.md` lists packages. These navigation indexes do not represent a topic Concept, Package, or Source.
 
-CLI commands target a Topic, reference domain, or Package by its `index.md` or parent directory. `read` appends the table of contents for an explicitly targeted index and omits it for ancestor indexes.
+CLI commands target a topic directory, reference domain, or Package by its `index.md` or parent directory. `read` appends the table of contents for an explicitly targeted index and omits it for ancestor indexes.
 
 `read` accepts an explicitly targeted `index.md` when its frontmatter or abstract is missing. Other commands require a conforming knowledge document.
 
@@ -301,7 +302,7 @@ Record changes within a directory scope to `log.md`. Use date groups in descendi
 2. Each knowledge document has all common required fields, its class-specific required fields and body content, every ancestor topical tag, and at least one term tag.
 3. Each reference `resource` identifies a persistent source; ordinary source references are unique after normalization; each Package and sanctioned execution resource matches an ordinary source Reference.
 4. Each Concept or Reference body and table-of-contents link resolves to a consumable Concept or Reference document; neither type links to external URLs or infrastructure, Reference links remain below `references/`, and each internal filepath has one destination declaration per document.
-5. Each `index.md` and `log.md` follows its defined form, each Topic directory contains a Concept `index.md`, and each Source or Package directory contains one correctly scoped Reference `index.md`. Every index-abstract link targets a consumable document outside the index directory. Each index table of contents links every file and child directory at that level except `index.md` and `log.md`.
+5. Each `index.md` and `log.md` follows its defined form, each topic directory contains a topic Concept, and each Source or Package directory contains one correctly scoped Reference `index.md`. Every index-abstract link targets a consumable document outside the index directory. Each index table of contents links every file and child directory at that level except `index.md` and `log.md`.
 6. Each concept history starts with a valid `created` and contains ordered update timestamps at or before evaluation time.
 7. When root `confidence.required` is `true`, each non-open Concept has confidence greater than `0.0`; only an open Concept may have confidence `0.0`.
 

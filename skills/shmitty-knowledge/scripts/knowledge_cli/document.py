@@ -21,6 +21,14 @@ class Document:
     contents: str = ""
     has_index_separator: bool = False
 
+    @property
+    def concept_body(self) -> str:
+        """Include both authored sections of a topic Concept."""
+        if (self.path.name == "index.md"
+                and self.metadata.get("type") == "Concept"):
+            return self.body + "\n" + self.contents
+        return self.body
+
 
 def split_frontmatter(text: str, path: Path) -> Tuple[Dict[str, Any], str]:
     lines = text.splitlines(keepends=True)

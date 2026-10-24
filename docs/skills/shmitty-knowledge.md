@@ -80,14 +80,18 @@ reference-style link definition.
 
 ## Typed indexes and logs
 
-Each Concept topic, source directory, and package directory has a typed `index.md`. Its frontmatter
-and abstract make it a readable Concept or Reference. A horizontal separator divides the abstract
-from a table of contents that links every adjacent file and child directory except `index.md` and
+Each topic directory, source directory, and package directory has a typed `index.md`. A **topic
+Concept** is the Concept `index.md` representing its topic directory. Its abstract and table of
+contents together form its Concept body for connections, ontology assertions, and investment.
+Validation checks the abstract and table of contents separately against their respective link and
+coverage rules. A horizontal separator divides the abstract from the table of contents, which links
+every adjacent file and child directory except `index.md` and
 `log.md`. The table of contents uses relative paths and short descriptions. An abstract may link to
 a typed document outside its own directory subtree; local children belong in the table of contents.
 Source directory abstracts identify the complete domain, website, guide, repository, or database
-represented beneath them. A Concept topic index has implicit connections to its direct child
-documents and child topic indexes.
+represented beneath them. A topic Concept also has implicit connections to its direct child
+documents and child topic Concepts. `read` appends the table of contents when the topic Concept is
+the explicit target; ancestor context still shows only its abstract.
 
 The tree root `index.md`, `references/index.md`, and `references/packages/index.md` contain policy
 and navigation rather than knowledge claims. A directory's `log.md` records changes in descending
@@ -106,9 +110,10 @@ self-contained tree requires terms to be present in these files; the CLI rejects
 A Concept's authored tags match ontology terms by exact, case-sensitive `rdfs:label` first and IRI
 local name second. This includes topical tags and tags that match named individuals. An ambiguous
 match is a verification error. The CLI derives property facts only from explicit directed Concept
-body links whose endpoint terms match a defined property relationship. Index table-of-contents
-links provide navigation and do not assert ontology relationships. It reports RL-derived facts
-separately. A derived inverse or property-chain fact does not supply a missing authored link.
+body links whose endpoint terms match a defined property relationship. A topic Concept's table-of-
+contents links are part of that body and may assert properties and fulfill its requirements. It
+reports RL-derived facts separately. A derived inverse or property-chain fact does not supply a
+missing authored link.
 
 Each applicable EL existence requirement asks for at least one explicit Concept link in the
 property's direction. A same-direction subproperty or equivalent property qualifies. Equivalent
@@ -156,14 +161,15 @@ their field contracts.
 
 ## Confidence and investment
 
-Confidence measures a Concept's support. Direct Reference links cover the Concept's authored term
+Confidence measures a Concept's support. Direct Reference links, including links in a topic
+Concept's table of contents, cover the Concept's authored term
 tags that they share by exact original text. The union of covered tags divided by all term tags
 gives **citation coverage**. Directory ancestor tags are topical tags and do not count in citation
 coverage. Linked Concepts
 contribute their average recursive confidence. When both inputs are positive, confidence averages
 them; when only one is positive, it uses that input. Evaluation caches completed Concepts and
 excludes a link back to a Concept currently being evaluated, so cycles terminate. An open Concept
-may have zero confidence; a populated Concept needs positive support. A topic index may gain
+may have zero confidence; a populated Concept needs positive support. A topic Concept may gain
 confidence through its implicit child connections.
 
 **Consistency** estimates the probability that a Concept needs no meaningful revision during a

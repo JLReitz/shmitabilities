@@ -526,7 +526,7 @@ def verify(root: Path, document: Document, as_of: datetime) -> List[Finding]:
         findings.append(Finding("history", str(exc)))
     try:
         if (
-            document.body.strip()
+            document.concept_body.strip()
             and confidence_required(root)
             and evaluate_confidence(root, document).score(document) == 0.0
         ):

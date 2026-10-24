@@ -156,7 +156,7 @@ def _match(tag: str, kinds: Dict[str, Set[str]], labels: Dict[str, Set[str]],
 def _explicit_links(root: Path, concept: Document) -> Set[Path]:
     links = set()
     text = concept.body + "\n" + concept.contents
-    for raw in markdown_targets(concept.body, text):
+    for raw in markdown_targets(concept.concept_body, text):
         target = resolve_internal(root, concept.path, raw)
         if target is None or not target.is_file() or target.suffix != ".md":
             continue

@@ -91,7 +91,7 @@ def implicit_index_targets(source: Document) -> Tuple[Path, ...]:
 def consumable_targets(root: Path, source: Document) -> Tuple[Path, ...]:
     targets: Set[Path] = set(implicit_index_targets(source))
     definition_text = source.body + "\n" + source.contents
-    for raw in markdown_targets(source.body, definition_text):
+    for raw in markdown_targets(source.concept_body, definition_text):
         target = resolve_internal(root, source.path, raw)
         if target is None:
             raise KnowledgeError(
