@@ -1,0 +1,91 @@
+{
+  "name": "@jlreitz/llamas-and-shmit",
+  "version": "0.1.0",
+  "description": "Shared llama.cpp router integration for Pi and DeepSeek Harness.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "main": "./dist/dsh-llamas-and-shmit/index.js",
+  "types": "./dist/dsh-llamas-and-shmit/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/dsh-llamas-and-shmit/index.d.ts",
+      "default": "./dist/dsh-llamas-and-shmit/index.js"
+    },
+    "./core": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "src/",
+    "dist/",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "format": "dprint fmt",
+    "format:check": "dprint check",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "@jlreitz/shmit-core": "file:../shmit-core"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.0.5-alpha.2",
+    "@deepseek-ai/cordis-plugin-loader": "1.0.6-alpha.2",
+    "@deepseek-ai/dsh-agent": "0.2.1-alpha.3",
+    "@deepseek-ai/dsh-llm": "0.2.1-alpha.3",
+    "@deepseek-ai/dsh-session": "0.2.1-alpha.3",
+    "@earendil-works/pi-coding-agent": "*"
+  },
+  "peerDependenciesMeta": {
+    "@earendil-works/pi-coding-agent": {
+      "optional": true
+    },
+    "@deepseek-ai/cordis": {
+      "optional": true
+    },
+    "@deepseek-ai/cordis-plugin-loader": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-agent": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-llm": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-session": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "4.0.5-alpha.2",
+    "@deepseek-ai/cordis-plugin-loader": "1.0.6-alpha.2",
+    "@deepseek-ai/dsh-agent": "0.2.1-alpha.3",
+    "@deepseek-ai/dsh-llm": "0.2.1-alpha.3",
+    "@deepseek-ai/dsh-session": "0.2.1-alpha.3",
+    "@dprint/typescript": "^0.96.1",
+    "@earendil-works/pi-coding-agent": "^0.80.6",
+    "@types/node": "^22.0.0",
+    "dprint": "^0.64.3",
+    "typescript": "^5.0.0",
+    "vitest": "^5.0.5"
+  },
+  "pi": {
+    "extensions": [
+      "./src/pi-llamas-and-shmit/index.ts"
+    ]
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

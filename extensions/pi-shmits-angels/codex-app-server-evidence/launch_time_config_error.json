@@ -1,0 +1,31 @@
+{
+  "scenario": "launch_time_config_error",
+  "scope_note": "Remote endpoint faults are intentionally out of scope. This scenario checks a local launch-time configuration error only.",
+  "evidence_basis": "startup_failure_before_transport",
+  "command": [
+    "codex",
+    "app-server",
+    "--strict-config",
+    "--listen",
+    "unix:///tmp/pi-shmits-angels-config-9b5a8fa863.sock",
+    "-c",
+    "model=\"gpt-5.4-mini\""
+  ],
+  "codex_home": "/tmp/pi-shmits-angels-codex-app-server-evidence/codex-app-server-config-error-mt_gvq0j",
+  "listen_url": "unix:///tmp/pi-shmits-angels-config-9b5a8fa863.sock",
+  "socket_path": "/tmp/pi-shmits-angels-config-9b5a8fa863.sock",
+  "socket_created": false,
+  "process": {
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"/tmp\" (codex_home: AbsolutePathBuf(\"/tmp/pi-shmits-angels-codex-app-server-evidence/codex-app-server-config-error-mt_gvq0j\"))\nError: /tmp/pi-shmits-angels-codex-app-server-evidence/codex-app-server-config-error-mt_gvq0j/config.toml:2:1: unknown configuration field `unsupported_launch_key`\n"
+  },
+  "rpc_messages": [],
+  "rpc_summary": {
+    "transport_reached": false,
+    "notification_methods": [],
+    "error_response_ids": [],
+    "result_response_ids": [],
+    "dedicated_error_warning_notification_methods": []
+  }
+}

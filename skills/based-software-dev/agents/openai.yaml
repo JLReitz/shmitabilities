@@ -1,0 +1,4 @@
+interface:
+  display_name: "Based Software Dev"
+  short_description: "Apply shared software development rules"
+  default_prompt: "Use $based-software-dev to design or modify this software."

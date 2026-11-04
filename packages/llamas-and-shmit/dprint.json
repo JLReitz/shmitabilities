@@ -1,0 +1,13 @@
+{
+  "lineWidth": 120,
+  "indentWidth": 4,
+  "useTabs": false,
+  "typescript": {
+    "useBraces": "always",
+    "bracePosition": "nextLine",
+    "nextControlFlowPosition": "nextLine"
+  },
+  "plugins": [
+    "npm:@dprint/typescript"
+  ]
+}

@@ -1,0 +1,331 @@
+[
+  {
+    "id": "3",
+    "result": {
+      "turn": {
+        "id": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+        "items": [],
+        "itemsView": "notLoaded",
+        "status": "inProgress",
+        "error": null,
+        "startedAt": null,
+        "completedAt": null,
+        "durationMs": null
+      }
+    }
+  },
+  {
+    "method": "thread/status/changed",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "status": {
+        "type": "active",
+        "activeFlags": []
+      }
+    }
+  },
+  {
+    "method": "turn/started",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turn": {
+        "id": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+        "items": [],
+        "itemsView": "notLoaded",
+        "status": "inProgress",
+        "error": null,
+        "startedAt": 1783365955,
+        "completedAt": null,
+        "durationMs": null
+      }
+    }
+  },
+  {
+    "method": "hook/started",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "run": {
+        "id": "session-start:0:/home/jensen/.codex/hooks.json",
+        "eventName": "sessionStart",
+        "handlerType": "command",
+        "executionMode": "sync",
+        "scope": "thread",
+        "sourcePath": "/home/jensen/.codex/hooks.json",
+        "source": "user",
+        "displayOrder": 0,
+        "status": "running",
+        "statusMessage": null,
+        "startedAt": 1783365955,
+        "completedAt": null,
+        "durationMs": null,
+        "entries": []
+      }
+    }
+  },
+  {
+    "method": "hook/completed",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "run": {
+        "id": "session-start:0:/home/jensen/.codex/hooks.json",
+        "eventName": "sessionStart",
+        "handlerType": "command",
+        "executionMode": "sync",
+        "scope": "thread",
+        "sourcePath": "/home/jensen/.codex/hooks.json",
+        "source": "user",
+        "displayOrder": 0,
+        "status": "completed",
+        "statusMessage": null,
+        "startedAt": 1783365955,
+        "completedAt": 1783365955,
+        "durationMs": 25,
+        "entries": []
+      }
+    }
+  },
+  {
+    "method": "item/started",
+    "params": {
+      "item": {
+        "type": "userMessage",
+        "id": "057fe7bc-15dd-409c-84f3-9ead8a90a612",
+        "clientId": null,
+        "content": [
+          {
+            "type": "text",
+            "text": "Say 'Hello from pi-shmits-angels test' and nothing else.",
+            "text_elements": []
+          }
+        ]
+      },
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "startedAtMs": 1783365955334
+    }
+  },
+  {
+    "method": "item/completed",
+    "params": {
+      "item": {
+        "type": "userMessage",
+        "id": "057fe7bc-15dd-409c-84f3-9ead8a90a612",
+        "clientId": null,
+        "content": [
+          {
+            "type": "text",
+            "text": "Say 'Hello from pi-shmits-angels test' and nothing else.",
+            "text_elements": []
+          }
+        ]
+      },
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "completedAtMs": 1783365955334
+    }
+  },
+  {
+    "method": "item/started",
+    "params": {
+      "item": {
+        "type": "reasoning",
+        "id": "rs_026d81c357ffc854016a4c01439cf0819b801612acd95b93b9",
+        "summary": [],
+        "content": []
+      },
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "startedAtMs": 1783365956402
+    }
+  },
+  {
+    "method": "item/completed",
+    "params": {
+      "item": {
+        "type": "reasoning",
+        "id": "rs_026d81c357ffc854016a4c01439cf0819b801612acd95b93b9",
+        "summary": [],
+        "content": []
+      },
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "completedAtMs": 1783365956771
+    }
+  },
+  {
+    "method": "item/started",
+    "params": {
+      "item": {
+        "type": "agentMessage",
+        "id": "msg_026d81c357ffc854016a4c0143f538819b8bf8be8febfcbc50",
+        "text": "",
+        "phase": "final_answer",
+        "memoryCitation": null
+      },
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "startedAtMs": 1783365956771
+    }
+  },
+  {
+    "method": "item/agentMessage/delta",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "itemId": "msg_026d81c357ffc854016a4c0143f538819b8bf8be8febfcbc50",
+      "delta": "Hello"
+    }
+  },
+  {
+    "method": "item/agentMessage/delta",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "itemId": "msg_026d81c357ffc854016a4c0143f538819b8bf8be8febfcbc50",
+      "delta": " from"
+    }
+  },
+  {
+    "method": "item/agentMessage/delta",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "itemId": "msg_026d81c357ffc854016a4c0143f538819b8bf8be8febfcbc50",
+      "delta": " pi"
+    }
+  },
+  {
+    "method": "item/agentMessage/delta",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "itemId": "msg_026d81c357ffc854016a4c0143f538819b8bf8be8febfcbc50",
+      "delta": "-sh"
+    }
+  },
+  {
+    "method": "item/agentMessage/delta",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "itemId": "msg_026d81c357ffc854016a4c0143f538819b8bf8be8febfcbc50",
+      "delta": "mits"
+    }
+  },
+  {
+    "method": "item/agentMessage/delta",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "itemId": "msg_026d81c357ffc854016a4c0143f538819b8bf8be8febfcbc50",
+      "delta": "-ang"
+    }
+  },
+  {
+    "method": "item/agentMessage/delta",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "itemId": "msg_026d81c357ffc854016a4c0143f538819b8bf8be8febfcbc50",
+      "delta": "els"
+    }
+  },
+  {
+    "method": "item/agentMessage/delta",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "itemId": "msg_026d81c357ffc854016a4c0143f538819b8bf8be8febfcbc50",
+      "delta": " test"
+    }
+  },
+  {
+    "method": "item/completed",
+    "params": {
+      "item": {
+        "type": "agentMessage",
+        "id": "msg_026d81c357ffc854016a4c0143f538819b8bf8be8febfcbc50",
+        "text": "Hello from pi-shmits-angels test",
+        "phase": "final_answer",
+        "memoryCitation": null
+      },
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "completedAtMs": 1783365956878
+    }
+  },
+  {
+    "method": "thread/tokenUsage/updated",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turnId": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+      "tokenUsage": {
+        "total": {
+          "totalTokens": 22255,
+          "inputTokens": 22226,
+          "cachedInputTokens": 4480,
+          "outputTokens": 29,
+          "reasoningOutputTokens": 15
+        },
+        "last": {
+          "totalTokens": 22255,
+          "inputTokens": 22226,
+          "cachedInputTokens": 4480,
+          "outputTokens": 29,
+          "reasoningOutputTokens": 15
+        },
+        "modelContextWindow": 258400
+      }
+    }
+  },
+  {
+    "method": "account/rateLimits/updated",
+    "params": {
+      "rateLimits": {
+        "limitId": "codex",
+        "limitName": null,
+        "primary": {
+          "usedPercent": 18,
+          "windowDurationMins": 300,
+          "resetsAt": 1783379767
+        },
+        "secondary": {
+          "usedPercent": 99,
+          "windowDurationMins": 10080,
+          "resetsAt": 1783446919
+        },
+        "credits": null,
+        "individualLimit": null,
+        "planType": "plus",
+        "rateLimitReachedType": null
+      }
+    }
+  },
+  {
+    "method": "thread/status/changed",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "status": {
+        "type": "idle"
+      }
+    }
+  },
+  {
+    "method": "turn/completed",
+    "params": {
+      "threadId": "019f38e4-d734-7e30-bca0-80ad9c2656ae",
+      "turn": {
+        "id": "019f38e4-eed4-77e0-b19b-0dfa583ec4e8",
+        "items": [],
+        "itemsView": "notLoaded",
+        "status": "completed",
+        "error": null,
+        "startedAt": 1783365955,
+        "completedAt": 1783365956,
+        "durationMs": 1607
+      }
+    }
+  }
+]

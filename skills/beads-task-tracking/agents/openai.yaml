@@ -1,0 +1,4 @@
+interface:
+  display_name: "Beads Task Tracking"
+  short_description: "Track project work with shared Beads"
+  default_prompt: "Use $beads-task-tracking to configure or manage this project's tracked work."

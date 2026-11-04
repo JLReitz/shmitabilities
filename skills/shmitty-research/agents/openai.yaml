@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shmitty Research"
+  short_description: "Research questions with current source evidence"
+  default_prompt: "Use $shmitty-research to answer this question with current source evidence."

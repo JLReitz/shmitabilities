@@ -1,0 +1,9 @@
+# Shared terms selected from the W3C SOSA ontology at https://www.w3.org/ns/sosa/.
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+sosa:Sensor a owl:Class ; rdfs:label "Sensor"@en .
+sosa:Observation a owl:Class ; rdfs:label "Observation"@en .
+sosa:madeObservation a owl:ObjectProperty ; rdfs:label "made observation"@en .
+sosa:madeBySensor a owl:ObjectProperty ; rdfs:label "made by sensor"@en .

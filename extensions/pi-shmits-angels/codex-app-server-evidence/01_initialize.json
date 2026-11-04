@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1",
+    "result": {
+      "userAgent": "pi-shmits-angels-test/0.142.5 (Ubuntu 24.4.0; x86_64) xterm-256color (pi-shmits-angels-test; 0.1.0)",
+      "codexHome": "/home/jensen/.codex",
+      "platformFamily": "unix",
+      "platformOs": "linux"
+    }
+  },
+  {
+    "method": "remoteControl/status/changed",
+    "params": {
+      "status": "disabled",
+      "serverName": "Alpha",
+      "installationId": "83f7c792-638e-43d8-aa27-d8e51420929a",
+      "environmentId": null
+    }
+  }
+]

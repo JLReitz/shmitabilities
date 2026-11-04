@@ -1,0 +1,4 @@
+interface:
+  display_name: "Based Skill Author"
+  short_description: "Apply conventions when writing agent skills"
+  default_prompt: "Use $based-skill-author to create or update this agent skill."

@@ -1,0 +1,192 @@
+diff --git a/node_modules/@oh-my-pi/hashline/src/format.ts b/node_modules/@oh-my-pi/hashline/src/format.ts
+index ff782ac..9632a8e 100644
+--- a/node_modules/@oh-my-pi/hashline/src/format.ts
++++ b/node_modules/@oh-my-pi/hashline/src/format.ts
+@@ -4,6 +4,7 @@
+  * tokenizer, the prompt, and the formal grammar.
+  */
+ 
++import { createHash } from "node:crypto";
+ import type { Cursor } from "./types";
+ 
+ /** File-section header delimiters: `[path#hash]`. */
+@@ -111,7 +112,11 @@ function normalizeFileHashText(text: string): string {
+  */
+ export function computeFileHash(text: string): string {
+ 	const normalized = normalizeFileHashText(text);
+-	const low16 = Bun.hash.xxHash32(normalized, 0) & 0xffff;
++	// Node replacement for upstream Bun.hash.xxHash32. This extension is the
++	// sole producer and consumer of its tags, so internal consistency is the
++	// compatibility requirement.
++	const digest = createHash("sha1").update(normalized, "utf8").digest();
++	const low16 = digest.readUInt16BE(0);
+ 	return low16.toString(16).padStart(HL_FILE_HASH_LENGTH, "0").toUpperCase();
+ }
+ 
+diff --git a/node_modules/@oh-my-pi/hashline/src/fs.ts b/node_modules/@oh-my-pi/hashline/src/fs.ts
+index bca9349..1a8efaa 100644
+--- a/node_modules/@oh-my-pi/hashline/src/fs.ts
++++ b/node_modules/@oh-my-pi/hashline/src/fs.ts
+@@ -8,9 +8,6 @@
+  * {@link Filesystem.readText} and {@link Filesystem.writeText}; the FS deals
+  * only in raw text strings.
+  */
+-import * as fs from "node:fs/promises";
+-import * as pathModule from "node:path";
+-
+ /**
+  * Result returned by {@link Filesystem.writeText}. The patcher echoes back
+  * `text` so adapters that transform on serialization (e.g. notebooks) can
+@@ -186,61 +183,3 @@ export class InMemoryFilesystem extends Filesystem {
+ 		return this.#files.entries();
+ 	}
+ }
+-
+-/**
+- * Disk-backed {@link Filesystem} using Bun's file APIs. The default for CLI
+- * use. Paths are accepted as-is; callers responsible for any cwd or
+- * jail/sandbox resolution should wrap this with their own subclass.
+- */
+-export class NodeFilesystem extends Filesystem {
+-	async readText(path: string): Promise<string> {
+-		const file = Bun.file(path);
+-		if (!(await file.exists())) throw new NotFoundError(path);
+-		return file.text();
+-	}
+-
+-	async readBinary(path: string): Promise<Uint8Array> {
+-		try {
+-			return await fs.readFile(path);
+-		} catch (error) {
+-			if (isNotFound(error)) throw new NotFoundError(path, error);
+-			throw error;
+-		}
+-	}
+-
+-	async writeText(path: string, content: string): Promise<WriteResult> {
+-		await Bun.write(path, content);
+-		return { text: content };
+-	}
+-
+-	async delete(path: string): Promise<void> {
+-		try {
+-			await fs.rm(path);
+-		} catch (error) {
+-			if (isNotFound(error)) throw new NotFoundError(path, error);
+-			throw error;
+-		}
+-	}
+-
+-	async move(from: string, to: string, content?: string): Promise<void> {
+-		if (content !== undefined) {
+-			await Bun.write(to, content);
+-			await this.delete(from);
+-			return;
+-		}
+-		try {
+-			await fs.rename(from, to);
+-		} catch (error) {
+-			if (isNotFound(error)) throw new NotFoundError(from, error);
+-			throw error;
+-		}
+-	}
+-
+-	canonicalPath(path: string): string {
+-		return pathModule.resolve(path);
+-	}
+-
+-	async exists(path: string): Promise<boolean> {
+-		return Bun.file(path).exists();
+-	}
+-}
+diff --git a/node_modules/@oh-my-pi/hashline/src/tokenizer.ts b/node_modules/@oh-my-pi/hashline/src/tokenizer.ts
+index c7dd34f..cf81987 100644
+--- a/node_modules/@oh-my-pi/hashline/src/tokenizer.ts
++++ b/node_modules/@oh-my-pi/hashline/src/tokenizer.ts
+@@ -43,6 +43,7 @@ const CHAR_DOT = 46;
+ const CHAR_HYPHEN = 45;
+ const CHAR_ELLIPSIS = 0x2026;
+ const CHAR_EQUALS = 61;
++const CHAR_PLUS = 43;
+ 
+ const CHAR_UPPER_A = 65;
+ const CHAR_UPPER_F = 70;
+@@ -155,9 +156,15 @@ interface RangeScan {
+ 	nextIndex: number;
+ }
+ 
+-function scanRangeSeparator(line: string, index: number, end: number): number | null {
++interface RangeSepResult {
++	cursor: number;
++	isLength: boolean;
++}
++
++function scanRangeSeparator(line: string, index: number, end: number): RangeSepResult | null {
+ 	let cursor = index;
+ 	let consumedSeparator = false;
++	let isLength = false;
+ 	while (cursor < end) {
+ 		const code = line.charCodeAt(cursor);
+ 		if (isWhitespaceCode(code)) {
+@@ -170,38 +177,50 @@ function scanRangeSeparator(line: string, index: number, end: number): number |
+ 			consumedSeparator = true;
+ 			continue;
+ 		}
+-		if (
+-			code === CHAR_DOT &&
+-			cursor + 1 < end &&
+-			(line.charCodeAt(cursor + 1) === CHAR_DOT || line.charCodeAt(cursor + 1) === CHAR_EQUALS)
+-		) {
+-			cursor += 2;
++		if (code === CHAR_PLUS) {
++			cursor++;
+ 			consumedSeparator = true;
++			isLength = true;
+ 			continue;
+ 		}
++		if (code === CHAR_DOT && cursor + 1 < end) {
++			const next = line.charCodeAt(cursor + 1);
++			if (next === CHAR_PLUS) {
++				cursor += 2;
++				consumedSeparator = true;
++				isLength = true;
++				continue;
++			}
++			if (next === CHAR_DOT || next === CHAR_EQUALS) {
++				cursor += 2;
++				consumedSeparator = true;
++				continue;
++			}
++		}
+ 		break;
+ 	}
+ 	if (!consumedSeparator) return null;
+ 	if (cursor >= end || !isNonZeroDigitCode(line.charCodeAt(cursor))) return null;
+-	return cursor;
++	return { cursor, isLength };
+ }
+ 
+ function scanHeaderRange(line: string, index = 0, end = trimEndIndex(line), allowSingle = false): RangeScan | null {
+ 	const numberStart = skipWhitespace(line, index, end);
+ 	const start = scanLineNumber(line, numberStart, end);
+ 	if (start === null) return null;
+-	const afterFirst = scanRangeSeparator(line, start.nextIndex, end);
+-	if (afterFirst === null) {
++	const sep = scanRangeSeparator(line, start.nextIndex, end);
++	if (sep === null) {
+ 		if (!allowSingle) return null;
+ 		return {
+ 			range: { start: { line: start.line }, end: { line: start.line } },
+ 			nextIndex: skipWhitespace(line, start.nextIndex, end),
+ 		};
+ 	}
+-	const endNumber = scanLineNumber(line, afterFirst, end);
++	const endNumber = scanLineNumber(line, sep.cursor, end);
+ 	if (endNumber === null) return null;
++	const endLine = sep.isLength ? start.line + endNumber.line - 1 : endNumber.line;
+ 	return {
+-		range: { start: { line: start.line }, end: { line: endNumber.line } },
++		range: { start: { line: start.line }, end: { line: endLine } },
+ 		nextIndex: skipWhitespace(line, endNumber.nextIndex, end),
+ 	};
+ }

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Based Harness Dev"
+  short_description: "Develop portable LLM agent harness infrastructure"
+  default_prompt: "Use $based-harness-dev to create or modify this agent harness."

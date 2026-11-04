@@ -1,0 +1,9 @@
+default_permissions = "shmitabilities_workspace"
+
+[permissions.shmitabilities_workspace]
+description = "Workspace access with .agents roots explicitly included."
+extends = ":workspace"
+
+[permissions.shmitabilities_workspace.workspace_roots]
+"/home/jensen/workspace/shmitabilities/.agents" = true
+"/home/jensen/workspace/shmitabilities/.agents/projects" = true

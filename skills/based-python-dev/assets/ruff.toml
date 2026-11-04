@@ -1,0 +1,6 @@
+target-version = "py39"
+line-length = 120
+indent-width = 4
+
+[format]
+indent-style = "space"

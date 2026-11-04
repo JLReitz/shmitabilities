@@ -1,0 +1,151 @@
+{
+  "typescript-language-server": {
+    "command": "typescript-language-server",
+    "args": [
+      "--stdio"
+    ],
+    "fileTypes": [
+      ".ts",
+      ".tsx",
+      ".js",
+      ".jsx",
+      ".mjs",
+      ".cjs"
+    ],
+    "rootMarkers": [
+      "package.json",
+      "tsconfig.json",
+      "jsconfig.json"
+    ],
+    "initOptions": {
+      "hostInfo": "omp-coding-agent",
+      "preferences": {
+        "includeInlayParameterNameHints": "all",
+        "includeInlayVariableTypeHints": true,
+        "includeInlayFunctionParameterTypeHints": true
+      }
+    }
+  },
+  "bashls": {
+    "command": "bash-language-server",
+    "args": [
+      "start"
+    ],
+    "fileTypes": [
+      ".sh",
+      ".bash",
+      ".zsh"
+    ],
+    "rootMarkers": [
+      ".git"
+    ],
+    "settings": {
+      "bashIde": {
+        "globPattern": "*@(.sh|.inc|.bash|.command)"
+      }
+    }
+  },
+  "pyright": {
+    "command": "pyright-langserver",
+    "args": [
+      "--stdio"
+    ],
+    "fileTypes": [
+      ".py",
+      ".pyi"
+    ],
+    "rootMarkers": [
+      "pyproject.toml",
+      "pyrightconfig.json",
+      "setup.py",
+      "setup.cfg",
+      "requirements.txt",
+      "Pipfile"
+    ],
+    "settings": {
+      "python": {
+        "analysis": {
+          "autoSearchPaths": true,
+          "diagnosticMode": "openFilesOnly",
+          "useLibraryCodeForTypes": true
+        }
+      }
+    }
+  },
+  "rust-analyzer": {
+    "command": "rust-analyzer",
+    "args": [],
+    "fileTypes": [
+      ".rs"
+    ],
+    "rootMarkers": [
+      "Cargo.toml",
+      "rust-analyzer.toml"
+    ],
+    "initOptions": {},
+    "settings": {
+      "rust-analyzer": {
+        "checkOnSave": false
+      }
+    },
+    "capabilities": {
+      "flycheck": true,
+      "ssr": true,
+      "expandMacro": true,
+      "runnables": true,
+      "relatedTests": true
+    }
+  },
+  "gopls": {
+    "command": "gopls",
+    "args": [
+      "serve"
+    ],
+    "fileTypes": [
+      ".go",
+      ".mod",
+      ".sum"
+    ],
+    "rootMarkers": [
+      "go.mod",
+      "go.work",
+      "go.sum"
+    ],
+    "settings": {
+      "gopls": {
+        "analyses": {
+          "unusedparams": true,
+          "shadow": true
+        },
+        "staticcheck": true,
+        "gofumpt": true
+      }
+    }
+  },
+  "clangd": {
+    "command": "clangd",
+    "args": [
+      "--background-index",
+      "--clang-tidy",
+      "--header-insertion=iwyu"
+    ],
+    "fileTypes": [
+      ".c",
+      ".cpp",
+      ".cc",
+      ".cxx",
+      ".h",
+      ".hpp",
+      ".hxx",
+      ".m",
+      ".mm"
+    ],
+    "rootMarkers": [
+      "compile_commands.json",
+      "CMakeLists.txt",
+      ".clangd",
+      ".clang-format",
+      "Makefile"
+    ]
+  }
+}

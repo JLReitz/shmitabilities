@@ -1,0 +1,4 @@
+interface:
+  display_name: "Based C++ Dev"
+  short_description: "Apply baseline C++ style and naming conventions"
+  default_prompt: "Use $based-cpp-dev to create or update this C++ code."

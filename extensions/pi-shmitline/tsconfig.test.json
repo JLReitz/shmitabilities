@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "baseUrl": "../..",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": true,
+    "paths": {
+      "@earendil-works/pi-tui": [
+        "extensions/pi-shmitline/test/tui-mock.ts"
+      ]
+    },
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2022",
+    "types": [
+      "node",
+      "vitest/globals"
+    ]
+  },
+  "files": [
+    "./test/terminal-split.test.ts"
+  ]
+}

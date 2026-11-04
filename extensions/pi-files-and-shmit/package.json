@@ -1,0 +1,73 @@
+{
+  "name": "@jlreitz/pi-files-and-shmit",
+  "version": "0.0.0",
+  "description": "Pi extension: hashline content-hash editing, ast-grep structural search/rewrite, and LSP tools.",
+  "keywords": [
+    "pi-package",
+    "pi-extension"
+  ],
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
+  },
+  "files": [
+    "src/",
+    "native/Cargo.toml",
+    "native/Cargo.lock",
+    "native/build.rs",
+    "native/src/",
+    "native/package.json",
+    "native/smoke-test.js",
+    "patches/",
+    "scripts/",
+    ".crates.toml",
+    ".crates2.json",
+    "README.md",
+    "AGENTS.md",
+    "DEFERRED.md",
+    "THIRD_PARTY_LICENSES.md",
+    "LICENSE-lspmux.txt"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build:native": "napi build --platform --release --no-const-enum --manifest-path ./native/Cargo.toml --package-json-path ./native/package.json --output-dir ./native",
+    "postinstall": "patch-package && node ./scripts/postinstall.cjs"
+  },
+  "dependencies": {
+    "@oh-my-pi/hashline": "16.2.9",
+    "@napi-rs/cli": "^3.7.0",
+    "diff": "^5.2.0",
+    "editorconfig": "^3.0.2",
+    "find-up": "^8.0.0",
+    "glob": "^11.1.0",
+    "lru-cache": "^11.0.0",
+    "minimatch": "^10.2.5",
+    "patch-package": "^8.0.0",
+    "which": "^7.0.0"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "^0.80.0",
+    "@earendil-works/pi-tui": "^0.80.3",
+    "@sinclair/typebox": "^0.27.0",
+    "@types/node": "^20.0.0",
+    "@types/which": "^3.0.4",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "pi": {
+    "extensions": [
+      "./src/index.ts"
+    ]
+  }
+}

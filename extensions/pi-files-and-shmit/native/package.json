@@ -1,0 +1,14 @@
+{
+  "name": "@jlreitz/pi-files-and-shmit-native",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Thin N-API adapter over pinned upstream pi-ast for the pi-files-and-shmit extension. Built from source at install time; no prebuilt binaries.",
+  "license": "MIT",
+  "type": "commonjs",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "napi": {
+    "binaryName": "pi_ast",
+    "packageName": "@jlreitz/pi-files-and-shmit-native"
+  }
+}

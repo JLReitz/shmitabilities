@@ -1,1 +1,6 @@
 .agents/
+.beads/
+.codex-log/
+.pi/
+coverage/
+node_modules/

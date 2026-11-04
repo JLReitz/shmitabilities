@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shmitty Knowledge"
+  short_description: "Maintain source-backed project knowledge"
+  default_prompt: "Use $shmitty-knowledge to find, add, or maintain durable project knowledge."

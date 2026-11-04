@@ -1,0 +1,39 @@
+{
+  "name": "@jlreitz/shmit-core",
+  "version": "0.1.0",
+  "description": "Shared managed-root and settings reader for Shmitabilities packages.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "format": "dprint fmt",
+    "format:check": "dprint check",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "smol-toml": "^1.9.1"
+  },
+  "devDependencies": {
+    "@dprint/typescript": "^0.96.1",
+    "@types/node": "^22.0.0",
+    "dprint": "^0.64.3",
+    "typescript": "^5.0.0",
+    "vitest": "^5.0.5"
+  }
+}
