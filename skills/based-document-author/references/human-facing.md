@@ -8,7 +8,8 @@ and specific to this audience.
 ## Voice
 
 Engaging and direct. Write to a colleague who is smart, busy, and skeptical. Lead with the point
-that matters, then earn the reader's attention on the way down.
+that matters, then earn the reader's attention on the way down. Keep sections short enough to fit
+on one screen where the content allows.
 
 What that looks like in practice:
 
@@ -40,8 +41,9 @@ Roadmaps, phase plans, and decision logs shall not be cited.
 ## Headings name the thing or its purpose
 
 A heading is a noun phrase: the artifact or what it is for — "Local task registry to maintain
-project state". Never a sentence with a predicate; "The registry records which session owns which
-task" spends the reader's first glance on a claim they cannot yet use.
+project state" - or something a reader can scan and land on. Never a sentence with a predicate;
+"The registry records which session owns which task" spends the reader's first glance on a claim
+they cannot yet use.
 
 ## Never announce a list
 
@@ -89,7 +91,53 @@ Preserve markdown structures over the column rule.
 Refer to anything by the name in its own system of record, spelled as that system spells
 it. Where a statement covers several named things, name them all.
 
-Nothing invented here stands in for a real name: not a group label ("the sim packages", "the batch", "both packages"), not a count, not a role description, and not a label minted to point at something by property, function, position, or state ("the CMake-heavy package", "the failing one", "the first package migrated", "the earlier decision"). Where the thing does not have a name of its own, describe it in full at every mention.
+Nothing invented here stands in for a real name: not a group label ("collection", "the batch",
+"both packages"), not a count, not a role description, and not a label minted to point at something
+by property, function, position, or state ("the CMake-heavy package", "the failing one", "the first
+package migrated", "the earlier decision"). Where the thing does not have a name of its own,
+describe it in full at every mention.
+
+## Technical design structure
+
+Open a technical design with the subject name and a one to two sentence introduction that
+summarizes its contract.
+
+Move from stable context to dynamic behavior. For example:
+- Literal terminology used by the document.
+- Dependencies, component boundaries, ownership.
+- Configuration, input shapes, validity rules.
+- Lifecycle.
+- Shared execution, ordering, timing, other mechanisms.
+- Individual features.
+
+Include only the parts that apply. Put shared mechanisms before the operations that depend on them.
+
+Describe behavior through the stable mechanism that explains the contract or result. Name an
+implementation primitive only when the behavior depends on it. State operations in execution order,
+then state the observable results.
+
+### Code excerpts
+
+Put an exact declaration immediately before the behavior that depends on it. Include public entry
+points, input and output types, contract-bearing state identifiers, and constraints that determine
+behavior.
+
+Prefer declarations to copied implementation bodies. Keep identifiers, types, and values verbatim.
+
+### Operation sections
+
+Use the same internal order for related operations:
+- Entry point and contract-bearing state.
+- Initial-entry, restart, and precondition behavior.
+- Ordered requests, responses, and state transitions.
+- Deadlines, failure persistence, and recovery.
+- Terminal status and its observable meaning.
+
+## Change descriptions
+
+State the required behavior and the conditions that produce different outcomes. State the solution
+as ordered operations, the mechanism needed to explain them, and the resulting observable state.
+State testing as the behaviors and environments exercised.
 
 ## Diagrams
 
@@ -101,6 +149,15 @@ and they will not.
 
 Detail is the point. Label the edges — the message, the trigger, the condition, the
 direction. Show the failure path alongside the happy path.
+
+Select the diagram by the relationship:
+- A topology diagram shows component boundaries, dependencies, and ownership.
+- A sequence diagram shows messages, update cycles, deadlines, and interactions over time.
+- A state or flow diagram shows operation steps, branches, and outcomes.
+
+Place each diagram next to the prose it explains. Label ever edge with the message, trigger,
+condition, result, or handoff that crosses it. Show failure and recovery paths with the successful
+path.
 
 ```
         ┌──────────┐   1. request(payload)    ┌──────────┐
@@ -144,30 +201,11 @@ crossings.
 | `▼` | U+25BC | Downward arrowhead |
 | `◄` | U+25C4 | Leftward arrowhead |
 
-## Describe behavior through its load-bearing mechanism
-
-State the stable mechanism that explains the contract or result. Name an implementation primitive
-only when the behavior depends on that primitive. Omit investigation history and details that do
-not establish the result.
-
-State the operations of a mechanism in the order they run, then state the observable result. An
-interface comment states the contract, an implementation comment states the platform mechamism
-that meets the contract.
-
-Check each claim about a platform, library, protocol, or external component against its source
-before writing it.
-
-## Change descriptions
-
-State the required behavior and the conditions that produce different outcomes. State the solution
-as ordered operations, the mechanism needed to explain them, and the resulting observable state.
-State testing as the behaviors and environments exercised.
-
 ## Diagnostic messages
 
 Name the operation, the step that failed, and the observed cause.
 
-## Best practices
+## Source verification
 
-Use headings a reader can scan and land on. Keep sections short enough to fit on one screen where
-the content allows.
+Check each claim about a platform, library, protocol, or external component against its source
+before writing it.

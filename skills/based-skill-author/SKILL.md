@@ -16,8 +16,7 @@ Use the `based-document-author` skill in addition to the following rules:
 - **Plain-English rule names.** Name rules by what they do ("the source-required gate"), never by an opaque code (`B-1`, `MJ2`) that forces the reader to hold a private namespace.
 - **Bounded rationale.** Rationale is at most a short forward-looking note at the rule it explains.
 - **Clean schema blocks.** Inline JSON/bash carries data shape only. Behavioral commentary (gate semantics, cross-step refs) lives in step prose, not inside field doc-strings.
-- **Constraints inline** No separate "GUARDRAILS"/"CONSTRAINTS" block. Each constraint is stated within the step that binds it.
-- **Invoke scripts exactly as `allowed-tools` names them.** A `Bash(cmd:*)` entry is a trailing wildcard (`cmd` plus any args), matched TOKEN-LITERAL on the leading command token: `Bash(scripts/foo.sh:*)` matches bare `scripts/foo.sh ...` but NOT `./scripts/foo.sh ...` nor `bash scripts/foo.sh ...` (different leading token; `bash` is not a stripped wrapper). Invoke project scripts exactly as the pattern names them — a `./`- or `bash `-prefixed form silently fails the permission match. Shell operators (`&&`, `||`, `;`, `|`) are parsed and each subcommand must independently match an allowed pattern.
+- **Inline constraints** No separate "GUARDRAILS"/"CONSTRAINTS" block. Each constraint is stated within the step that binds it.
 
 When authoring a skill that writes a body/comment/description/field/message/command for an external system, follow the [external artifact content rules](references/external-artifact-content.md).
 
@@ -25,7 +24,40 @@ When authoring a skill that writes a body/comment/description/field/message/comm
 
 Agents load skills progressively, pulling in more detail only as a task calls for it. Skills should be structured to take advantage of this.
 
-Keep your main SKILL.md short. Move detailed reference material to separate files. Use relatibe paths from the skill directory root in SKILL.md to reference bundled files:
+Define the skill boundary and select the structure that matches the work:
+
+- [Router](references/router.md) to select one procedure from task-specific criteria.
+- [Extension](references/extension.md) to add context and policies to a required skill.
+- [Orchestrator](references/orchestrator.md) to coordinate ordered stages and retained state.
+
+A package MAY combine structures when all content serves one operation boundary. State only procedures within that boundary.
+
+### `SKILL.md`
+
+**YAML frontmatter (~100 tokens):**
+
+- `name`: matches parent directory name.
+- `description`: what the skill does and when it applies. Use an imperative verb.
+- `allowed-tools`: List only CLI commands and MCP tools called directly by the skill.
+- `compatibility`: Name required skills, services, packages, configuration, and network access.
+
+Follow [Tool permissions](references/tool-permissions.md) when the skill allows commands or MCP tools.
+
+**Body (<5000 tokens recommended):**
+
+Instructions loaded for every invocation of the skill:
+- Universal behavior and invariants.
+- Provider, operation, or workflow routing.
+- Ordered stages and retained fields.
+- Conditional references.
+
+Name sections after their content.
+
+Use `## Vocabulary` when the skill reuses standardized terms. Each entry MUST define one noun or verb. Use that term with its defined meaning throughout the skill.
+
+Number procedural steps, use step 0 only for setup that precedes the operation.
+
+Keep `SKILL.md` short. Move detailed reference material to separate files. Use relative paths from the skill directory root in `SKILL.md` to reference a bundled file at the decision or handoff that requires it:
 ```
 See [the reference guide](references/reference.md)
 
@@ -34,35 +66,27 @@ Use **`scripts/validate.sh`** on configuration files
 Compare the loaded image to `assets/reference.png`
 ```
 
-### `SKILL.md`
-
-**YAML frontmatter (~100 tokens):**
-
-Always:
-- `name`: matches parent directory name
-- `description`: what the skill does and when to use it, imperative phrasing
-
-Conditional:
-- `allowed-tools`: Permissions for required bash commands and MCP tools
-- `compatibility`: All required system packages configurations, network access, etc.
-
-**Body (<5000 tokens recommended):**
-
-Introduction if needed. Set the scene, do not repeat the description.
-
-`## Vocabulary` to list skill-defined terms
-
-`## Execution` if a procedure Numbered list of steps 0..N
-
-`## Topical Sections` otherwise
-
-`## Appendix` When common details or constraints are re-used throughout a procedure, place in sections here
+Reference a required skill by its exact name at the point it applies. Tell the agent when to load it, do not restate its procedure.
+```
+Use the `<skill-name>` skill to ...
+```
 
 ### `references/`
 
-Contains additional documentation to reveal conditional context or instructions. Keep individual reference files focused, agents load these on demand.
+Keep individual reference files focused, agents load these on demand. Give each reference one named unit of work. Name the file after its operation, stage, format, or domain.
 
-Name files for the domain that they represent. Link to them inline where they have the most impact.
+Start with the operative instruction. Add only the context needed for that unit.
+
+For a state workflow, specify:
+- The event that permits each transition.
+- The source and expected state.
+- Runtime transition discovery when identifiers can change.
+- The evidence required before reporting success.
+- Failure reports.
+
+Keep templates and schema blocks limited to artifact shape. Put behavioral rules in the surrounding prose.
+
+Separate a report template when multiple steps use it or when it is loaded only for one result type.
 
 ### `scripts/`
 
