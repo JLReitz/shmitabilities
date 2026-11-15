@@ -2,7 +2,7 @@
 
 A sanctioned execution is a `Reference` with `reference_type: Command` or `reference_type: Computation`. Its definition specifies how to reproduce evidence from a persistent resource and attest the receipt.
 
-Set its `resource` to a persistent source documented by an ordinary source Reference with the same normalized URL. Place a package-scoped Command or Computation under `references/packages/<package>/`. Place other sanctioned executions under the source domain.
+Set its `resource` to a persistent source documented by an ordinary source Reference with the same normalized URL. Place a package-scoped Command or Computation under `tools/<package>/`. Place other sanctioned executions under the source domain.
 
 ## Reference body
 

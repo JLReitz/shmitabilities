@@ -14,7 +14,7 @@ from .connections import (
 from .document import Document, load_document
 from .errors import KnowledgeError
 from .investment import as_datetime, history_inputs, load_policy
-from .ontology import build_snapshot
+from .ontology import build_snapshot, tag_classification
 from .paths import (
     markdown_path_destinations,
     markdown_targets,
@@ -24,13 +24,14 @@ from .reading import concept_indexes, reference_indexes
 
 
 SANCTIONED_EXECUTION_TYPES = {"Command", "Computation"}
-SOURCE_MATCH_TYPES = SANCTIONED_EXECUTION_TYPES | {"Package"}
+SOURCE_MATCH_TYPES = SANCTIONED_EXECUTION_TYPES | {"Tool"}
 
 
 @dataclass(frozen=True)
 class Finding:
     field: str
     message: str
+    severity: str = "error"
 
 
 def confidence_required(root: Path) -> bool:
@@ -53,11 +54,11 @@ def reference_root(root: Path, path: Path) -> Path:
         raise KnowledgeError(
             f"{path}: document is outside the tree root"
         ) from exc
-    if len(relative.parts) < 3 or relative.parts[0] != "references":
+    if len(relative.parts) < 3 or relative.parts[0] not in {"sources", "tools"}:
         raise KnowledgeError(
-            f"{path}: document is outside the tree-root references directory"
+            f"{path}: Reference is outside sources/ or tools/"
         )
-    return root.resolve() / "references"
+    return root.resolve() / relative.parts[0]
 
 
 def tag_findings(root: Path, document: Document) -> List[Finding]:
@@ -79,6 +80,23 @@ def tag_findings(root: Path, document: Document) -> List[Finding]:
         findings.append(
             Finding("tags", "at least one term tag is required")
         )
+    try:
+        matched, _, unmatched = tag_classification(root, document)
+        if document.metadata.get("type") == "Concept":
+            if not set(matched).intersection(terms):
+                findings.append(Finding("tags", "Concept requires an ontology-matched term tag"))
+        ontology_policy = load_document(root / "index.md").metadata.get("ontology", {})
+        if not isinstance(ontology_policy, dict):
+            raise KnowledgeError("ontology policy must be a mapping")
+        policy = ontology_policy.get("term_tags")
+        if policy not in (None, "required", "warn"):
+            raise KnowledgeError("ontology.term_tags must be required or warn")
+        if policy:
+            for tag in set(unmatched).intersection(terms):
+                findings.append(Finding("tags", f"unmatched ontology term tag: {tag}",
+                                        "warning" if policy == "warn" else "error"))
+    except KnowledgeError as exc:
+        findings.append(Finding("tags", str(exc)))
     return findings
 
 
@@ -111,9 +129,9 @@ def source_match_findings(root: Path, document: Document) -> List[Finding]:
     if not isinstance(resource, str) or not is_resource_url(resource):
         return []
     normalized = normalize_resource_url(resource)
-    references = root / "references"
-    if references.exists():
-        for path in references.rglob("*.md"):
+    sources = root / "sources"
+    if sources.exists():
+        for path in sources.rglob("*.md"):
             try:
                 candidate = load_document(path)
             except KnowledgeError:
@@ -132,7 +150,7 @@ def source_match_findings(root: Path, document: Document) -> List[Finding]:
     return [
         Finding(
             "resource",
-            "Package and sanctioned execution resources must match an "
+            "Tool and sanctioned execution resources must match an "
             f"ordinary source Reference: {resource}",
         )
     ]
@@ -315,15 +333,18 @@ def link_findings(
                 )
         if references_only:
             try:
-                reference_root(root, target)
+                source_partition = reference_root(root, document.path)
+                target.relative_to(source_partition)
             except KnowledgeError:
                 findings.append(
                     Finding(
                         "body",
-                        "Reference link leaves the references directory: "
+                        "Reference link leaves its source or tool hierarchy: "
                         f"{target}",
                     )
                 )
+            except ValueError:
+                findings.append(Finding("body", "Reference link leaves its source or tool hierarchy: " + str(target)))
     return findings
 
 
@@ -369,14 +390,20 @@ def index_contents_findings(root: Path, document: Document) -> List[Finding]:
 
     findings = []
     for child in sorted(document.path.parent.iterdir()):
-        if child.name in {"index.md", "log.md"} or (
-            document.path.parent.resolve() == root.resolve()
-            and child.name in {
-                "vocabulary.ttl", "requirements.ttl", "axioms.ttl"
-            }
-        ):
+        if child.name in {"index.md", "log.md", "ontology.ttl",
+                          "vocabulary.ttl", "requirements.ttl", "axioms.ttl"}:
             continue
         target = child / "index.md" if child.is_dir() else child
+        if target.suffix != ".md" or not target.exists():
+            continue
+        try:
+            child_document = load_document(target)
+        except KnowledgeError as exc:
+            findings.append(Finding("contents", str(exc)))
+            continue
+        if child_document.metadata.get("type") not in {"Concept", "Reference"}:
+            findings.append(Finding("contents", f"immediate child is not consumable knowledge: {target}"))
+            continue
         if target.resolve() not in linked:
             findings.append(
                 Finding(
@@ -385,6 +412,11 @@ def index_contents_findings(root: Path, document: Document) -> List[Finding]:
                     f"{child}",
                 )
             )
+    for target in linked:
+        if target not in set(implicit_index_targets(document)):
+            findings.append(Finding(
+                "contents", "index table of contents has a non-child entry: "
+                f"{target}"))
     return findings
 
 

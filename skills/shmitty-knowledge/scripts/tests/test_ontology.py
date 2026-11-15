@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from knowledge_cli.errors import KnowledgeError
 from knowledge_cli.ontology import build_snapshot, load_ontology
+from knowledge_cli.migration import _convert_ontology
 
 
 VOCABULARY = """\
@@ -46,6 +47,14 @@ class OntologyTests(unittest.TestCase):
         (self.root / "requirements.ttl").write_text(REQUIREMENTS)
         (self.root / "axioms.ttl").write_text("")
 
+    def sync_ontology(self):
+        output = self.root / "ontology.ttl"
+        output.unlink(missing_ok=True)
+        text, conflicts = _convert_ontology(self.root)
+        if conflicts:
+            raise AssertionError(conflicts)
+        output.write_text(text)
+
     def tearDown(self):
         self.directory.cleanup()
 
@@ -66,6 +75,7 @@ class OntologyTests(unittest.TestCase):
         concept(self.root / "both.md", ["Rover", "Sensor"],
                 "[sensor](sensor.md)\n")
         concept(self.root / "sensor.md", ["Sensor"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(self.root / "both.md"),
                          (1, 0, 1))
@@ -89,6 +99,7 @@ ex:B rdfs:subClassOf [ a owl:Restriction ; owl:onProperty ex:q ;
 ''')
         concept(self.root / "a.md", ["A"], "[B](b.md)\n")
         concept(self.root / "b.md", ["B"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(self.root / "a.md"),
                          (1, 0, 1))
@@ -109,6 +120,7 @@ ex:A rdfs:subClassOf [ a owl:Restriction ; owl:onProperty ex:p ;
 ''')
         concept(self.root / "a.md", ["A"], "[target](target.md)\n")
         concept(self.root / "target.md", ["Target"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(self.root / "a.md"),
                          (1, 0, 1))
@@ -131,6 +143,7 @@ ex:A rdfs:subClassOf [ a owl:Restriction ;
         with self.assertRaisesRegex(
             KnowledgeError, "unsupported EL data restriction"
         ):
+            self.sync_ontology()
             build_snapshot(self.root)
 
     def test_directional_requirement_and_incident_link(self):
@@ -138,6 +151,7 @@ ex:A rdfs:subClassOf [ a owl:Restriction ;
         sensor = self.root / "sensor.md"
         concept(rover, ["Rover"], "[sensor](sensor.md)\n")
         concept(sensor, ["Sensor"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(rover), (1, 0, 1))
         self.assertTrue(any(
@@ -149,8 +163,9 @@ ex:A rdfs:subClassOf [ a owl:Restriction ;
                               and f.predicate.endswith("uses")]), 1)
         concept(rover, ["Rover"])
         concept(sensor, ["Sensor"], "[rover](rover.md)\n")
-        reversed_snapshot = build_snapshot(self.root)
-        self.assertEqual(reversed_snapshot.connection_counts(rover),
+        self.sync_ontology()
+        snapshot = build_snapshot(self.root)
+        self.assertEqual(snapshot.connection_counts(rover),
                          (0, 1, 0))
 
     def test_ambiguity_at_label_tier(self):
@@ -159,6 +174,7 @@ ex:A rdfs:subClassOf [ a owl:Restriction ;
         concept(self.root / "rover.md", ["Rover"])
         with self.assertRaisesRegex(KnowledgeError,
                                     "ambiguously matches rdfs:label"):
+            self.sync_ontology()
             build_snapshot(self.root)
 
     def test_label_precedes_local_name_and_subproperty_fulfills(self):
@@ -169,26 +185,35 @@ ex:A rdfs:subClassOf [ a owl:Restriction ;
         target = self.root / "target.md"
         concept(rover, ["Rover"], "[target](target.md)\n")
         concept(target, ["Sensor"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         matches = [term for term in snapshot.terms if term.concept == target]
         self.assertEqual(matches[0].term, "https://example.org/Other")
         self.assertEqual(matches[0].match, "rdfs:label")
         self.assertEqual(snapshot.connection_counts(rover), (0, 1, 0))
         concept(target, ["Detector"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(rover), (1, 0, 1))
 
-    def test_topic_contents_link_fulfills_and_asserts_property(self):
+    def test_topic_contents_link_fulfills_without_authored_assertion(self):
         folder = self.root / "Rover"
         folder.mkdir()
         concept(folder / "index.md", ["Rover"],
                 "Topic.\n\n---\n\n# Contents\n\n"
                 "- [sensor](sensor.md)\n")
         concept(folder / "sensor.md", ["Sensor"])
+        self.sync_ontology()
+        with (folder / "index.md").open("r+") as topic:
+            content = topic.read().replace("tags: [Rover]", "tags: [Rover]\ntopic_tag: Rover")
+            topic.seek(0)
+            topic.write(content)
+            topic.truncate()
+        (folder / "ontology.ttl").write_text("@prefix ex: <https://example.org/> .\n@prefix owl: <http://www.w3.org/2002/07/owl#> .\nex:Rover a owl:Class .\n")
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(folder / "index.md"),
                          (1, 0, 1))
-        self.assertTrue(any(
+        self.assertFalse(any(
             fact.subject == "https://example.org/Rover"
             and fact.predicate == "https://example.org/uses"
             and fact.object == "https://example.org/Sensor"
@@ -204,6 +229,13 @@ ex:A rdfs:subClassOf [ a owl:Restriction ;
                 "# Contents\n\n- [inside](sensor.md)\n")
         concept(self.root / "outside.md", ["Sensor"])
         concept(folder / "sensor.md", ["Sensor"])
+        self.sync_ontology()
+        with (folder / "index.md").open("r+") as topic:
+            content = topic.read().replace("tags: [Rover]", "tags: [Rover]\ntopic_tag: Rover")
+            topic.seek(0)
+            topic.write(content)
+            topic.truncate()
+        (folder / "ontology.ttl").write_text("@prefix ex: <https://example.org/> .\n@prefix owl: <http://www.w3.org/2002/07/owl#> .\nex:Rover a owl:Class .\n")
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(folder / "index.md"),
                          (1, 0, 2))
@@ -220,6 +252,7 @@ ex:A rdfs:subClassOf [ a owl:Restriction ;
         sensor = self.root / "sensor.md"
         concept(rover, ["Aster", "Rover"], "[Camera](sensor.md)\n")
         concept(sensor, ["Camera"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(rover), (1, 0, 1))
         self.assertTrue(any(
@@ -242,6 +275,7 @@ ex:Vehicle rdfs:subClassOf ex:Rover .
         concept(self.root / "aster.md", ["Aster"],
                 "[sensor](sensor.md)\n")
         concept(self.root / "sensor.md", ["Sensor"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(self.root / "aster.md"),
                          (1, 0, 1))
@@ -263,6 +297,7 @@ ex:Rover rdfs:subClassOf [ a owl:Restriction ;
         concept(self.root / "rover.md", ["Rover"],
                 "[sensor](sensor.md)\n")
         concept(self.root / "sensor.md", ["Sensor"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(self.root / "rover.md"),
                          (2, 0, 1))
@@ -278,6 +313,7 @@ ex:uses owl:inverseOf ex:usedBy .
         concept(self.root / "rover.md", ["Rover"])
         concept(self.root / "sensor.md", ["Sensor"],
                 "[rover](rover.md)\n")
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(self.root / "rover.md"),
                          (0, 1, 0))
@@ -290,6 +326,7 @@ ex:Rover rdfs:subClassOf [ a owl:Restriction ;
 ''')
         rover = self.root / "rover.md"
         concept(rover, ["Rover"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(rover), (0, 1, 0))
         self.assertTrue(snapshot.requirements[0].property.endswith(
@@ -311,6 +348,7 @@ ex:Rover rdfs:subClassOf [ a owl:Restriction ;
         concept(rover, ["Rover"], "[sensor](sensor.md)\n")
         concept(self.root / "sensor.md", ["Sensor"])
         concept(self.root / "terrain.md", ["Terrain"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(rover), (1, 1, 1))
         self.assertEqual({item.property.rsplit("/", 1)[-1]
@@ -318,6 +356,7 @@ ex:Rover rdfs:subClassOf [ a owl:Restriction ;
                          {"uses", "explores"})
         concept(rover, ["Rover"],
                 "[sensor](sensor.md)\n[terrain](terrain.md)\n")
+        self.sync_ontology()
         self.assertEqual(build_snapshot(self.root).connection_counts(rover),
                          (2, 0, 2))
 
@@ -334,6 +373,7 @@ ex:Rover rdfs:subClassOf [ a owl:Restriction ;
 ''')
         rover = self.root / "rover.md"
         concept(rover, ["Rover"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(rover), (0, 1, 0))
         self.assertEqual(snapshot.requirements[0].target_class,
@@ -354,6 +394,7 @@ ex:Rover rdfs:subClassOf [ a owl:Restriction ;
 ''')
         rover = self.root / "rover.md"
         concept(rover, ["Rover"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(rover), (0, 2, 0))
 
@@ -376,6 +417,7 @@ ex:Rover rdfs:subClassOf [ a owl:Restriction ;
 ''')
         rover = self.root / "rover.md"
         concept(rover, ["Rover"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(rover), (0, 1, 0))
         self.assertTrue(snapshot.requirements[0].property.endswith(
@@ -400,6 +442,7 @@ ex:C rdfs:subClassOf [ a owl:Restriction ; owl:onProperty ex:uses ;
 ''')
         concept(self.root / "a.md", ["A"], "[D](d.md)\n")
         concept(self.root / "d.md", ["D"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(self.root / "a.md"),
                          (0, 1, 0))
@@ -416,6 +459,7 @@ ex:observes a owl:ObjectProperty ; rdfs:domain ex:Rover ;
         concept(self.root / "rover-two.md", ["Rover"],
                 "[sensor](sensor.md)\n")
         concept(self.root / "sensor.md", ["Sensor"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         for property_name in ("uses", "observes"):
             facts = [fact for fact in snapshot.facts
@@ -444,6 +488,7 @@ ex:specialUses rdfs:subPropertyOf ex:uses .
         concept(self.root / "rover.md", ["Rover"],
                 "[sensor](sensor.md)\n")
         concept(self.root / "sensor.md", ["Sensor"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(self.root / "rover.md"),
                          (1, 0, 1))
@@ -468,6 +513,7 @@ ex:A rdfs:subClassOf [ a owl:Restriction ; owl:onProperty ex:uses ;
 ''')
         concept(self.root / "d.md", ["D"], "[sensor](sensor.md)\n")
         concept(self.root / "sensor.md", ["Sensor"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(self.root / "d.md"),
                          (1, 0, 1))
@@ -497,6 +543,7 @@ ex:r owl:propertyChainAxiom (ex:p ex:q) .
         concept(self.root / "a.md", ["A"], "[B](b.md)\n")
         concept(self.root / "b.md", ["B"], "[C](c.md)\n")
         concept(self.root / "c.md", ["C"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(self.root / "a.md"),
                          (0, 1, 0))
@@ -519,6 +566,7 @@ ex:Rover rdfs:subClassOf [ a owl:Class ; owl:intersectionOf (
 ) ] .
 ''')
         concept(self.root / "rover.md", ["Rover"])
+        self.sync_ontology()
         snapshot = build_snapshot(self.root)
         self.assertEqual(snapshot.connection_counts(self.root / "rover.md"),
                          (0, 1, 0))
@@ -529,8 +577,7 @@ class PublishedSosaTests(unittest.TestCase):
         fixture = Path(__file__).parent / "fixtures" / "sosa"
         with TemporaryDirectory() as directory:
             root = Path(directory)
-            for name in ("vocabulary.ttl", "requirements.ttl", "axioms.ttl"):
-                copyfile(fixture / name, root / name)
+            copyfile(fixture / "ontology.ttl", root / "ontology.ttl")
             concept(root / "sensor.md", ["Sensor"],
                     "[observation](observation.md)\n")
             concept(root / "observation.md", ["Observation"])

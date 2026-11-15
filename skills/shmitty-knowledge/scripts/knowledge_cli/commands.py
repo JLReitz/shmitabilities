@@ -9,6 +9,7 @@ from .connections import collect_connections, render_connections
 from .document import load_document
 from .errors import KnowledgeError
 from .investment import as_datetime, evaluate, load_policy
+from .migration import apply_migration, plan_migration
 from .ontology import build_snapshot
 from .paths import resolve_document_path
 from .reading import expand_read, render_read
@@ -52,6 +53,9 @@ def parser() -> argparse.ArgumentParser:
     ontology = subcommands.add_parser("ontology")
     add_root(ontology)
     ontology.add_argument("report", choices=("terms", "facts", "requirements"))
+    migrate = subcommands.add_parser("migrate")
+    migrate.add_argument("--root", required=True, type=Path)
+    migrate.add_argument("--apply", action="store_true")
     return result
 
 
@@ -67,6 +71,24 @@ def main(argv=None) -> int:
                 "--root is required when SHMIT_KNOWLEDGE_ROOT is unset"
             )
         root = args.root.resolve()
+        if args.command == "migrate":
+            plan = plan_migration(root)
+            print(row(("kind", "source", "target")))
+            for source, destination in plan.moves:
+                print(row(("move", str(source.relative_to(root)),
+                           str(destination.relative_to(root)))))
+            for source, _, _ in plan.rewrites:
+                print(row(("rewrite", str(source.relative_to(root)), "")))
+            for role, count in plan.role_counts:
+                print(row(("ontology", role, count)))
+            for conflict in plan.conflicts:
+                print(row(("conflict", conflict, "")))
+            if args.apply:
+                receipt = apply_migration(plan)
+                for old, new in receipt:
+                    print(row(("applied", old, new)))
+                print(row(("result", "applied", "")))
+            return 1 if plan.conflicts else 0
         if args.command == "ontology":
             if not root.is_dir():
                 raise KnowledgeError(
@@ -165,12 +187,14 @@ def main(argv=None) -> int:
         print(row(("field", "value")))
         print(row(("document", document.path)))
         print(row(("evaluated", as_of.isoformat())))
-        if not findings:
+        if not findings or all(item.severity == "warning" for item in findings):
             print(row(("result", "valid")))
+            for finding in findings:
+                print(row(("warning", finding.message)))
             return 0
         print(row(("result", "invalid")))
         for finding in findings:
-            print(row((finding.field, finding.message)))
+            print(row((finding.field if finding.severity == "error" else "warning", finding.message)))
         return 1
     except KnowledgeError as exc:
         print(f"knowledge-cli: {exc}", file=sys.stderr)

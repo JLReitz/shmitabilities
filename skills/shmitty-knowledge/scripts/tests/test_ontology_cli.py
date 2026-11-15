@@ -11,6 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from knowledge_cli.commands import main
+from knowledge_cli.migration import _convert_ontology
 
 
 VOCABULARY = """\
@@ -52,13 +53,25 @@ Root.
         (self.root / "axioms.ttl").write_text("")
         bundle = self.root / "topic"
         bundle.mkdir()
-        self._concept(bundle / "index.md", ["topic", "Group"],
+        (bundle / "ontology.ttl").write_text(
+            "@prefix ex: <https://example.org/> .\n"
+            "@prefix owl: <http://www.w3.org/2002/07/owl#> .\n"
+            "ex:Rover a owl:Class .\n")
+        self._concept(bundle / "index.md", ["topic", "Rover"],
                       "Topic.\n\n---\n\n# Contents\n\n"
                       "- [Rover](rover.md)\n- [Sensor](sensor.md)\n")
         self.rover = bundle / "rover.md"
         self.sensor = bundle / "sensor.md"
         self._concept(self.rover, ["topic", "Rover"], "")
         self._concept(self.sensor, ["topic", "Sensor"], "")
+
+    def sync_ontology(self):
+        output = self.root / "ontology.ttl"
+        output.unlink(missing_ok=True)
+        text, conflicts = _convert_ontology(self.root)
+        if conflicts:
+            raise AssertionError(conflicts)
+        output.write_text(text)
 
     def tearDown(self):
         self.directory.cleanup()
@@ -67,11 +80,16 @@ Root.
         path.write_text("---\ntype: Concept\ntitle: Example\n"
                         "description: Example concept.\n"
                         "tags: [" + ", ".join(tags) + "]\n"
+                        + ("topic_tag: Rover\n" if path.name == "index.md" else "")
+                        +
                         "history:\n  created: 2024-01-01T00:00:00Z\n"
                         "  updates: []\n---\n" + body,
                         encoding="utf-8")
 
     def _run(self, *args):
+        if any((self.root / name).exists() for name in
+               ("vocabulary.ttl", "requirements.ttl", "axioms.ttl")):
+            self.sync_ontology()
         output, errors = StringIO(), StringIO()
         with redirect_stdout(output), redirect_stderr(errors):
             code = main(list(args) + ["--root", str(self.root)])
@@ -138,20 +156,26 @@ ex:Rover owl:equivalentClass [ owl:complementOf ex:Sensor ] .
         self.assertIn("OWL 2 EL profile violation", output)
 
     def test_missing_root_ontology_file_is_verification_finding(self):
-        (self.root / "axioms.ttl").unlink()
+        self.sync_ontology()
+        (self.root / "ontology.ttl").unlink()
+        for name in ("vocabulary.ttl", "requirements.ttl", "axioms.ttl"):
+            (self.root / name).unlink()
         code, output, _ = self._run(
             "verify", "topic/rover.md", "--as-of", "2024-01-11T00:00:00Z"
         )
         self.assertEqual(code, 1)
-        self.assertIn("axioms.ttl: required ontology file is missing", output)
+        self.assertIn("ontology.ttl: required ontology file is missing", output)
 
     def test_turtle_error_identifies_file(self):
-        (self.root / "requirements.ttl").write_text("ex:broken [\n")
+        self.sync_ontology()
+        (self.root / "ontology.ttl").write_text("ex:broken [\n")
+        for name in ("vocabulary.ttl", "requirements.ttl", "axioms.ttl"):
+            (self.root / name).unlink()
         code, output, _ = self._run(
             "verify", "topic/rover.md", "--as-of", "2024-01-11T00:00:00Z"
         )
         self.assertEqual(code, 1)
-        self.assertIn("requirements.ttl: invalid Turtle", output)
+        self.assertIn("ontology.ttl: invalid Turtle", output)
 
     def test_multiple_links_repeat_requirement_without_recounting_it(self):
         second = self.root / "topic" / "sensor-two.md"

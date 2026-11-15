@@ -1,0 +1,1633 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix sk: <urn:shmitty:knowledge:> .
+@prefix ns2: <http://schema.org/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+sosa:ActuatableProperty a rdfs:Class,
+        owl:Class ;
+    rdfs:label "Actuatable Property"@en ;
+    rdfs:comment "An actuatable quality (property, characteristic) of a FeatureOfInterest."@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "An actuatable quality (property, characteristic) of a FeatureOfInterest."@en ;
+    skos:example "A window actuator acts by changing the state between a frame and a window. The ability of the window to be opened and closed is its ActuatableProperty."@en .
+
+sosa:Actuation a rdfs:Class,
+        owl:Class ;
+    rdfs:label "Actuation"@en ;
+    rdfs:comment "An Actuation carries out an (Actuation) Procedure to change the state of the world using an Actuator."@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "An Actuation carries out an (Actuation) Procedure to change the state of the world using an Actuator."@en ;
+    skos:example "The activity of automatically closing a window if the temperature in a room drops below 20 degree Celsius. The activity is the Actuation and the device that closes the window is the Actuator. The Procedure is the rule, plan, or specification that defines the conditions that triggers the Actuation, here a drop in temperature. "@en .
+
+sosa:Actuator a rdfs:Class,
+        owl:Class ;
+    rdfs:label "Actuator"@en ;
+    rdfs:comment "A device that is used by, or implements, an (Actuation) Procedure that changes the state of the world."@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "A device that is used by, or implements, an (Actuation) Procedure that changes the state of the world."@en ;
+    skos:example "A window actuator for automatic window control, i.e., opening or closing the window."@en .
+
+sosa:FeatureOfInterest a rdfs:Class,
+        owl:Class ;
+    rdfs:label "Feature Of Interest"@en ;
+    rdfs:comment "The thing whose property is being estimated or calculated in the course of an Observation to arrive at a Result or whose property is being manipulated by an Actuator, or which is being sampled or transformed in an act of Sampling."@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "The thing whose property is being estimated or calculated in the course of an Observation to arrive at a Result or whose property is being manipulated by an Actuator, or which is being sampled or transformed in an act of Sampling."@en ;
+    skos:example "When measuring the height of a tree, the height is the observed ObservableProperty, 20m may be the Result of the Observation, and the tree is the FeatureOfInterest. A window is a FeatureOfInterest for an automatic window control Actuator."@en .
+
+sosa:ObservableProperty a rdfs:Class,
+        owl:Class ;
+    rdfs:label "Observable Property"@en ;
+    rdfs:comment "An observable quality (property, characteristic) of a FeatureOfInterest."@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "An observable quality (property, characteristic) of a FeatureOfInterest."@en ;
+    skos:example "The height of a tree, the depth of a water body, or the temperature of a surface are examples of observable properties, while the value of a classic car is not (directly) observable but asserted."@en .
+
+sosa:Observation a rdfs:Class,
+        owl:Class ;
+    rdfs:label "Observation"@en ;
+    rdfs:comment "Act of carrying out an (Observation) Procedure to estimate or calculate a value of a property of a FeatureOfInterest. Links to a Sensor to describe what made the Observation and how; links to an ObservableProperty to describe what the result is an estimate of, and to a FeatureOfInterest to detail what that property was associated with."@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "Act of carrying out an (Observation) Procedure to estimate or calculate a value of a property of a FeatureOfInterest. Links to a Sensor to describe what made the Observation and how; links to an ObservableProperty to describe what the result is an estimate of, and to a FeatureOfInterest to detail what that property was associated with."@en ;
+    skos:example "The activity of estimating the intensity of an Earthquake using the Mercalli intensity scale is an Observation as is measuring the moment magnitude, i.e., the energy released by said earthquake."@en .
+
+sosa:Platform a rdfs:Class,
+        owl:Class ;
+    rdfs:label "Platform"@en ;
+    rdfs:comment "A Platform is an entity that hosts other entities, particularly Sensors, Actuators, Samplers, and other Platforms."@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "A Platform is an entity that hosts other entities, particularly Sensors, Actuators, Samplers, and other Platforms."@en ;
+    skos:example "A post, buoy, vehicle, ship, aircraft, satellite, cell-phone, human or animal may act as platforms for (technical or biological) sensors or actuators."@en .
+
+sosa:Procedure a rdfs:Class,
+        owl:Class ;
+    rdfs:label "Procedure"@en ;
+    rdfs:comment "A workflow, protocol, plan, algorithm, or computational method specifying how to make an Observation, create a Sample, or make a change to the state of the world (via an Actuator). A Procedure is re-usable, and might be involved in many Observations, Samplings, or Actuations. It explains the steps to be carried out to arrive at reproducible results."@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "A workflow, protocol, plan, algorithm, or computational method specifying how to make an Observation, create a Sample, or make a change to the state of the world (via an Actuator). A Procedure is re-usable, and might be involved in many Observations, Samplings, or Actuations. It explains the steps to be carried out to arrive at reproducible results."@en ;
+    skos:example "The measured wind speed differs depending on the height of the sensor above the surface, e.g., due to friction. Consequently, procedures for measuring wind speed define a standard height for anemometers above ground, typically 10m for meteorological measures and 2m in Agrometeorology. This definition of height, sensor placement, and so forth are defined by the Procedure."@en ;
+    skos:note "Many observations may be created via the same Procedure, the same way as many tables are assembled using the same instructions (as information objects, not their concrete realization)."@en .
+
+sosa:Result a rdfs:Class,
+        owl:Class ;
+    rdfs:label "Result"@en ;
+    rdfs:comment "The Result of an Observation, Actuation, or act of Sampling. To store an observation's simple result value one can use the hasSimpleResult property."@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "The Result of an Observation, Actuation, or act of Sampling. To store an observation's simple result value one can use the hasSimpleResult property."@en ;
+    skos:example "The value 20 as the height of a certain tree together with the unit, e.g., Meter."@en .
+
+sosa:Sample a rdfs:Class,
+        owl:Class ;
+    rdfs:label "Sample"@en ;
+    rdfs:comment "A Sample is the result from an act of Sampling."@en,
+        "Feature which is intended to be representative of a FeatureOfInterest on which Observations may be made."@en,
+        "Physical samples are sometimes known as 'specimens'."@en,
+        """Samples are artifacts of an observational strategy, and have no significant function outside of their role in the observation process. The characteristics of the samples themselves are of little interest, except perhaps to the manager of a sampling campaign.
+
+A Sample is intended to sample some FatureOfInterest, so there is an expectation of at least one isSampleOf property. However, in some cases the identity, and even the exact type, of the sampled feature may not be known when observations are made using the sampling features."""@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "Feature which is intended to be representative of a FeatureOfInterest on which Observations may be made."@en ;
+    skos:example "A 'station' is essentially an identifiable locality where a sensor system or Procedure may be deployed and an observation made. In the context of the observation model, it connotes the 'world in the vicinity of the station', so the observed properties relate to the physical medium at the station, and not to any physical artifact such as a mooring, buoy, benchmark, monument, well, etc."@en,
+        "A statistical sample is often designed to be characteristic of an entire population, so that observations can be made regarding the sample that provide a good estimate of the properties of the population."@en ;
+    skos:note "A transient sample, such as a ships-track or flight-line, might be identified and described, but is unlikely to be revisited exactly."@en .
+
+sosa:Sampler a rdfs:Class,
+        owl:Class ;
+    rdfs:label "Sampler"@en ;
+    rdfs:comment "A device that is used by, or implements, a Sampling Procedure to create or transform one or more samples."@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "A device that is used by, or implements, a Sampling Procedure to create or transform one or more samples."@en ;
+    skos:example "A ball mill, diamond drill, hammer, hypodermic syringe and needle, image Sensor or a soil auger can all act as sampling devices (i.e., be Samplers). However, sometimes the distinction between the Sampler and the Sensor is not evident, as they are packaged as a unit. A Sampler need not be a physical device."@en .
+
+sosa:Sampling a rdfs:Class,
+        owl:Class ;
+    rdfs:label "Sampling"@en ;
+    rdfs:comment "An act of Sampling carries out a sampling Procedure to create or transform one or more samples."@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "An act of Sampling carries out a sampling Procedure to create or transform one or more samples."@en ;
+    skos:example "Crushing a rock sample in a ball mill."@en,
+        "Digging a pit through a soil sequence."@en,
+        "Dividing a field site into quadrants."@en,
+        "Drawing blood from a patient."@en,
+        "Drilling an observation well."@en,
+        "Establishing a station for environmental monitoring."@en,
+        "Registering an image of the landscape."@en,
+        "Selecting a subset of a population."@en,
+        "Sieving a powder to separate the subset finer than 100-mesh."@en,
+        "Splitting a piece of drill-core to create two new samples."@en,
+        "Taking a diamond-drill core from a rock outcrop."@en .
+
+sosa:Sensor a rdfs:Class,
+        owl:Class ;
+    rdfs:label "Sensor"@en ;
+    rdfs:comment "Device, agent (including humans), or software (simulation) involved in, or implementing, a Procedure. Sensors respond to a stimulus, e.g., a change in the environment, or input data composed from the results of prior Observations, and generate a Result. Sensors can be hosted by Platforms."@en ;
+    rdfs:isDefinedBy sosa: ;
+    rdfs:subClassOf _:na94cee2228da475ca98eb450b021e5cdb1 ;
+    skos:definition "Device, agent (including humans), or software (simulation) involved in, or implementing, a Procedure. Sensors respond to a stimulus, e.g., a change in the environment, or input data composed from the results of prior Observations, and generate a Result. Sensors can be hosted by Platforms."@en ;
+    skos:example "Accelerometers, gyroscopes, barometers, magnetometers, and so forth are Sensors that are typically mounted on a modern smart phone (which acts as Platform). Other examples of sensors include the human eyes."@en .
+
+foaf:name a owl:AnnotationProperty .
+
+sk:role a owl:AnnotationProperty .
+
+dcterms:created a owl:AnnotationProperty .
+
+dcterms:creator a owl:AnnotationProperty .
+
+dcterms:description a owl:AnnotationProperty .
+
+dcterms:rights a owl:AnnotationProperty .
+
+dcterms:title a owl:AnnotationProperty .
+
+vann:preferredNamespacePrefix a owl:AnnotationProperty .
+
+vann:preferredNamespaceUri a owl:AnnotationProperty .
+
+foaf:Agent a owl:Class .
+
+dcterms:license a owl:AnnotationProperty .
+
+<http://purl.org/vocommons/voaf#Vocabulary> a owl:Class .
+
+skos:note a owl:AnnotationProperty .
+
+time:TemporalEntity a owl:Class .
+
+sosa:observedProperty a owl:ObjectProperty ;
+    rdfs:label "observed property"@en ;
+    ns2:domainIncludes sosa:Observation ;
+    ns2:rangeIncludes sosa:ObservableProperty ;
+    rdfs:comment "Relation linking an Observation to the property that was observed. The ObservableProperty should be a property of the FeatureOfInterest (linked by hasFeatureOfInterest) of this Observation."@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "Relation linking an Observation to the property that was observed. The ObservableProperty should be a property of the FeatureOfInterest (linked by hasFeatureOfInterest) of this Observation."@en .
+
+sosa:hasSimpleResult a owl:DatatypeProperty ;
+    rdfs:label "has simple result"@en ;
+    ns2:domainIncludes sosa:Actuation,
+        sosa:Observation,
+        sosa:Sampling ;
+    rdfs:comment "The simple value of an Observation or Actuation or act of Sampling."@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "The simple value of an Observation or Actuation or act of Sampling."@en ;
+    skos:example "For instance, the values 23 or true."@en .
+
+sosa:phenomenonTime a owl:ObjectProperty ;
+    rdfs:label "phenomenon time"@en ;
+    ns2:domainIncludes sosa:Actuation,
+        sosa:Observation,
+        sosa:Sampling ;
+    ns2:rangeIncludes time:TemporalEntity ;
+    rdfs:comment "The time that the Result of an Observation, Actuation or Sampling applies to the FeatureOfInterest. Not necessarily the same as the resultTime. May be an Interval or an Instant, or some other compound TemporalEntity."@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "The time that the Result of an Observation, Actuation or Sampling applies to the FeatureOfInterest. Not necessarily the same as the resultTime. May be an Interval or an Instant, or some other compound TemporalEntity."@en .
+
+sosa:resultTime a owl:DatatypeProperty ;
+    rdfs:label "result time"@en ;
+    ns2:domainIncludes sosa:Actuation,
+        sosa:Observation,
+        sosa:Sampling ;
+    rdfs:comment "The result time is the instant of time when the Observation, Actuation or Sampling activity was completed."@en ;
+    rdfs:isDefinedBy sosa: ;
+    rdfs:range xsd:dateTime ;
+    skos:definition "The result time is the instant of time when the Observation, Actuation or Sampling activity was completed."@en .
+
+sosa:usedProcedure a owl:ObjectProperty ;
+    rdfs:label "used procedure"@en ;
+    ns2:domainIncludes sosa:Actuation,
+        sosa:Observation,
+        sosa:Sampling ;
+    ns2:rangeIncludes sosa:Procedure ;
+    rdfs:comment "A relation to link to a re-usable Procedure used in making an Observation, an Actuation, or a Sample, typically through a Sensor, Actuator or Sampler."@en ;
+    rdfs:isDefinedBy sosa: ;
+    skos:definition "A relation to link to a re-usable Procedure used in making an Observation, an Actuation, or a Sample, typically through a Sensor, Actuator or Sampler."@en .
+
+sosa:hasSample a owl:ObjectProperty ;
+    rdfs:label "has sample"@en ;
+    ns2:domainIncludes sosa:FeatureOfInterest ;
+    ns2:rangeIncludes sosa:Sample ;
+    rdfs:comment "Relation between a FeatureOfInterest and the Sample used to represent it."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:isSampleOf ;
+    skos:definition "Relation between a FeatureOfInterest and the Sample used to represent it."@en .
+
+sosa:isObservedBy a owl:ObjectProperty ;
+    rdfs:label "is observed by"@en ;
+    ns2:domainIncludes sosa:ObservableProperty ;
+    ns2:rangeIncludes sosa:Sensor ;
+    rdfs:comment "Relation between an ObservableProperty and the Sensor able to observe it."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:observes ;
+    skos:definition "Relation between an ObservableProperty and the Sensor able to observe it."@en .
+
+sosa:isSampleOf a owl:ObjectProperty ;
+    rdfs:label "is sample of"@en ;
+    ns2:domainIncludes sosa:Sample ;
+    ns2:rangeIncludes sosa:FeatureOfInterest ;
+    rdfs:comment "Relation from a Sample to the FeatureOfInterest that it is intended to be representative of."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:hasSample ;
+    skos:definition "Relation from a Sample to the FeatureOfInterest that it is intended to be representative of."@en .
+
+sosa:madeActuation a owl:ObjectProperty ;
+    rdfs:label "made actuation"@en ;
+    ns2:domainIncludes sosa:Actuator ;
+    ns2:rangeIncludes sosa:Actuation ;
+    rdfs:comment "Relation between an Actuator and the Actuation it has made."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:madeByActuator ;
+    skos:definition "Relation between an Actuator and the Actuation it has made."@en .
+
+sosa:madeByActuator a owl:ObjectProperty ;
+    rdfs:label "made by actuator"@en ;
+    ns2:domainIncludes sosa:Actuation ;
+    ns2:rangeIncludes sosa:Actuator ;
+    rdfs:comment "Relation linking an Actuation to the Actuator that made that Actuation."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:madeActuation ;
+    skos:definition "Relation linking an Actuation to the Actuator that made that Actuation."@en .
+
+sosa:madeBySampler a owl:ObjectProperty ;
+    rdfs:label "made by sampler"@en ;
+    ns2:domainIncludes sosa:Sampling ;
+    ns2:rangeIncludes sosa:Sampler ;
+    rdfs:comment "Relation linking an act of Sampling to the Sampler (sampling device or entity) that made it."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:madeSampling ;
+    skos:definition "Relation linking an act of Sampling to the Sampler (sampling device or entity) that made it."@en .
+
+sosa:madeBySensor a owl:ObjectProperty ;
+    rdfs:label "made by sensor"@en ;
+    ns2:domainIncludes sosa:Observation ;
+    ns2:rangeIncludes sosa:Sensor ;
+    rdfs:comment "Relation between an Observation and the Sensor which made the Observation."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:madeObservation ;
+    skos:definition "Relation between an Observation and the Sensor which made the Observation."@en .
+
+sosa:madeSampling a owl:ObjectProperty ;
+    rdfs:label "made sampling"@en ;
+    ns2:domainIncludes sosa:Sampler ;
+    ns2:rangeIncludes sosa:Sampling ;
+    rdfs:comment "Relation between a Sampler (sampling device or entity) and the Sampling act it performed."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:madeBySampler ;
+    skos:definition "Relation between a Sampler (sampling device or entity) and the Sampling act it performed."@en .
+
+sosa:observes a owl:ObjectProperty ;
+    rdfs:label "observes"@en ;
+    ns2:domainIncludes sosa:Sensor ;
+    ns2:rangeIncludes sosa:ObservableProperty ;
+    rdfs:comment "Relation between a Sensor and an ObservableProperty that it is capable of sensing."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:isObservedBy ;
+    skos:definition "Relation between a Sensor and an ObservableProperty that it is capable of sensing."@en .
+
+sosa:actsOnProperty a owl:ObjectProperty ;
+    rdfs:label "acts on property"@en ;
+    ns2:domainIncludes sosa:Actuation ;
+    ns2:rangeIncludes sosa:ActuatableProperty ;
+    rdfs:comment "Relation between an Actuation and the property of a FeatureOfInterest it is acting upon."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:isActedOnBy ;
+    skos:definition "Relation between an Actuation and the property of a FeatureOfInterest it is acting upon."@en ;
+    skos:example "In the activity (Actuation) of automatically closing a window if the temperature in a room drops below 20 degrees Celsius, the property on which the Actuator acts upon is the state of the window as it changes from being open to being closed. "@en .
+
+sosa:isActedOnBy a owl:ObjectProperty ;
+    rdfs:label "is acted on by"@en ;
+    ns2:domainIncludes sosa:ActuatableProperty ;
+    ns2:rangeIncludes sosa:Actuation ;
+    rdfs:comment "Relation between an ActuatableProperty of a FeatureOfInterest and an Actuation changing its state."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:actsOnProperty ;
+    skos:definition "Relation between an ActuatableProperty of a FeatureOfInterest and an Actuation changing its state."@en ;
+    skos:example "In the activity (Actuation) of automatically closing a window if the temperature in a room drops below 20 degrees Celsius, the property on which the Actuator acts upon is the state of the window as it changes from being open to being closed. "@en .
+
+sosa:madeObservation a owl:ObjectProperty ;
+    rdfs:label "made observation"@en ;
+    ns2:domainIncludes sosa:Sensor ;
+    ns2:rangeIncludes sosa:Observation ;
+    rdfs:comment "Relation between a Sensor and an Observation made by the Sensor."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:madeBySensor ;
+    skos:definition "Relation between a Sensor and an Observation made by the Sensor."@en .
+
+sosa:hasResult a owl:ObjectProperty ;
+    rdfs:label "has result"@en ;
+    ns2:domainIncludes sosa:Actuation,
+        sosa:Observation,
+        sosa:Sampling ;
+    ns2:rangeIncludes sosa:Result,
+        sosa:Sample ;
+    rdfs:comment "Relation linking an Observation or Actuation or act of Sampling and a Result or Sample."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:isResultOf ;
+    skos:definition "Relation linking an Observation or Actuation or act of Sampling and a Result or Sample."@en .
+
+sosa:hosts a owl:ObjectProperty ;
+    rdfs:label "hosts"@en ;
+    ns2:domainIncludes sosa:Platform ;
+    ns2:rangeIncludes sosa:Actuator,
+        sosa:Platform,
+        sosa:Sampler,
+        sosa:Sensor ;
+    rdfs:comment "Relation between a Platform and a Sensor, Actuator, Sampler, or Platform, hosted or mounted on it."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:isHostedBy ;
+    skos:definition "Relation between a Platform and a Sensor, Actuator, Sampler, or Platform, hosted or mounted on it."@en .
+
+sosa:isFeatureOfInterestOf a owl:ObjectProperty ;
+    rdfs:label "is feature of interest of"@en ;
+    ns2:domainIncludes sosa:FeatureOfInterest,
+        sosa:Sample ;
+    ns2:rangeIncludes sosa:Actuation,
+        sosa:Observation,
+        sosa:Sampling ;
+    rdfs:comment "A relation between a FeatureOfInterest and an Observation about it, an Actuation acting on it, or an act of Sampling that sampled it."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:hasFeatureOfInterest ;
+    skos:definition "A relation between a FeatureOfInterest and an Observation about it, an Actuation acting on it, or an act of Sampling that sampled it."@en .
+
+sosa:isHostedBy a owl:ObjectProperty ;
+    rdfs:label "is hosted by"@en ;
+    ns2:domainIncludes sosa:Actuator,
+        sosa:Platform,
+        sosa:Sampler,
+        sosa:Sensor ;
+    ns2:rangeIncludes sosa:Platform ;
+    rdfs:comment "Relation between a Sensor, Actuator, Sampler, or Platform, and the Platform that it is mounted on or hosted by."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:hosts ;
+    skos:definition "Relation between a Sensor, Actuator, Sampler, or Platform, and the Platform that it is mounted on or hosted by."@en .
+
+sosa:isResultOf a owl:ObjectProperty ;
+    rdfs:label "is result of"@en ;
+    ns2:domainIncludes sosa:Result,
+        sosa:Sample ;
+    ns2:rangeIncludes sosa:Actuation,
+        sosa:Observation,
+        sosa:Sampling ;
+    rdfs:comment "Relation linking a Result to the Observation or Actuation or act of Sampling that created or caused it."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:hasResult ;
+    skos:definition "Relation linking a Result to the Observation or Actuation or act of Sampling that created or caused it."@en .
+
+sosa:hasFeatureOfInterest a owl:ObjectProperty ;
+    rdfs:label "has feature of interest"@en ;
+    ns2:domainIncludes sosa:Actuation,
+        sosa:Observation,
+        sosa:Sampling ;
+    ns2:rangeIncludes sosa:FeatureOfInterest,
+        sosa:Sample ;
+    rdfs:comment "A relation between an Observation and the entity whose quality was observed, or between an Actuation and the entity whose property was modified, or between an act of Sampling and the entity that was sampled."@en ;
+    rdfs:isDefinedBy sosa: ;
+    owl:inverseOf sosa:isFeatureOfInterestOf ;
+    skos:definition "A relation between an Observation and the entity whose quality was observed, or between an Actuation and the entity whose property was modified, or between an act of Sampling and the entity that was sampled."@en ;
+    skos:example "For example, in an Observation of the weight of a person, the FeatureOfInterest is the person and the property is its weight."@en .
+
+skos:example a owl:AnnotationProperty .
+
+ns2:rangeIncludes a owl:AnnotationProperty .
+
+skos:definition a owl:AnnotationProperty .
+
+ns2:domainIncludes a owl:AnnotationProperty .
+
+sosa: a <http://purl.org/vocommons/voaf#Vocabulary>,
+        owl:Ontology ;
+    dcterms:created "2017-04-17"^^xsd:date ;
+    dcterms:creator _:n3b38a14ef9f34368b35f1c8d8c2f445fb1 ;
+    dcterms:description "This ontology is based on the SSN Ontology by the W3C Semantic Sensor Networks Incubator Group (SSN-XG), together with considerations from the W3C/OGC Spatial Data on the Web Working Group."@en ;
+    dcterms:license <http://www.opengeospatial.org/ogc/Software>,
+        <http://www.w3.org/Consortium/Legal/2015/copyright-software-and-document> ;
+    dcterms:rights "Copyright 2017 W3C/OGC." ;
+    dcterms:title "Sensor, Observation, Sample, and Actuator (SOSA) Ontology"@en ;
+    vann:preferredNamespacePrefix "sosa" ;
+    vann:preferredNamespaceUri "http://www.w3.org/ns/sosa/" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:observedProperty ;
+    owl:annotatedTarget sosa:Observation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:hasSimpleResult ;
+    owl:annotatedTarget "The simple value of an Observation or Actuation or act of Sampling."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:hasFeatureOfInterest ;
+    owl:annotatedTarget sosa:Sampling ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:actsOnProperty ;
+    owl:annotatedTarget sosa:isActedOnBy ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:isResultOf ;
+    owl:annotatedTarget sosa:Actuation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:isHostedBy ;
+    owl:annotatedTarget sosa:hosts ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:observes ;
+    owl:annotatedTarget sosa:ObservableProperty ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:isHostedBy ;
+    owl:annotatedTarget sosa:Platform ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty vann:preferredNamespacePrefix ;
+    owl:annotatedSource sosa: ;
+    owl:annotatedTarget "sosa" ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:phenomenonTime ;
+    owl:annotatedTarget time:TemporalEntity ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:hasSimpleResult ;
+    owl:annotatedTarget sosa:Observation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:isActedOnBy ;
+    owl:annotatedTarget "Relation between an ActuatableProperty of a FeatureOfInterest and an Actuation changing its state."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:Actuation ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:madeBySampler ;
+    owl:annotatedTarget sosa:Sampler ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:resultTime ;
+    owl:annotatedTarget sosa:Sampling ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty dcterms:license ;
+    owl:annotatedSource sosa: ;
+    owl:annotatedTarget <http://www.opengeospatial.org/ogc/Software> ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:range ;
+    owl:annotatedSource sosa:resultTime ;
+    owl:annotatedTarget xsd:dateTime ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:hosts ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:isSampleOf ;
+    owl:annotatedTarget sosa:hasSample ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:madeObservation ;
+    owl:annotatedTarget sosa:Sensor ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:madeBySensor ;
+    owl:annotatedTarget "Relation between an Observation and the Sensor which made the Observation."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:Result ;
+    owl:annotatedTarget "The Result of an Observation, Actuation, or act of Sampling. To store an observation's simple result value one can use the hasSimpleResult property."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdf:type ;
+    owl:annotatedSource sosa: ;
+    owl:annotatedTarget <http://purl.org/vocommons/voaf#Vocabulary> ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:hosts ;
+    owl:annotatedTarget sosa:Platform ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:usedProcedure ;
+    owl:annotatedTarget sosa:Sampling ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:hasFeatureOfInterest ;
+    owl:annotatedTarget sosa:Actuation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Sampling ;
+    owl:annotatedTarget "Establishing a station for environmental monitoring."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:phenomenonTime ;
+    owl:annotatedTarget sosa:Observation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty dcterms:license ;
+    owl:annotatedSource sosa: ;
+    owl:annotatedTarget <http://www.w3.org/Consortium/Legal/2015/copyright-software-and-document> ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Sampling ;
+    owl:annotatedTarget "Dividing a field site into quadrants."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Sampling ;
+    owl:annotatedTarget "Registering an image of the landscape."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:madeByActuator ;
+    owl:annotatedTarget "Relation linking an Actuation to the Actuator that made that Actuation."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:actsOnProperty ;
+    owl:annotatedTarget "In the activity (Actuation) of automatically closing a window if the temperature in a room drops below 20 degrees Celsius, the property on which the Actuator acts upon is the state of the window as it changes from being open to being closed. "@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:Procedure ;
+    owl:annotatedTarget "A workflow, protocol, plan, algorithm, or computational method specifying how to make an Observation, create a Sample, or make a change to the state of the world (via an Actuator). A Procedure is re-usable, and might be involved in many Observations, Samplings, or Actuations. It explains the steps to be carried out to arrive at reproducible results."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:ActuatableProperty ;
+    owl:annotatedTarget "A window actuator acts by changing the state between a frame and a window. The ability of the window to be opened and closed is its ActuatableProperty."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:isResultOf ;
+    owl:annotatedTarget sosa:Result ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:madeBySensor ;
+    owl:annotatedTarget sosa:Observation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Sampling ;
+    owl:annotatedTarget "Crushing a rock sample in a ball mill."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:madeActuation ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Sample ;
+    owl:annotatedTarget "A statistical sample is often designed to be characteristic of an entire population, so that observations can be made regarding the sample that provide a good estimate of the properties of the population."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:isSampleOf ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Actuator ;
+    owl:annotatedTarget "A window actuator for automatic window control, i.e., opening or closing the window."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:madeObservation ;
+    owl:annotatedTarget sosa:Observation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:isFeatureOfInterestOf ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Sample ;
+    owl:annotatedTarget "A 'station' is essentially an identifiable locality where a sensor system or Procedure may be deployed and an observation made. In the context of the observation model, it connotes the 'world in the vicinity of the station', so the observed properties relate to the physical medium at the station, and not to any physical artifact such as a mooring, buoy, benchmark, monument, well, etc."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:isFeatureOfInterestOf ;
+    owl:annotatedTarget sosa:hasFeatureOfInterest ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:usedProcedure ;
+    owl:annotatedTarget sosa:Actuation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:madeObservation ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:isResultOf ;
+    owl:annotatedTarget sosa:Sample ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:madeActuation ;
+    owl:annotatedTarget "Relation between an Actuator and the Actuation it has made."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:isHostedBy ;
+    owl:annotatedTarget sosa:Sensor ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:madeByActuator ;
+    owl:annotatedTarget sosa:madeActuation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:hasSample ;
+    owl:annotatedTarget "Relation between a FeatureOfInterest and the Sample used to represent it."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:madeActuation ;
+    owl:annotatedTarget sosa:madeByActuator ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:observes ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty dcterms:created ;
+    owl:annotatedSource sosa: ;
+    owl:annotatedTarget "2017-04-17"^^xsd:date ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:hasSample ;
+    owl:annotatedTarget sosa:Sample ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Result ;
+    owl:annotatedTarget "The value 20 as the height of a certain tree together with the unit, e.g., Meter."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:observedProperty ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Sensor ;
+    owl:annotatedTarget "Accelerometers, gyroscopes, barometers, magnetometers, and so forth are Sensors that are typically mounted on a modern smart phone (which acts as Platform). Other examples of sensors include the human eyes."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:isHostedBy ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:isResultOf ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Sampling ;
+    owl:annotatedTarget "Digging a pit through a soil sequence."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:hosts ;
+    owl:annotatedTarget sosa:Sensor ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:hasResult ;
+    owl:annotatedTarget sosa:isResultOf ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:madeByActuator ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:ActuatableProperty ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Sampling ;
+    owl:annotatedTarget "Taking a diamond-drill core from a rock outcrop."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:hasResult ;
+    owl:annotatedTarget "Relation linking an Observation or Actuation or act of Sampling and a Result or Sample."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:hasFeatureOfInterest ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:resultTime ;
+    owl:annotatedTarget "The result time is the instant of time when the Observation, Actuation or Sampling activity was completed."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:hasSimpleResult ;
+    owl:annotatedTarget "For instance, the values 23 or true."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:Sampling ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:isActedOnBy ;
+    owl:annotatedTarget sosa:Actuation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:Platform ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:usedProcedure ;
+    owl:annotatedTarget sosa:Procedure ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:hasResult ;
+    owl:annotatedTarget sosa:Observation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:observes ;
+    owl:annotatedTarget sosa:Sensor ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Sampler ;
+    owl:annotatedTarget "A ball mill, diamond drill, hammer, hypodermic syringe and needle, image Sensor or a soil auger can all act as sampling devices (i.e., be Samplers). However, sometimes the distinction between the Sampler and the Sensor is not evident, as they are packaged as a unit. A Sampler need not be a physical device."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:phenomenonTime ;
+    owl:annotatedTarget sosa:Actuation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:isActedOnBy ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:Actuator ;
+    owl:annotatedTarget "A device that is used by, or implements, an (Actuation) Procedure that changes the state of the world."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:isHostedBy ;
+    owl:annotatedTarget sosa:Actuator ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:isObservedBy ;
+    owl:annotatedTarget "Relation between an ObservableProperty and the Sensor able to observe it."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:isHostedBy ;
+    owl:annotatedTarget "Relation between a Sensor, Actuator, Sampler, or Platform, and the Platform that it is mounted on or hosted by."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:isResultOf ;
+    owl:annotatedTarget sosa:hasResult ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:resultTime ;
+    owl:annotatedTarget sosa:Observation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:resultTime ;
+    owl:annotatedTarget sosa:Actuation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:ObservableProperty ;
+    owl:annotatedTarget "The height of a tree, the depth of a water body, or the temperature of a surface are examples of observable properties, while the value of a classic car is not (directly) observable but asserted."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty dcterms:title ;
+    owl:annotatedSource sosa: ;
+    owl:annotatedTarget "Sensor, Observation, Sample, and Actuator (SOSA) Ontology"@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:hasSample ;
+    owl:annotatedTarget sosa:isSampleOf ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:actsOnProperty ;
+    owl:annotatedTarget sosa:ActuatableProperty ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:isActedOnBy ;
+    owl:annotatedTarget "In the activity (Actuation) of automatically closing a window if the temperature in a room drops below 20 degrees Celsius, the property on which the Actuator acts upon is the state of the window as it changes from being open to being closed. "@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:FeatureOfInterest ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:actsOnProperty ;
+    owl:annotatedTarget sosa:Actuation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:hasResult ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:hosts ;
+    owl:annotatedTarget "Relation between a Platform and a Sensor, Actuator, Sampler, or Platform, hosted or mounted on it."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Observation ;
+    owl:annotatedTarget "The activity of estimating the intensity of an Earthquake using the Mercalli intensity scale is an Observation as is measuring the moment magnitude, i.e., the energy released by said earthquake."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:hasResult ;
+    owl:annotatedTarget sosa:Sampling ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:ActuatableProperty ;
+    owl:annotatedTarget "An actuatable quality (property, characteristic) of a FeatureOfInterest."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:isSampleOf ;
+    owl:annotatedTarget sosa:FeatureOfInterest ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:madeObservation ;
+    owl:annotatedTarget sosa:madeBySensor ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:hasFeatureOfInterest ;
+    owl:annotatedTarget sosa:Observation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:madeByActuator ;
+    owl:annotatedTarget sosa:Actuation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:isObservedBy ;
+    owl:annotatedTarget sosa:observes ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:madeActuation ;
+    owl:annotatedTarget sosa:Actuator ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Platform ;
+    owl:annotatedTarget "A post, buoy, vehicle, ship, aircraft, satellite, cell-phone, human or animal may act as platforms for (technical or biological) sensors or actuators."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:note ;
+    owl:annotatedSource sosa:Procedure ;
+    owl:annotatedTarget "Many observations may be created via the same Procedure, the same way as many tables are assembled using the same instructions (as information objects, not their concrete realization)."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:madeByActuator ;
+    owl:annotatedTarget sosa:Actuator ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:hasSimpleResult ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:Sensor ;
+    owl:annotatedTarget "Device, agent (including humans), or software (simulation) involved in, or implementing, a Procedure. Sensors respond to a stimulus, e.g., a change in the environment, or input data composed from the results of prior Observations, and generate a Result. Sensors can be hosted by Platforms."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:madeBySensor ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:Platform ;
+    owl:annotatedTarget "A Platform is an entity that hosts other entities, particularly Sensors, Actuators, Samplers, and other Platforms."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:subClassOf ;
+    owl:annotatedSource sosa:Sensor ;
+    owl:annotatedTarget _:na94cee2228da475ca98eb450b021e5cdb1 ;
+    sk:role "Requirement" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:actsOnProperty ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:Sampler ;
+    owl:annotatedTarget "A device that is used by, or implements, a Sampling Procedure to create or transform one or more samples."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:hasFeatureOfInterest ;
+    owl:annotatedTarget "For example, in an Observation of the weight of a person, the FeatureOfInterest is the person and the property is its weight."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:Observation ;
+    owl:annotatedTarget "Act of carrying out an (Observation) Procedure to estimate or calculate a value of a property of a FeatureOfInterest. Links to a Sensor to describe what made the Observation and how; links to an ObservableProperty to describe what the result is an estimate of, and to a FeatureOfInterest to detail what that property was associated with."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:hasFeatureOfInterest ;
+    owl:annotatedTarget "A relation between an Observation and the entity whose quality was observed, or between an Actuation and the entity whose property was modified, or between an act of Sampling and the entity that was sampled."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:hasSimpleResult ;
+    owl:annotatedTarget sosa:Sampling ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:Sampler ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:phenomenonTime ;
+    owl:annotatedTarget "The time that the Result of an Observation, Actuation or Sampling applies to the FeatureOfInterest. Not necessarily the same as the resultTime. May be an Interval or an Instant, or some other compound TemporalEntity."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:isFeatureOfInterestOf ;
+    owl:annotatedTarget "A relation between a FeatureOfInterest and an Observation about it, an Actuation acting on it, or an act of Sampling that sampled it."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:madeBySampler ;
+    owl:annotatedTarget sosa:madeSampling ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty dcterms:rights ;
+    owl:annotatedSource sosa: ;
+    owl:annotatedTarget "Copyright 2017 W3C/OGC." ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:isFeatureOfInterestOf ;
+    owl:annotatedTarget sosa:Sampling ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:Sampling ;
+    owl:annotatedTarget "An act of Sampling carries out a sampling Procedure to create or transform one or more samples."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:madeSampling ;
+    owl:annotatedTarget sosa:Sampler ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:hasFeatureOfInterest ;
+    owl:annotatedTarget sosa:FeatureOfInterest ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:isActedOnBy ;
+    owl:annotatedTarget sosa:actsOnProperty ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:isResultOf ;
+    owl:annotatedTarget "Relation linking a Result to the Observation or Actuation or act of Sampling that created or caused it."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:madeObservation ;
+    owl:annotatedTarget "Relation between a Sensor and an Observation made by the Sensor."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:madeActuation ;
+    owl:annotatedTarget sosa:Actuation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:madeSampling ;
+    owl:annotatedTarget sosa:Sampling ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:madeBySensor ;
+    owl:annotatedTarget sosa:Sensor ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty vann:preferredNamespaceUri ;
+    owl:annotatedSource sosa: ;
+    owl:annotatedTarget "http://www.w3.org/ns/sosa/" ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:Sample ;
+    owl:annotatedTarget "Feature which is intended to be representative of a FeatureOfInterest on which Observations may be made."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:hasSample ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:FeatureOfInterest ;
+    owl:annotatedTarget "When measuring the height of a tree, the height is the observed ObservableProperty, 20m may be the Result of the Observation, and the tree is the FeatureOfInterest. A window is a FeatureOfInterest for an automatic window control Actuator."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:isResultOf ;
+    owl:annotatedTarget sosa:Sampling ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:hasSample ;
+    owl:annotatedTarget sosa:FeatureOfInterest ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:isActedOnBy ;
+    owl:annotatedTarget sosa:ActuatableProperty ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:FeatureOfInterest ;
+    owl:annotatedTarget "The thing whose property is being estimated or calculated in the course of an Observation to arrive at a Result or whose property is being manipulated by an Actuator, or which is being sampled or transformed in an act of Sampling."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:hasResult ;
+    owl:annotatedTarget sosa:Actuation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty dcterms:creator ;
+    owl:annotatedSource sosa: ;
+    owl:annotatedTarget _:n3b38a14ef9f34368b35f1c8d8c2f445fb1 ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:isFeatureOfInterestOf ;
+    owl:annotatedTarget sosa:Observation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:madeBySampler ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:isObservedBy ;
+    owl:annotatedTarget sosa:ObservableProperty ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:phenomenonTime ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:hasFeatureOfInterest ;
+    owl:annotatedTarget sosa:Sample ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:note ;
+    owl:annotatedSource sosa:Sample ;
+    owl:annotatedTarget "A transient sample, such as a ships-track or flight-line, might be identified and described, but is unlikely to be revisited exactly."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Sampling ;
+    owl:annotatedTarget "Drawing blood from a patient."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty dcterms:description ;
+    owl:annotatedSource sosa: ;
+    owl:annotatedTarget "This ontology is based on the SSN Ontology by the W3C Semantic Sensor Networks Incubator Group (SSN-XG), together with considerations from the W3C/OGC Spatial Data on the Web Working Group."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:madeBySensor ;
+    owl:annotatedTarget sosa:madeObservation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:isHostedBy ;
+    owl:annotatedTarget sosa:Platform ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:usedProcedure ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:hasFeatureOfInterest ;
+    owl:annotatedTarget sosa:isFeatureOfInterestOf ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Actuation ;
+    owl:annotatedTarget "The activity of automatically closing a window if the temperature in a room drops below 20 degree Celsius. The activity is the Actuation and the device that closes the window is the Actuator. The Procedure is the rule, plan, or specification that defines the conditions that triggers the Actuation, here a drop in temperature. "@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:isFeatureOfInterestOf ;
+    owl:annotatedTarget sosa:Actuation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:Procedure ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:isSampleOf ;
+    owl:annotatedTarget sosa:Sample ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:usedProcedure ;
+    owl:annotatedTarget sosa:Observation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:hosts ;
+    owl:annotatedTarget sosa:Actuator ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:hosts ;
+    owl:annotatedTarget sosa:Sampler ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:hasResult ;
+    owl:annotatedTarget sosa:Sample ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:madeBySampler ;
+    owl:annotatedTarget sosa:Sampling ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:isObservedBy ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:isFeatureOfInterestOf ;
+    owl:annotatedTarget sosa:Sample ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:madeSampling ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:madeSampling ;
+    owl:annotatedTarget "Relation between a Sampler (sampling device or entity) and the Sampling act it performed."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:Sensor ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:observes ;
+    owl:annotatedTarget "Relation between a Sensor and an ObservableProperty that it is capable of sensing."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:ObservableProperty ;
+    owl:annotatedTarget "An observable quality (property, characteristic) of a FeatureOfInterest."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:isFeatureOfInterestOf ;
+    owl:annotatedTarget sosa:FeatureOfInterest ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:isResultOf ;
+    owl:annotatedTarget sosa:Observation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:madeSampling ;
+    owl:annotatedTarget sosa:madeBySampler ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:Actuator ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:phenomenonTime ;
+    owl:annotatedTarget sosa:Sampling ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:usedProcedure ;
+    owl:annotatedTarget "A relation to link to a re-usable Procedure used in making an Observation, an Actuation, or a Sample, typically through a Sensor, Actuator or Sampler."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:Result ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:hasResult ;
+    owl:annotatedTarget sosa:Result ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:observedProperty ;
+    owl:annotatedTarget "Relation linking an Observation to the property that was observed. The ObservableProperty should be a property of the FeatureOfInterest (linked by hasFeatureOfInterest) of this Observation."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:actsOnProperty ;
+    owl:annotatedTarget "Relation between an Actuation and the property of a FeatureOfInterest it is acting upon."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:ObservableProperty ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:isHostedBy ;
+    owl:annotatedTarget sosa:Sampler ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:isSampleOf ;
+    owl:annotatedTarget "Relation from a Sample to the FeatureOfInterest that it is intended to be representative of."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Sampling ;
+    owl:annotatedTarget "Selecting a subset of a population."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Sampling ;
+    owl:annotatedTarget "Sieving a powder to separate the subset finer than 100-mesh."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:Actuation ;
+    owl:annotatedTarget "An Actuation carries out an (Actuation) Procedure to change the state of the world using an Actuator."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Sampling ;
+    owl:annotatedTarget "Splitting a piece of drill-core to create two new samples."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:definition ;
+    owl:annotatedSource sosa:madeBySampler ;
+    owl:annotatedTarget "Relation linking an act of Sampling to the Sampler (sampling device or entity) that made it."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:observes ;
+    owl:annotatedTarget sosa:isObservedBy ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:isObservedBy ;
+    owl:annotatedTarget sosa:Sensor ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty owl:inverseOf ;
+    owl:annotatedSource sosa:hosts ;
+    owl:annotatedTarget sosa:isHostedBy ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:Observation ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:resultTime ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Sampling ;
+    owl:annotatedTarget "Drilling an observation well."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty rdfs:isDefinedBy ;
+    owl:annotatedSource sosa:Sample ;
+    owl:annotatedTarget sosa: ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:domainIncludes ;
+    owl:annotatedSource sosa:hasSimpleResult ;
+    owl:annotatedTarget sosa:Actuation ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty skos:example ;
+    owl:annotatedSource sosa:Procedure ;
+    owl:annotatedTarget "The measured wind speed differs depending on the height of the sensor above the surface, e.g., due to friction. Consequently, procedures for measuring wind speed define a standard height for anemometers above ground, typically 10m for meteorological measures and 2m in Agrometeorology. This definition of height, sensor placement, and so forth are defined by the Procedure."@en ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:hosts ;
+    owl:annotatedTarget sosa:Platform ;
+    sk:role "Inference" .
+
+[] a owl:Axiom ;
+    owl:annotatedProperty ns2:rangeIncludes ;
+    owl:annotatedSource sosa:observedProperty ;
+    owl:annotatedTarget sosa:ObservableProperty ;
+    sk:role "Inference" .
+
+_:n3b38a14ef9f34368b35f1c8d8c2f445fb1 a foaf:Agent ;
+    foaf:name "W3C/OGC Spatial Data on the Web Working Group"@en .
+
+_:na94cee2228da475ca98eb450b021e5cdb1 a owl:Restriction ;
+    owl:onProperty sosa:madeObservation ;
+    owl:someValuesFrom sosa:Observation .

@@ -15,9 +15,7 @@ def _classes():
         raise KnowledgeError("ontology support requires JPype1") from exc
     jar = os.environ.get("SHMIT_OWL_JAR")
     if not jar or not Path(jar).is_file():
-        raise KnowledgeError(
-            "SHMIT_OWL_JAR must name the packaged HermiT OWL API JAR"
-        )
+        raise KnowledgeError("SHMIT_OWL_JAR must name the packaged HermiT OWL API JAR")
     try:
         if not jpype.isJVMStarted():
             jpype.startJVM(classpath=[jar])
@@ -26,21 +24,17 @@ def _classes():
         raise KnowledgeError(f"cannot start OWL API: {exc}") from exc
 
 
-def _ontology(paths: Tuple[Path, Path]):
+def _ontology(graph, context: str):
     classes = _classes()
-    manager = classes("org.semanticweb.owlapi.apibinding.OWLManager")\
-        .createOWLOntologyManager()
+    manager = classes(
+        "org.semanticweb.owlapi.apibinding.OWLManager"
+    ).createOWLOntologyManager()
     source_file = classes("java.io.File")
     try:
         import rdflib
-        graph = rdflib.Graph()
-        for path in paths:
-            graph.parse(str(path), format="turtle", publicID=path.as_uri())
+
         if any(graph.triples((None, rdflib.OWL.imports, None))):
-            raise KnowledgeError(
-                f"{paths[0]} + {paths[1]}: owl:imports is unsupported "
-                "in a self-contained knowledge tree"
-            )
+            raise KnowledgeError(f"{context}: owl:imports is unsupported")
         if not graph:
             combined = manager.createOntology()
         else:
@@ -55,54 +49,54 @@ def _ontology(paths: Tuple[Path, Path]):
     except KnowledgeError:
         raise
     except Exception as exc:
-        raise KnowledgeError(
-            f"{paths[0]} and {paths[1]}: OWL API cannot load ontology: {exc}"
-        ) from exc
+        raise KnowledgeError(f"{context}: OWL API cannot load ontology: {exc}") from exc
     return classes, manager, combined
 
 
-def validate(root: Path) -> None:
-    """Check the shared vocabulary in each independent ontology role."""
-    for role, filename, profile_name in (
-        ("EL", "requirements.ttl", "OWL2ELProfile"),
-        ("RL", "axioms.ttl", "OWL2RLProfile"),
+def validate(root: Path, endpoints) -> None:
+    """Check the EL and RL views of the endpoint-scoped module union."""
+    from .ontology_modules import load_views
+
+    _, el_graph, rl_graph = load_views(root, endpoints)
+    for role, graph, profile_name in (
+        ("EL", el_graph, "OWL2ELProfile"),
+        ("RL", rl_graph, "OWL2RLProfile"),
     ):
-        paths = (root / "vocabulary.ttl", root / filename)
-        classes, _, ontology = _ontology(paths)
+        classes, _, ontology = _ontology(graph, f"{root}: {role} view")
         try:
-            profile = classes(
-                "org.semanticweb.owlapi.profiles." + profile_name
-            )()
+            profile = classes("org.semanticweb.owlapi.profiles." + profile_name)()
             report = profile.checkOntology(ontology)
             if not report.isInProfile():
-                violations = sorted(
-                    str(item) for item in report.getViolations()
-                )
+                violations = sorted(str(item) for item in report.getViolations())
                 raise KnowledgeError(
-                    f"{paths[0]} + {paths[1]}: OWL 2 {role} profile "
-                    "violation: " + "; ".join(violations)
+                    f"{root}: OWL 2 {role} profile violation: " + "; ".join(violations)
                 )
         except KnowledgeError:
             raise
         except Exception as exc:
             raise KnowledgeError(
-                f"{paths[0]} + {paths[1]}: cannot check OWL 2 {role} "
-                f"profile: {exc}"
+                f"{root}: cannot check OWL 2 {role} profile: {exc}"
             ) from exc
 
 
 class EntailmentSession:
     """Reuse one EL reasoner for class and filler subsumption."""
 
-    def __init__(self, root: Path):
-        paths = (root / "vocabulary.ttl", root / "requirements.ttl")
-        self.classes, manager, ontology = _ontology(paths)
+    def __init__(self, root: Path, endpoints):
+        from .ontology_modules import load_views
+
+        _, el_graph, _ = load_views(root, endpoints)
+        self.classes, manager, ontology = _ontology(el_graph, f"{root}: EL view")
         self.factory = manager.getOWLDataFactory()
         self.iri = self.classes("org.semanticweb.owlapi.model.IRI")
         try:
             self.reasoner = self.classes(
                 "org.semanticweb.HermiT.ReasonerFactory"
             )().createReasoner(ontology)
+            if not self.reasoner.isConsistent():
+                raise KnowledgeError(f"{root}: inconsistent EL ontology view")
+        except KnowledgeError:
+            raise
         except Exception as exc:
             raise KnowledgeError(f"cannot start EL reasoner: {exc}") from exc
 
@@ -130,9 +124,7 @@ class EntailmentSession:
                 prop, self.class_expression(item[2])
             )
         if kind == "one":
-            individual = self.factory.getOWLNamedIndividual(
-                self.iri.create(item[1])
-            )
+            individual = self.factory.getOWLNamedIndividual(self.iri.create(item[1]))
             return self.factory.getOWLObjectOneOf(individual)
         raise KnowledgeError(f"unsupported EL expression: {item}")
 
@@ -141,28 +133,27 @@ class EntailmentSession:
         try:
             child = self.class_expression(child_expr)
             parent = self.class_expression(parent_expr)
-            return bool(self.reasoner.isEntailed(
-                self.factory.getOWLSubClassOfAxiom(child, parent)
-            ))
+            return bool(
+                self.reasoner.isEntailed(
+                    self.factory.getOWLSubClassOfAxiom(child, parent)
+                )
+            )
         except Exception as exc:
-            raise KnowledgeError(
-                f"EL filler subsumption check failed: {exc}"
-            ) from exc
+            raise KnowledgeError(f"EL filler subsumption check failed: {exc}") from exc
 
     def subclass(self, child_iri: str, parent_iri: str) -> bool:
         try:
             child = self.factory.getOWLClass(self.iri.create(child_iri))
             parent = self.factory.getOWLClass(self.iri.create(parent_iri))
-            return bool(self.reasoner.isEntailed(
-                self.factory.getOWLSubClassOfAxiom(child, parent)
-            ))
+            return bool(
+                self.reasoner.isEntailed(
+                    self.factory.getOWLSubClassOfAxiom(child, parent)
+                )
+            )
         except Exception as exc:
-            raise KnowledgeError(
-                f"EL class subsumption check failed: {exc}"
-            ) from exc
+            raise KnowledgeError(f"EL class subsumption check failed: {exc}") from exc
 
-    def all_classes_subclass(self, child_iris: Iterable[str],
-                             parent_expr) -> bool:
+    def all_classes_subclass(self, child_iris: Iterable[str], parent_expr) -> bool:
         """Test whether known classes imply a class expression."""
         names = sorted(set(child_iris))
         if not names:
@@ -170,17 +161,17 @@ class EntailmentSession:
         try:
             intersection = self.class_expression(("and", tuple(names)))
             parent = self.class_expression(parent_expr)
-            return bool(self.reasoner.isEntailed(
-                self.factory.getOWLSubClassOfAxiom(intersection, parent)
-            ))
+            return bool(
+                self.reasoner.isEntailed(
+                    self.factory.getOWLSubClassOfAxiom(intersection, parent)
+                )
+            )
         except Exception as exc:
-            raise KnowledgeError(
-                f"EL class conjunction check failed: {exc}"
-            ) from exc
+            raise KnowledgeError(f"EL class conjunction check failed: {exc}") from exc
 
-    def all_terms_subclass(self, child_iris: Iterable[str],
-                           individual_iris: Iterable[str],
-                           parent_expr) -> bool:
+    def all_terms_subclass(
+        self, child_iris: Iterable[str], individual_iris: Iterable[str], parent_expr
+    ) -> bool:
         """Test classes and matched individual identities against a filler."""
         names = sorted(set(child_iris))
         if names and self.all_classes_subclass(names, parent_expr):
@@ -196,12 +187,10 @@ class EntailmentSession:
                     return True
             return False
         except Exception as exc:
-            raise KnowledgeError(
-                f"EL individual qualification failed: {exc}"
-            ) from exc
+            raise KnowledgeError(f"EL individual qualification failed: {exc}") from exc
 
 
-def subclass(root: Path, child_iri: str, parent_iri: str) -> bool:
+def subclass(root: Path, child_iri: str, parent_iri: str, endpoints) -> bool:
     """Test named-class subsumption in the EL role ontology."""
-    with EntailmentSession(root) as session:
+    with EntailmentSession(root, endpoints) as session:
         return session.subclass(child_iri, parent_iri)

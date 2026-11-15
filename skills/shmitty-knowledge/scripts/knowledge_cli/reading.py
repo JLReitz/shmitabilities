@@ -19,23 +19,20 @@ def tree_path(root: Path, path: Path) -> str:
 
 def reference_indexes(root: Path, document: Document) -> Iterable[Path]:
     relative = Path(tree_path(root, document.path).lstrip("/"))
-    if len(relative.parts) < 3 or relative.parts[0] != "references":
+    if len(relative.parts) < 3 or relative.parts[0] not in {"sources", "tools"}:
         raise KnowledgeError(
-            f"{document.path}: Reference document is outside the tree-root "
-            "references directory"
+            f"{document.path}: Reference document is outside sources/ or tools/"
         )
-    reference_root = root.resolve() / "references"
+    reference_root = root.resolve() / relative.parts[0]
     current = reference_root
     for part in relative.parent.parts[1:]:
         current = current / part
-        if current == reference_root / "packages":
-            continue
         yield current / "index.md"
 
 
 def concept_indexes(root: Path, document: Document) -> Iterable[Path]:
     relative = Path(tree_path(root, document.path).lstrip("/"))
-    if len(relative.parts) < 2 or relative.parts[0] == "references":
+    if len(relative.parts) < 2 or relative.parts[0] in {"sources", "tools"}:
         raise KnowledgeError(
             f"{document.path}: Concept document is outside the knowledge tree"
         )

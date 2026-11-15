@@ -117,11 +117,11 @@ evidence unless a persistent published source supports a durable Reference.
 
 `shmitty-knowledge` maintains one self-contained Open Knowledge Format tree. References preserve
 source-defined information. Concepts combine supported claims and link to their evidence. Open
-Concepts represent known gaps.
+requirements represent unanswered relationship questions.
 
-The tree root configures confidence and investment policy. `vocabulary.ttl`, `requirements.ttl`,
-and `axioms.ttl` extend the tree with shared ontology terms, required authored relationships, and
-inference rules. `knowledge-cli` reads, checks, and evaluates the tree.
+The tree root configures confidence, investment, and unmatched-term policy. Root and topic
+`ontology.ttl` modules carry Shared vocabulary, Requirement existence restrictions, and Inference
+axioms. `knowledge-cli` reads, checks, evaluates, and explicitly migrates a selected tree.
 
 `knowledge-cli` uses `PyYAML==6.0.3`, `rdflib==7.6.0`, `owlrl==7.6.2`, and `JPype1==1.5.2`. Its
 ontology commands also require Java 8 and the packaged HermiT OWL API JAR selected by

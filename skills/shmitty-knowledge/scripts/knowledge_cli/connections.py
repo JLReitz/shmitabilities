@@ -15,6 +15,9 @@ class Connection:
     document_type: str
     shared_tags: Tuple[str, ...]
     depth: int
+    origin: str = "authored"
+    predicate: str = "links"
+    basis: str = "Markdown link"
 
 
 @dataclass(frozen=True)
@@ -71,7 +74,7 @@ def require_valid_tags(root: Path, document: Document) -> None:
 def implicit_index_targets(source: Document) -> Tuple[Path, ...]:
     if (
         source.path.name != "index.md"
-        or source.metadata.get("type") != "Concept"
+        or source.metadata.get("type") not in {"Concept", "Reference"}
     ):
         return ()
     targets = []
@@ -85,13 +88,23 @@ def implicit_index_targets(source: Document) -> Tuple[Path, ...]:
             targets.append(child / "index.md")
         elif child.suffix == ".md":
             targets.append(child)
-    return tuple(sorted(path.resolve() for path in targets))
+    consumable = []
+    for path in targets:
+        if not path.exists():
+            continue
+        try:
+            document = load_document(path)
+        except KnowledgeError:
+            continue
+        if document.metadata.get("type") in {"Concept", "Reference"}:
+            consumable.append(path.resolve())
+    return tuple(sorted(consumable))
 
 
 def consumable_targets(root: Path, source: Document) -> Tuple[Path, ...]:
-    targets: Set[Path] = set(implicit_index_targets(source))
+    targets: Set[Path] = set()
     definition_text = source.body + "\n" + source.contents
-    for raw in markdown_targets(source.concept_body, definition_text):
+    for raw in markdown_targets(source.body, definition_text):
         target = resolve_internal(root, source.path, raw)
         if target is None:
             raise KnowledgeError(
@@ -139,6 +152,48 @@ def collect_connections(root: Path, concept: Document) -> ConnectionGraph:
     concept_links: Dict[Path, Tuple[Path, ...]] = {}
     reference_links: Dict[Path, Tuple[Path, ...]] = {}
     connections: List[Connection] = []
+    from .ontology import _build_snapshot_scoped
+
+    semantic: Dict[Tuple[Path, Path], Set[Tuple[str, str, str]]] = {}
+    if (root / "ontology.ttl").exists():
+        all_concepts = {}
+        for path in sorted(root.rglob("*.md")):
+            try:
+                document = load_document(path)
+            except KnowledgeError:
+                continue
+            if document.metadata.get("type") == "Concept":
+                all_concepts[path.resolve()] = document
+        for source_path in all_concepts:
+            for target_path in all_concepts:
+                if source_path == target_path:
+                    continue
+                snapshot = _build_snapshot_scoped(root, (source_path, target_path))
+                source_terms = {
+                    match.term for match in snapshot.terms
+                    if match.concept == source_path
+                }
+                target_terms = {
+                    match.term for match in snapshot.terms
+                    if match.concept == target_path
+                }
+                for fact in snapshot.facts:
+                    if fact.subject not in source_terms or fact.object not in target_terms:
+                        continue
+                    if (
+                        fact.predicate.endswith("#type")
+                        or fact.predicate.endswith("#sameAs")
+                        or fact.subject == fact.object
+                    ):
+                        continue
+                    origin = "derived" if fact.derived else "authored"
+                    basis = fact.link or (
+                        "ontology inference" if fact.derived
+                        else "ontology assertion"
+                    )
+                    semantic.setdefault((source_path, target_path), set()).add(
+                        (origin, fact.predicate, basis)
+                    )
     visited: Set[Path] = set()
 
     def walk(source: Document, depth: int) -> None:
@@ -159,18 +214,42 @@ def collect_connections(root: Path, concept: Document) -> ConnectionGraph:
                 for tag in document_tags(target_document)
                 if tag in requested_tags
             )
-            connections.append(
-                Connection(
-                    source_path, target_path, document_type, shared_tags, depth
-                )
+            interpreted = any(
+                origin == "authored" and basis != "ontology assertion"
+                for origin, _, basis in semantic.get((source_path, target_path), ())
             )
+            if not interpreted:
+                connections.append(
+                    Connection(source_path, target_path, document_type,
+                               shared_tags, depth)
+                )
+            for origin, predicate, basis in sorted(
+                semantic.get((source_path, target_path), ())
+            ):
+                connections.append(
+                    Connection(source_path, target_path, document_type,
+                               shared_tags, depth, origin, predicate, basis)
+                )
             if document_type == "Concept":
                 concepts[target_path] = target_document
                 linked_concepts.append(target_path)
             else:
                 linked_references.append(target_path)
 
-        concept_links[source_path] = tuple(linked_concepts)
+        for (semantic_source, target_path), edge_kinds in sorted(semantic.items()):
+            if semantic_source != source_path or target_path in linked_concepts:
+                continue
+            target_document = load_document(target_path)
+            shared_tags = tuple(
+                tag for tag in document_tags(target_document)
+                if tag in requested_tags
+            )
+            for origin, predicate, basis in sorted(edge_kinds):
+                connections.append(Connection(source_path, target_path,
+                    "Concept", shared_tags, depth, origin, predicate, basis))
+                concepts[target_path] = target_document
+                linked_concepts.append(target_path)
+        concept_links[source_path] = tuple(dict.fromkeys(linked_concepts))
         reference_links[source_path] = tuple(linked_references)
         for target_path in linked_concepts:
             walk(concepts[target_path], depth + 1)
@@ -188,7 +267,7 @@ def tree_path(root: Path, path: Path) -> str:
 def render_connections(
     root: Path, concept: Document, graph: ConnectionGraph
 ) -> str:
-    lines = [row(("depth", "source", "link", "type", "shared_tags"))]
+    lines = [row(("depth", "source", "target", "origin", "predicate", "basis", "type", "shared_tags"))]
     for connection in graph.connections:
         tags = ", ".join(connection.shared_tags)
         lines.append(
@@ -197,6 +276,9 @@ def render_connections(
                     connection.depth,
                     tree_path(root, connection.source),
                     tree_path(root, connection.target),
+                    connection.origin,
+                    connection.predicate,
+                    connection.basis,
                     connection.document_type,
                     tags,
                 )

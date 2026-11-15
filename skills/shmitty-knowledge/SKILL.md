@@ -1,40 +1,40 @@
 ---
 name: shmitty-knowledge
-description: Use, add to, and maintain a self-contained Open Knowledge Format knowledge tree of source-faithful references and cited concepts.
+description: Use, add to, and maintain a knowledge base of source-faithful references and cited concepts.
 allowed-tools: Bash(scripts/knowledge-cli:*)
 ---
 
 # Knowledge Format
 
-This format stores knowledge as UTF-8 Markdown files with YAML frontmatter. A knowledge tree is one unit of distribution and can contain cross-linked bundles.
+This format stores knowledge as UTF-8 Markdown files with YAML frontmatter.
 
 ## Terms
 
-- **Tree root**: The top directory of a knowledge tree and the boundary for knowledge-document paths.
-- **Topic directory**: A directory whose `index.md` is a Concept and whose name is a topical tag of descendants.
-- **Topic Concept**: The Concept `index.md` representing a topic directory. Its abstract and table of contents form one Concept body for connections, ontology facts, and investment.
-- **Package**: A Package Reference `index.md` or its parent directory.
+- **Knowledge root**: The top directory of a knowledge tree and the boundary for knowledge-document paths.
+- **Knowledge graph**: Knowledge documents as nodes and directed connections as edges.
+- **Filesystem tree**: The storage and authoring hierarchy containing knowledge documents and support files.
+- **Structural connection**: Containment from a Topic Concept to an immediate consumable child; derived from the filesystem.
+- **Topic**: A top-level subject directory within a knowledge tree that contains related concepts and support documents.
+- **Topic Concept**: The Concept `index.md` representing a topic directory. Its abstract carries authored connections; its table of contents serializes structural children.
+- **Tool**: A Tool Reference `index.md` or its parent directory.
 - **Source**: A standard Reference `index.md` or its parent domain.
-- **Bundle**: A top-level subject directory within a knowledge tree that contains related concepts and support documents.
 - **Knowledge document**: A `Reference` or `Concept` Markdown file.
 - **Reference**: A source-faithful document about one external resource.
 - **Resource**: The external source identified by a reference document's `resource` URL.
 - **Concept**: Analysis or knowledge supported by references or linked concepts.
-- **Open concept**: A known knowledge gap represented by a concept with an empty body.
+- **Open concept**: A Concept with an empty body and no supported claim yet.
 - **Citation**: A concept-to-reference link with a declared support level.
 - **Document ID**: The tree-relative document path without the `.md` suffix.
 
-## Bundle structure
+## Tree structure
 
-Organize concepts by subject. Organize references first by source domain and then by meaningful source boundaries such as a website, webpage, repository, or database. Place package abstracts and package-scoped sanctioned executions under `references/packages/<package>/`; place other sanctioned executions under their resource domains.
+Organize concepts by subject. Organize ordinary source References first by source domain under `sources/`, then by meaningful source boundaries such as a website, webpage, repository, or database. Place Tool, Command, and Computation References under `tools/`.
 
 ```text
 <tree-root>/
   index.md
-  vocabulary.ttl
-  requirements.ttl
-  axioms.ttl
-  references/
+  ontology.ttl
+  sources/
     index.md
     <domain>/
       index.md
@@ -42,8 +42,14 @@ Organize concepts by subject. Organize references first by source domain and the
       <source>/
         index.md
         <contained-source>.md
-  <bundle>/
+  tools/
     index.md
+    <tool>/
+      index.md
+      <command>.md
+  <topic>/
+    index.md
+    ontology.ttl
     log.md
     <concept>.md
     <subtopic>/
@@ -51,7 +57,7 @@ Organize concepts by subject. Organize references first by source domain and the
       <concept>.md
 ```
 
-Every source domain and package directory below `references/` MUST contain `index.md` with Reference frontmatter, an abstract, a horizontal separator, and a table of contents. Set its `resource` to the persistent source represented by the entire directory. A domain directory's abstract identifies the domain root. A nested directory's abstract identifies the complete website, guide, repository, database, or other source whose contained resources appear below it.
+Every source domain under `sources/` and tool directory under `tools/` MUST contain `index.md` with Reference frontmatter, an abstract, a horizontal separator, and a table of contents. Set its `resource` to the persistent resource represented by the entire directory.
 
 Use `<source>.md` when one document represents the source. Use `<source>/index.md` when the source contains separately referenced sources. Model source boundaries by meaning, not by splitting each URL path segment into a directory.
 
@@ -59,29 +65,20 @@ The reserved filenames are:
 
 | Filename | Meaning |
 |---|---|
-| `index.md` | Topic Concept, Package, or standard Reference abstract followed by a horizontal separator and a table of contents. |
+| `index.md` | Topic Concept, Tool, or standard Reference abstract followed by a horizontal separator and a table of contents. |
 | `log.md` | Chronological update history. |
 
-`index.md` is a consumable `Concept` or `Reference` knowledge document according to its tree location. The root `index.md`, `references/index.md`, `references/packages/index.md`, and `log.md` are support documents.
+`index.md` is a consumable `Concept` or `Reference` knowledge document according to its tree location. The root `index.md`, `sources/index.md`, `tools/index.md`, and `log.md` are support documents.
 
 ## Ontology files
 
-Every knowledge root contains `vocabulary.ttl`, `requirements.ttl`, and
-`axioms.ttl`. Empty files are valid. Define shared ontology terms in
-`vocabulary.ttl`, EL existence requirements in `requirements.ttl`, and RL
-inference axioms in `axioms.ttl`. The CLI checks vocabulary plus requirements
-against OWL 2 EL and vocabulary plus axioms against OWL 2 RL. Keep generated
-tag and link assertions separate from these authored files. The root table of
-contents omits the Turtle support files.
+Every knowledge root contains `ontology.ttl`; every topic directory contains its own `ontology.ttl`. The root module applies throughout the tree. A topic module applies to its topic and descendants. Do not put ontology modules under `sources/` or `tools/`, and do not use authored `owl:imports`. Declare `@prefix sk: <urn:shmitty:knowledge:> .` in modules that use Shmitty properties.
 
-Authored tags match ontology terms by exact, case-sensitive `rdfs:label` first
-and IRI local name second. Match topical tags too. Named individuals use the
-same rule. Ambiguous names are verification errors. Explicit Concept body links
-assert matching directed property relationships. RL facts can add class and
-property context; inverse and chain-derived facts do not fulfill a required
-authored link. Report requirements with `knowledge-cli ontology requirements`.
-An open requirement affects connection investment and does not invalidate a
-Concept.
+Entity declarations and labels enter the Shared view without role annotations. Annotate every other logical axiom with one `owl:Axiom` annotation whose `sk:role` value is exactly `Shared`, `Requirement`, or `Inference`. Use `Shared` for term declarations and common relationships, `Requirement` for existence restrictions, and `Inference` for inference rules. The CLI checks the Shared plus Requirement view against OWL 2 EL and the Shared plus Inference view against OWL 2 RL. Keep generated tag and link assertions outside authored modules. The root and topic tables of contents omit Turtle support files. Repeated axioms retain one role; inherited axioms cannot be overridden.
+
+Each topic Concept declares `topic_tag` as one of its tags. It must match one class in the topic's effective ontology, and that class must be declared in the topic's own module. A nested topic class must have a Shared authored `rdfs:subClassOf` relationship to its immediate parent topic class. Top-level topics have no parent class because the root index is a support document.
+
+Authored tags match ontology terms by exact, case-sensitive `rdfs:label` first and IRI local name second. Match topical tags too. Named individuals use the same rule. Ambiguous names and multiple taggable kinds are verification errors. Declare an intentional plain tag with a repeated `sk:plainTag` literal on an `owl:Ontology` in the effective `ontology.ttl`; declare `sk:plainTag` as an `owl:AnnotationProperty` with IRI `urn:shmitty:knowledge:plainTag`. Resolve ontology terms before plain tags. Set root index `ontology.term_tags` to `required` for unmatched term-tag errors or `warn` for warnings; omit it to disable unmatched-tag reporting. Every Concept still requires an ontology-matched class, property, or named-individual term tag. Explicit Concept body links assert matching directed property relationships. RL facts can add class and property context; inverse and chain-derived facts do not fulfill a required authored link. Report requirements with `knowledge-cli ontology requirements`. An open requirement affects connection investment and does not invalidate a Concept.
 
 ## Knowledge documents
 
@@ -135,7 +132,7 @@ Reference frontmatter also requires:
 
 Set `timestamp` to the source's last-modified time. When that time is unavailable, use the time the source was observed. Keep timestamp provenance and fallback notes out of the source-faithful reference body.
 
-One tree contains at most one ordinary source reference for a given normalized `resource` URL. Every Package and sanctioned execution `resource` MUST match the normalized `resource` of an ordinary source Reference. Packages and sanctioned executions MAY share that URL. Normalize scheme and host casing, remove fragments, and preserve query parameters that select distinct content. A resource collision between ordinary source references means the existing reference is the update target. Keep source-faithful detail in that reference and move analysis to a concept.
+One tree contains at most one ordinary source reference for a given normalized `resource` URL. Every Tool and sanctioned execution `resource` MUST match the normalized `resource` of an ordinary source Reference. Tools and sanctioned executions MAY share that URL. Normalize scheme and host casing, remove fragments, and preserve query parameters that select distinct content. A resource collision between ordinary source references means the existing reference is the update target. Keep source-faithful detail in that reference and move analysis to a concept.
 
 Every parent-directory name between a Reference and the knowledge root is a required topical tag. At least one additional term tag is required. Topical tags identify progressively narrower groups as the tree deepens; they do not represent source coverage.
 
@@ -151,9 +148,9 @@ timestamp: 2026-09-18T20:15:00Z
 ---
 ```
 
-### Packages
+### Tools
 
-Read [packages](references/packages.md) to understand `package` reference types.
+Read [Tools](references/tools.md) to understand `Tool` references for installed packages.
 
 ### Sanctioned executions
 
@@ -163,11 +160,11 @@ Read [Sanctioned executions](references/sanctioned-executions.md) for `Command` 
 
 A concept combines supported claims into useful knowledge. Its body links are its evidence and relationships.
 
-A Concept MAY link to any document whose top-level `type` is `Reference`, including an ordinary source Reference and the `Package`, `Command`, and `Computation` subtypes. `reference_type` does not change linkability, evidence treatment, or path rules.
+A Concept MAY link to any document whose top-level `type` is `Reference`, including an ordinary source Reference and the `Tool`, `Command`, and `Computation` subtypes. `reference_type` does not change linkability, evidence treatment, or path rules.
 
 Every parent-directory name between a Concept and the knowledge root is a required topical tag. At least one additional term tag is required. A tag exactly equal to any parent-directory name is always a topical tag and never contributes to citation coverage.
 
-Every topic directory contains a topic Concept. It is implicitly connected to every consumable child document and each child topic Concept in its directory. These implicit links behave like body links: recursive collection follows Concepts and stops at References. Explicit table-of-contents links also participate in its connections and ontology property assertions.
+Every topic directory contains a topic Concept. The filesystem derives a structural connection to each immediate consumable child document and child topic Concept. Its table of contents MUST list exactly these children. Structural connections supply containment and ancestor context; they do not become authored body links or ontology property assertions. A structural child MAY fulfill a matching requirement and count toward the parent Topic Concept's investment, but MUST NOT count for the child. Recursive `connections` traversal follows authored and ontology-derived document relationships through Concepts and stops at References. It MUST omit structural connections and report each authored or derived edge with its origin, predicate, and basis.
 
 Every direct body link whose resolved target has `type: Reference`, including `index.md` and every Reference subtype, counts as local evidence. For each linked Reference, the original-text tags it shares with the Concept cover those term tags. Citation coverage is the size of the union of all covered term tags divided by the Concept's total number of term tags. Linked Concepts contribute through recursive confidence.
 
@@ -191,14 +188,14 @@ history:
 
 When credible evidence supports positions that do not converge in the current task context, model each position as a separate Concept or topic. State the scope of each position, cite its supporting References, and link the related position Concepts. Keep the positions distinct while the conflict remains unresolved in that context.
 
-Create an open Concept for each unanswered question needed to resolve the conflict. Link the relevant position Concepts to each open Concept; keep the open Concept body empty until evidence supports an answer.
+Represent each unanswered question needed to resolve the conflict as an open ontology existence requirement. Link the position Concepts when their relationship is supported. Keep the requirement open until evidence supports a fulfilling Concept relationship.
 
 ## Links and paths
 
-A Concept link MAY cross bundle boundaries within the tree. A Reference link MUST remain within the tree-root `references/` directory, except in an index abstract. Use standard Markdown links with tree-absolute paths beginning with `/`.
+A Concept link MAY cross topic boundaries within the tree. A Reference link MUST remain within its `sources/` or `tools/` hierarchy, except in an index abstract. Use standard Markdown links with tree-absolute paths beginning with `/`.
 
 ```markdown
-See the [API reference](/references/example.com/api.md).
+See the [API reference](/sources/example.com/api.md).
 ```
 
 A link states a directed relationship. The surrounding prose names the relationship. Consumers accept unknown relationship types.
@@ -248,13 +245,13 @@ Set `confidence.required` to `true` to make verification reject a non-open Conce
 
 Use `second`, `minute`, `hour`, or `day` as `time_unit`. Set `alpha`, `beta`, and `horizon` to positive numbers. Interpret `beta` and `horizon` in `time_unit`.
 
-Set `investment.connection.target` to a positive integer to activate connection investment for every Concept. `F` counts fulfilled normalized existence requirements, `G` counts open requirements, `Q` counts distinct explicit Concept links incident to the Concept that fulfill a requirement at either endpoint, and `T` is the target. Normalize requirements only when a link fulfilling one necessarily fulfills the other through the same-direction property hierarchy and filler subclass relation; a property domain alone never removes a separate link obligation. A requirement needs an explicit link in its property's direction from the Concept to count as fulfilled. When `Q >= T` and `G = 0`, connection is `1`. Without this setting, investment uses confidence and consistency alone.
+Set `investment.connection.target` to a positive integer to activate connection investment for every Concept. `F` counts fulfilled normalized existence requirements, `G` counts open requirements, `Q` counts distinct qualifying Concept relationships incident to the Concept that fulfill a requirement at either endpoint, and `T` is the target. Normalize requirements only when a link fulfilling one necessarily fulfills the other through the same-direction property hierarchy and filler subclass relation; a property domain alone never removes a separate link obligation. An authored link fulfills a requirement in its property's direction. An immediate structural child MAY fulfill a matching requirement and contribute only to its parent Topic Concept's connection score; it never supplies authored ontology evidence. When `Q >= T` and `G = 0`, connection is `1`. Without this setting, investment uses confidence and consistency alone.
 
-Connections are the recursive document links from a concept. Use `knowledge-cli connections` to list them with each document's `type` and the `tags` it shares with the requested concept.
+Connections are directed links between knowledge documents. Use `knowledge-cli connections` to list authored and derived connections from a Concept; it does not report or follow structural connections. The CLI reports each target's `type` and the `tags` it shares with the requested Concept.
 
 ## Indexes
 
-Each topic, Package, and Source directory has an `index.md`. Its frontmatter identifies the Concept or Reference. Put its abstract above a horizontal separator (`---`) and its table of contents below. Put a blank line before and after the separator. Keep links to documents in the index directory or below it in the table of contents. The table of contents MUST link every file and child directory directly beside the index, excluding `index.md` and `log.md`. A directory link resolves to its child `index.md`. Use a relative path and short description for each link. Apply the document's link rules to its table of contents. Validation checks the abstract and table of contents separately. When `read` appends a topic Concept as ancestor context, it shows only its abstract; an explicitly requested topic Concept includes the table of contents.
+Each topic, Tool, and Source directory has an `index.md`. Its frontmatter identifies the Concept or Reference. Put its abstract above a horizontal separator (`---`) and its table of contents below. Put a blank line before and after the separator. The table of contents MUST link exactly the immediate consumable child documents and child directories, excluding support files. A directory link resolves to its child `index.md`. Use a relative path and short description for each link. Validation checks the abstract and table of contents separately. When `read` appends a topic Concept as ancestor context, it shows only its abstract; an explicitly requested topic Concept includes the table of contents.
 
 ```markdown
 ---
@@ -275,9 +272,9 @@ API concepts describe service interfaces.
 - [Widget API](widget-api.md) - Authentication and request limits.
 ```
 
-The root `index.md` contains tree policies and navigation. The `references/index.md` lists reference domains and packages. The `references/packages/index.md` lists packages. These navigation indexes do not represent a topic Concept, Package, or Source.
+The root `index.md` contains tree policies and navigation. The `sources/index.md` lists source domains. The `tools/index.md` lists tools. These navigation indexes do not represent a topic Concept, Tool, or Source.
 
-CLI commands target a topic directory, reference domain, or Package by its `index.md` or parent directory. `read` appends the table of contents for an explicitly targeted index and omits it for ancestor indexes.
+CLI commands target a topic directory, reference domain, or Tool by its `index.md` or parent directory. `read` appends the table of contents for an explicitly targeted index and omits it for ancestor indexes.
 
 `read` accepts an explicitly targeted `index.md` when its frontmatter or abstract is missing. Other commands require a conforming knowledge document.
 
@@ -290,7 +287,7 @@ Record changes within a directory scope to `log.md`. Use date groups in descendi
 
 ## 2026-09-19
 
-- **Created** - [Widget API reference](/references/example.com/widget-api.md)
+- **Created** - [Widget API reference](/sources/example.com/widget-api.md)
 - **Removed** - ...
 - **Modified** - ...
   - List of modifications
@@ -300,9 +297,9 @@ Record changes within a directory scope to `log.md`. Use date groups in descendi
 
 1. Each `.md` file other than root navigation indexes and `log.md` is a valid `Reference` or `Concept` knowledge document.
 2. Each knowledge document has all common required fields, its class-specific required fields and body content, every ancestor topical tag, and at least one term tag.
-3. Each reference `resource` identifies a persistent source; ordinary source references are unique after normalization; each Package and sanctioned execution resource matches an ordinary source Reference.
-4. Each Concept or Reference body and table-of-contents link resolves to a consumable Concept or Reference document; neither type links to external URLs or infrastructure, Reference links remain below `references/`, and each internal filepath has one destination declaration per document.
-5. Each `index.md` and `log.md` follows its defined form, each topic directory contains a topic Concept, and each Source or Package directory contains one correctly scoped Reference `index.md`. Every index-abstract link targets a consumable document outside the index directory. Each index table of contents links every file and child directory at that level except `index.md` and `log.md`.
+3. Each reference `resource` identifies a persistent source; ordinary source references are unique after normalization; each Tool and sanctioned execution resource matches an ordinary source Reference.
+4. Each Concept or Reference body and table-of-contents link resolves to a consumable Concept or Reference document; neither type links to external URLs or infrastructure, Reference links remain within their `sources/` or `tools/` hierarchy, and each internal filepath has one destination declaration per document.
+5. Each `index.md` and `log.md` follows its defined form, each topic directory contains a topic Concept, and each Source or Tool directory contains one correctly scoped Reference `index.md`. Every index-abstract link targets a consumable document outside the index directory. Each index table of contents links every file and child directory at that level except `index.md` and `log.md`.
 6. Each concept history starts with a valid `created` and contains ordered update timestamps at or before evaluation time.
 7. When root `confidence.required` is `true`, each non-open Concept has confidence greater than `0.0`; only an open Concept may have confidence `0.0`.
 
@@ -310,6 +307,7 @@ Consumers accept missing optional fields, unknown extension fields, unknown subt
 
 ## Operations
 
+- [Set up knowledge](references/set-up-knowledge.md)
 - [Use knowledge](references/use-knowledge.md)
 - [Add knowledge](references/add-knowledge.md)
 - [Maintain knowledge](references/maintain-knowledge.md)

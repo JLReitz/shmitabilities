@@ -30,8 +30,13 @@ class KnowledgeCliTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)
-        for name in ("vocabulary.ttl", "requirements.ttl", "axioms.ttl"):
-            (self.root / name).write_text("", encoding="utf-8")
+        (self.root / "ontology.ttl").write_text(
+            "@prefix ex: <https://example.org/knowledge/> .\n"
+            "@prefix owl: <http://www.w3.org/2002/07/owl#> .\n"
+            "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n"
+            'ex:test a owl:Class ; rdfs:label "test" .\n',
+            encoding="utf-8",
+        )
         self.write(
             "index.md",
             """---
@@ -48,12 +53,12 @@ investment:
 """,
         )
         self.write(
-            "references/example.com/index.md",
+            "sources/example.com/index.md",
             """---
 type: Reference
 title: Example domain
 description: Complete example.com source.
-tags: [references, example.com, test]
+tags: [sources, example.com, test]
 resource: https://example.com/
 resource_type: Website
 timestamp: 2024-01-01T00:00:00Z
@@ -68,12 +73,12 @@ Example domain abstract.
 """,
         )
         self.write(
-            "references/example.com/source.md",
+            "sources/example.com/source.md",
             """---
 type: Reference
 title: Source
 description: Persistent source.
-tags: [references, example.com, test]
+tags: [sources, example.com, test]
 resource: https://example.com/source
 resource_type: Webpage
 timestamp: 2024-01-01T00:00:00Z
@@ -114,6 +119,30 @@ history:
     def write(self, relative, content):
         path = self.root / relative
         path.parent.mkdir(parents=True, exist_ok=True)
+        if relative.endswith("/index.md") and "type: Concept" in content:
+            topic = path.parent.name
+            content = content.replace(
+                "type: Concept\n", f"type: Concept\ntopic_tag: {topic}\n", 1
+            )
+            iri = f"https://example.org/knowledge/{topic}"
+            module = (
+                "@prefix owl: <http://www.w3.org/2002/07/owl#> .\n"
+                "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n"
+                f'<{iri}> a owl:Class ; rdfs:label "{topic}" .\n'
+            )
+            if path.parent.parent != self.root:
+                parent = path.parent.parent.name
+                module += (
+                    "@prefix sk: <urn:shmitty:knowledge:> .\n"
+                    f'<{iri}> rdfs:subClassOf '
+                    f'<https://example.org/knowledge/{parent}> .\n'
+                    "[] a owl:Axiom ; "
+                    f"owl:annotatedSource <{iri}> ; "
+                    "owl:annotatedProperty rdfs:subClassOf ; "
+                    f"owl:annotatedTarget <https://example.org/knowledge/{parent}> ; "
+                    'sk:role "Shared" .\n'
+                )
+            (path.parent / "ontology.ttl").write_text(module, encoding="utf-8")
         if (
             path.name == "index.md"
             and "type: " in content
@@ -178,12 +207,12 @@ Metric definition.
 """,
         )
         self.write(
-            "references/example.com/command.md",
+            "sources/example.com/command.md",
             """---
 type: Reference
 reference_type: Command
 title: Command
-tags: [references, example.com, test, shared]
+tags: [sources, example.com, test, shared]
 ---
 Command abstract.
 """,
@@ -199,8 +228,8 @@ Command abstract.
         self.assertEqual(status, 0)
         self.assertEqual(output.getvalue().splitlines(), [
             "document\ttype\tsubtype\ttags\ttitle",
-            "references/example.com/command.md\tReference\tCommand\t"
-            "references, example.com, test, shared\tCommand",
+            "sources/example.com/command.md\tReference\tCommand\t"
+            "sources, example.com, test, shared\tCommand",
         ])
 
         output = StringIO()
@@ -226,7 +255,7 @@ Command abstract.
     def concept(self, body=None, tags="bundle-a, test"):
         if body is None:
             body = (
-                "See [source](/references/example.com/source.md) "
+                "See [source](/sources/example.com/source.md) "
                 "and [other](/bundle-a/other.md)."
             )
         return self.write(
@@ -353,7 +382,7 @@ history:
   created: 2024-01-01T00:00:00Z
   updates: []
 ---
-See [source](/references/example.com/source.md).
+See [source](/sources/example.com/source.md).
 """,
         )
         document = load_document(self.concept())
@@ -374,7 +403,7 @@ history:
   updates: []
 ---
 See [target](/bundle-a/target.md) and
-[source](/references/example.com/source.md).
+[source](/sources/example.com/source.md).
 """,
         )
         document = load_document(self.concept())
@@ -422,7 +451,7 @@ See [leaf](/bundle-a/leaf.md).
         self.assertNotIn("/bundle-a/leaf.md", direct)
         self.assertIn("/bundle-a/leaf.md", recursive)
 
-    def test_connections_recurse_stop_at_references_and_show_shared_tags(self):
+    def test_connections_recurse_stop_at_sources_and_show_shared_tags(self):
         self.write(
             "bundle-a/other.md",
             """---
@@ -434,7 +463,7 @@ history:
   created: 2024-01-01T00:00:00Z
   updates: []
 ---
-See [source](/references/example.com/source.md).
+See [source](/sources/example.com/source.md).
 """,
         )
         document = load_document(self.concept())
@@ -442,21 +471,22 @@ See [source](/references/example.com/source.md).
         output = render_connections(self.root, document, graph)
         self.assertEqual(len(graph.connections), 3)
         self.assertIn(
-            "1\t/bundle-a/target.md\t/bundle-a/other.md\tConcept\t"
+            "1\t/bundle-a/target.md\t/bundle-a/other.md\tauthored\tlinks\t"
+            "Markdown link\tConcept\t"
             "bundle-a, test",
             output,
         )
         self.assertIn("Reference\t", output)
         self.assertNotIn("`", output)
-        self.assertNotIn("/references/example.com/index.md", output)
+        self.assertNotIn("/sources/example.com/index.md", output)
 
-    def test_concept_index_implicitly_connects_to_child_documents(self):
+    def test_concept_index_structure_is_not_in_connections_report(self):
         target = self.concept()
         topic_index = load_document(self.root / "bundle-a/index.md")
         graph = collect_connections(self.root, topic_index)
         paths = {connection.target for connection in graph.connections}
-        self.assertIn(target.resolve(), paths)
-        self.assertIn((self.root / "bundle-a/other.md").resolve(), paths)
+        self.assertNotIn(target.resolve(), paths)
+        self.assertNotIn((self.root / "bundle-a/other.md").resolve(), paths)
 
     def test_read_directory_targets_concept_index(self):
         documents = expand_read(self.root, [Path("bundle-a")])
@@ -482,7 +512,7 @@ See [source](/references/example.com/source.md).
         )
 
     def test_verify_reports_missing_required_reference_metadata(self):
-        path = self.root / "references/example.com/source.md"
+        path = self.root / "sources/example.com/source.md"
         text = path.read_text(encoding="utf-8")
         for line in (
             "resource: https://example.com/source\n",
@@ -498,7 +528,7 @@ See [source](/references/example.com/source.md).
         )
 
     def test_verify_requires_http_or_https_resource_url(self):
-        path = self.root / "references/example.com/source.md"
+        path = self.root / "sources/example.com/source.md"
         original = path.read_text(encoding="utf-8")
         invalid_resources = (
             "file:///mnt/f/source.md",
@@ -578,19 +608,19 @@ history:
 
     def test_verify_rejects_link_fragment(self):
         path = self.concept(
-            body="See [source](/references/example.com/source.md#details)."
+            body="See [source](/sources/example.com/source.md#details)."
         )
         findings = self.verify_path(path)
         self.assertTrue(
             any("fragment link" in finding.message for finding in findings)
         )
 
-    def test_markdown_targets_supports_references_and_autolinks(self):
+    def test_markdown_targets_supports_sources_and_autolinks(self):
         targets = list(markdown_targets(
             """[Full][source] [Collapsed][] [Shortcut]
 <https://example.org/source> <agent@example.org>
 
-[source]: /references/example.com/source.md
+[source]: /sources/example.com/source.md
 [collapsed]: </bundle-a/other.md> "Title"
 [shortcut]: /bundle-a/index.md
 """
@@ -598,7 +628,7 @@ history:
         self.assertEqual(
             targets,
             [
-                "/references/example.com/source.md",
+                "/sources/example.com/source.md",
                 "/bundle-a/other.md",
                 "/bundle-a/index.md",
                 "https://example.org/source",
@@ -627,13 +657,13 @@ history:
 ![Reference image][source]
 ![Shortcut image]
 
-[source]: /references/example.com/source.md
+[source]: /sources/example.com/source.md
 [Shortcut image]: https://example.org/shortcut.png
 """
         ))
         self.assertEqual(
             targets,
-            ["/references/example.com/source.md"],
+            ["/sources/example.com/source.md"],
         )
 
     def test_markdown_targets_does_not_duplicate_nested_autolink(self):
@@ -660,7 +690,7 @@ history:
 
     def test_verify_ignores_link_like_text_in_fenced_code(self):
         path = self.concept(
-            body="""See [source](/references/example.com/source.md).
+            body="""See [source](/sources/example.com/source.md).
 
 ```markdown
 [External](https://example.org)
@@ -672,8 +702,8 @@ history:
 
     def test_verify_rejects_duplicate_inline_filepaths(self):
         path = self.concept(
-            body="""See [first](/references/example.com/source.md).
-See [second](../references/example.com/source.md).
+            body="""See [first](/sources/example.com/source.md).
+See [second](../sources/example.com/source.md).
 """
         )
         findings = self.verify_path(path)
@@ -686,7 +716,7 @@ See [second](../references/example.com/source.md).
         path = self.concept(
             body="""See [first claim][source] and [second claim][source].
 
-[source]: /references/example.com/source.md
+[source]: /sources/example.com/source.md
 """
         )
         self.assertEqual(self.verify_path(path), [])
@@ -695,8 +725,8 @@ See [second](../references/example.com/source.md).
         path = self.concept(
             body="""See [first][source-a] and [second][source-b].
 
-[source-a]: /references/example.com/source.md
-[source-b]: ../references/example.com/source.md
+[source-a]: /sources/example.com/source.md
+[source-b]: ../sources/example.com/source.md
 """
         )
         findings = self.verify_path(path)
@@ -706,14 +736,14 @@ See [second](../references/example.com/source.md).
         ))
 
     def test_verify_rejects_wrong_reference_ancestor_type(self):
-        abstract = self.root / "references/example.com/index.md"
+        abstract = self.root / "sources/example.com/index.md"
         abstract.write_text(
             abstract.read_text(encoding="utf-8").replace(
                 "type: Reference", "type: Concept"
             ),
             encoding="utf-8",
         )
-        path = self.root / "references/example.com/source.md"
+        path = self.root / "sources/example.com/source.md"
         findings = self.verify_path(path)
         self.assertTrue(
             any("not a Reference" in finding.message for finding in findings)
@@ -852,7 +882,7 @@ See [second](../references/example.com/source.md).
 type: Reference
 title: {title}
 description: {description}
-tags: [references, example.com, guide, test]
+tags: [sources, example.com, guide, test]
 resource: https://example.com/{resource}
 resource_type: Webpage
 timestamp: 2024-01-01T00:00:00Z
@@ -860,28 +890,28 @@ timestamp: 2024-01-01T00:00:00Z
 {body}
 """
         self.write(
-            "references/example.com/index.md",
+            "sources/example.com/index.md",
             reference_template.format(
                 title="Domain", description="Domain abstract.",
                 resource="domain", body="Domain body.",
             ),
         )
         self.write(
-            "references/example.com/guide/index.md",
+            "sources/example.com/guide/index.md",
             reference_template.format(
                 title="Guide", description="Guide abstract.",
                 resource="guide", body="Guide body.",
             ),
         )
         first = self.write(
-            "references/example.com/guide/first.md",
+            "sources/example.com/guide/first.md",
             reference_template.format(
                 title="First", description="First reference.",
                 resource="first", body="First body.",
             ),
         )
         second = self.write(
-            "references/example.com/guide/second.md",
+            "sources/example.com/guide/second.md",
             reference_template.format(
                 title="Second", description="Second reference.",
                 resource="second", body="Second body.",
@@ -895,30 +925,30 @@ timestamp: 2024-01-01T00:00:00Z
         self.assertEqual(
             paths,
             [
-                "references/example.com/index.md",
-                "references/example.com/guide/index.md",
-                "references/example.com/guide/first.md",
-                "references/example.com/guide/second.md",
+                "sources/example.com/index.md",
+                "sources/example.com/guide/index.md",
+                "sources/example.com/guide/first.md",
+                "sources/example.com/guide/second.md",
             ],
         )
         output = render_read(self.root, documents)
         self.assertEqual(output.count("Domain body."), 1)
         self.assertEqual(output.count("Guide body."), 1)
         self.assertIn(
-            "# /references/example.com/guide/first.md\n"
-            "**Tags:** references, example.com, guide, test\n"
+            "# /sources/example.com/guide/first.md\n"
+            "**Tags:** sources, example.com, guide, test\n"
             "https://example.com/first",
             output,
         )
 
     def test_reference_reports_missing_ancestor_abstract(self):
         reference = self.write(
-            "references/example.com/missing-scope/source.md",
+            "sources/example.com/missing-scope/source.md",
             """---
 type: Reference
 title: Missing scope
 description: Reference below a directory without an abstract.
-tags: [references, example.com, missing-scope, test]
+tags: [sources, example.com, missing-scope, test]
 resource: https://example.com/missing-scope/source
 resource_type: Webpage
 timestamp: 2024-01-01T00:00:00Z
@@ -964,7 +994,7 @@ history:
         document = load_document(
             self.concept(
                 body="See [cross-bundle topic](/bundle-b/) "
-                "and [source](/references/example.com/source.md)."
+                "and [source](/sources/example.com/source.md)."
             )
         )
         as_of = datetime(2024, 1, 11, tzinfo=timezone.utc)
@@ -975,14 +1005,14 @@ history:
             graph.concept_links[document.path.resolve()],
         )
 
-    def test_reference_may_not_link_outside_references_directory(self):
+    def test_reference_may_not_link_outside_sources_directory(self):
         reference = self.write(
-            "references/example.com/outbound.md",
+            "sources/example.com/outbound.md",
             """---
 type: Reference
 title: Outbound reference
 description: Reference with a prohibited link.
-tags: [references, example.com, test]
+tags: [sources, example.com, test]
 resource: https://example.com/outbound
 resource_type: Webpage
 timestamp: 2024-01-01T00:00:00Z
@@ -993,50 +1023,50 @@ See [another concept](/bundle-a/other.md).
         findings = self.verify_path(reference)
         self.assertTrue(
             any(
-                "leaves the references directory" in finding.message
+                "leaves its source or tool hierarchy" in finding.message
                 for finding in findings
             )
         )
 
-    def test_reference_may_link_within_references_directory(self):
+    def test_reference_may_link_within_sources_directory(self):
         reference = self.write(
-            "references/example.com/related.md",
+            "sources/example.com/related.md",
             """---
 type: Reference
 title: Related reference
 description: Reference with an internal link.
-tags: [references, example.com, test]
+tags: [sources, example.com, test]
 resource: https://example.com/related
 resource_type: Webpage
 timestamp: 2024-01-01T00:00:00Z
 ---
-See [source](/references/example.com/source.md).
+See [source](/sources/example.com/source.md).
 """,
         )
         findings = self.verify_path(reference)
         self.assertEqual(findings, [])
 
     def test_reference_rejects_invalid_link_targets(self):
-        self.write("references/example.com/data.txt", "data\n")
-        self.write("references/example.com/log.md", "# Log\n")
-        self.write("references/index.md", "# References\n")
+        self.write("sources/example.com/data.txt", "data\n")
+        self.write("sources/example.com/log.md", "# Log\n")
+        self.write("sources/index.md", "# References\n")
         reference = self.write(
-            "references/example.com/invalid-links.md",
+            "sources/example.com/invalid-links.md",
             """---
 type: Reference
 title: Invalid links
 description: Reference with invalid links.
-tags: [references, example.com, test]
+tags: [sources, example.com, test]
 resource: https://example.com/invalid-links
 resource_type: Webpage
 timestamp: 2024-01-01T00:00:00Z
 ---
 See [external](https://example.org),
-[fragment](/references/example.com/source.md#part),
-[missing](/references/example.com/missing.md),
-[text](/references/example.com/data.txt),
-[log](/references/example.com/log.md), and
-[navigation](/references/index.md).
+[fragment](/sources/example.com/source.md#part),
+[missing](/sources/example.com/missing.md),
+[text](/sources/example.com/data.txt),
+[log](/sources/example.com/log.md), and
+[navigation](/sources/index.md).
 """,
         )
         messages = [
@@ -1059,7 +1089,7 @@ See [external](https://example.org),
         )
 
     def test_reference_index_validates_table_of_contents_links(self):
-        index = self.root / "references/example.com/index.md"
+        index = self.root / "sources/example.com/index.md"
         index.write_text(
             index.read_text(encoding="utf-8")
             + "- [External](https://example.org)\n",
@@ -1074,7 +1104,7 @@ See [external](https://example.org),
         )
 
     def test_reference_index_requires_each_level_file_in_contents(self):
-        index = self.root / "references/example.com/index.md"
+        index = self.root / "sources/example.com/index.md"
         index.write_text(
             index.read_text(encoding="utf-8").replace(
                 "- [Source](source.md)\n", ""
@@ -1089,7 +1119,7 @@ See [external](https://example.org),
         ))
 
     def test_reference_index_contents_accept_reference_style_link(self):
-        index = self.root / "references/example.com/index.md"
+        index = self.root / "sources/example.com/index.md"
         index.write_text(
             index.read_text(encoding="utf-8").replace(
                 "- [Source](source.md)",
@@ -1099,23 +1129,23 @@ See [external](https://example.org),
         )
         self.assertEqual(self.verify_path(index), [])
 
-    def test_reference_index_requires_non_markdown_level_file_in_contents(self):
-        extra = self.root / "references/example.com/attachment.txt"
+    def test_reference_index_omits_non_markdown_level_file_from_contents(self):
+        extra = self.root / "sources/example.com/attachment.txt"
         extra.write_text("attachment", encoding="utf-8")
         findings = self.verify_path(
-            self.root / "references/example.com/index.md"
+            self.root / "sources/example.com/index.md"
         )
-        self.assertTrue(any(
+        self.assertFalse(any(
             finding.field == "contents"
             and "attachment.txt" in finding.message
             for finding in findings
         ))
 
     def test_reference_index_contents_omit_index_and_log(self):
-        log = self.root / "references/example.com/log.md"
+        log = self.root / "sources/example.com/log.md"
         log.write_text("# Update Log\n", encoding="utf-8")
         findings = self.verify_path(
-            self.root / "references/example.com/index.md"
+            self.root / "sources/example.com/index.md"
         )
         self.assertFalse(any(
             finding.field == "contents"
@@ -1127,7 +1157,7 @@ See [external](https://example.org),
         ))
 
     def test_reference_index_abstract_allows_any_external_directory_link(self):
-        index = self.root / "references/example.com/index.md"
+        index = self.root / "sources/example.com/index.md"
         index.write_text(
             index.read_text(encoding="utf-8").replace(
                 "Example domain abstract.",
@@ -1138,7 +1168,7 @@ See [external](https://example.org),
         self.assertEqual(self.verify_path(index), [])
 
     def test_reference_index_abstract_uses_contents_definition(self):
-        index = self.root / "references/example.com/index.md"
+        index = self.root / "sources/example.com/index.md"
         index.write_text(
             index.read_text(encoding="utf-8").replace(
                 "Example domain abstract.",
@@ -1151,12 +1181,12 @@ See [external](https://example.org),
 
     def test_reference_index_abstract_allows_same_bundle_sibling_link(self):
         self.write(
-            "references/other.example/index.md",
+            "sources/other.example/index.md",
             """---
 type: Reference
 title: Other domain
 description: Complete other.example source.
-tags: [references, other.example, test]
+tags: [sources, other.example, test]
 resource: https://other.example/
 resource_type: Website
 timestamp: 2024-01-01T00:00:00Z
@@ -1165,12 +1195,12 @@ Other domain abstract.
 """,
         )
         sibling = self.write(
-            "references/other.example/source.md",
+            "sources/other.example/source.md",
             """---
 type: Reference
 title: Other source
 description: Persistent other source.
-tags: [references, other.example, test]
+tags: [sources, other.example, test]
 resource: https://other.example/source
 resource_type: Webpage
 timestamp: 2024-01-01T00:00:00Z
@@ -1178,11 +1208,11 @@ timestamp: 2024-01-01T00:00:00Z
 Other source abstract.
 """,
         )
-        index = self.root / "references/example.com/index.md"
+        index = self.root / "sources/example.com/index.md"
         index.write_text(
             index.read_text(encoding="utf-8").replace(
                 "Example domain abstract.",
-                "See [other source](/references/other.example/source.md).",
+                "See [other source](/sources/other.example/source.md).",
             ),
             encoding="utf-8",
         )
@@ -1190,7 +1220,7 @@ Other source abstract.
         self.assertEqual(self.verify_path(index), [])
 
     def test_reference_index_abstract_rejects_own_directory_link(self):
-        index = self.root / "references/example.com/index.md"
+        index = self.root / "sources/example.com/index.md"
         index.write_text(
             index.read_text(encoding="utf-8").replace(
                 "Example domain abstract.",
@@ -1208,13 +1238,13 @@ Other source abstract.
 
     def test_command_requires_execution_fields(self):
         command = self.write(
-            "references/example.com/command.md",
+            "sources/example.com/command.md",
             """---
 type: Reference
 reference_type: Command
 title: Command
 description: Sanctioned command.
-tags: [references, example.com, test]
+tags: [sources, example.com, test]
 resource: https://example.com/command
 resource_type: Webpage
 timestamp: 2024-01-01T00:00:00Z
@@ -1232,13 +1262,13 @@ Command reference.
 
     def test_computation_requires_commands_and_attestation_fields(self):
         computation = self.write(
-            "references/example.com/computation.md",
+            "sources/example.com/computation.md",
             """---
 type: Reference
 reference_type: Computation
 title: Computation
 description: Sanctioned computation.
-tags: [references, example.com, test]
+tags: [sources, example.com, test]
 resource: https://example.com/computation
 resource_type: Webpage
 timestamp: 2024-01-01T00:00:00Z
@@ -1265,13 +1295,13 @@ Computation reference.
 
     def test_valid_command_and_computation_subtypes(self):
         command = self.write(
-            "references/example.com/command.md",
+            "sources/example.com/command.md",
             """---
 type: Reference
 reference_type: Command
 title: Command
 description: Sanctioned command.
-tags: [references, example.com, test]
+tags: [sources, example.com, test]
 resource: https://example.com/source
 resource_type: Webpage
 timestamp: 2024-01-01T00:00:00Z
@@ -1285,13 +1315,13 @@ Command reference.
 """,
         )
         computation = self.write(
-            "references/example.com/computation.md",
+            "sources/example.com/computation.md",
             """---
 type: Reference
 reference_type: Computation
 title: Computation
 description: Sanctioned computation.
-tags: [references, example.com, test]
+tags: [sources, example.com, test]
 resource: https://example.com/source
 resource_type: Webpage
 timestamp: 2024-01-01T00:00:00Z
@@ -1312,13 +1342,13 @@ Computation reference.
 
     def test_package_and_execution_resources_require_source_reference(self):
         command = self.write(
-            "references/example.com/unmatched-command.md",
+            "sources/example.com/unmatched-command.md",
             """---
 type: Reference
 reference_type: Command
 title: Unmatched command
 description: Sanctioned command without a source match.
-tags: [references, example.com, test]
+tags: [sources, example.com, test]
 resource: https://example.com/unmatched
 resource_type: Webpage
 timestamp: 2024-01-01T00:00:00Z
@@ -1348,13 +1378,13 @@ Command reference.
 
     def test_package_contents_allow_sources_and_computations(self):
         package = self.write(
-            "references/packages/widget/index.md",
+            "tools/widget/index.md",
             """---
 type: Reference
-reference_type: Package
+reference_type: Tool
 title: Widget package
 description: Installed Widget package.
-tags: [references, packages, widget, test]
+tags: [tools, widget, test]
 resource: https://example.com/source
 resource_type: Webpage
 timestamp: 2024-01-01T00:00:00Z
@@ -1365,18 +1395,17 @@ Widget package abstract.
 
 # Contents
 
-- [Source documentation](../../example.com/source.md)
 - [Compute Widget state](state.md)
 """,
         )
         computation = self.write(
-            "references/packages/widget/state.md",
+            "tools/widget/state.md",
             """---
 type: Reference
 reference_type: Computation
 title: Compute Widget state
 description: Computes Widget state.
-tags: [references, packages, widget, test]
+tags: [tools, widget, test]
 resource: https://example.com/source
 resource_type: Webpage
 timestamp: 2024-01-01T00:00:00Z
@@ -1440,8 +1469,7 @@ class TypedIndexTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)
-        for name in ("vocabulary.ttl", "requirements.ttl", "axioms.ttl"):
-            (self.root / name).write_text("", encoding="utf-8")
+        (self.root / "ontology.ttl").write_text("", encoding="utf-8")
         self.index = self.root / "topic/index.md"
         self.index.parent.mkdir()
         self.index.write_text(
