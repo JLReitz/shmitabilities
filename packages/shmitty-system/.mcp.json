@@ -7,7 +7,8 @@
         "bin/knowledge-cli",
         "mcp"
       ],
-      "env_vars": ["SHMIT_KNOWLEDGE_ROOT"]
+      "env_vars": ["SHMIT_KNOWLEDGE_ROOT"],
+      "cwd": "."
     }
   }
 }
