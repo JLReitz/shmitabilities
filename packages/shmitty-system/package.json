@@ -33,8 +33,8 @@
     "src/",
     "dist/",
     "cordis.patch.yml",
-    "mcp.json",
-    "plugin.json",
+    ".codex-plugin/plugin.json",
+    ".mcp.json",
     "README.md"
   ],
   "scripts": {

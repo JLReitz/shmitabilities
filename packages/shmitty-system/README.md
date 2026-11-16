@@ -25,9 +25,10 @@ Pi loads `src/pi-shmitty-system/index.ts` and `skills/` from `package.json`. DSH
 `dist/dsh/index.js` through `cordis.patch.yml` and registers a filesystem skill provider for
 `skills/`. Both entries append `bin/` to their process `PATH` once.
 
-Codex discovers `plugin.json`, `skills/`, and `mcp.json` from the package root. The MCP registration
-starts `python3` with `bin/knowledge-cli mcp`. Codex sets the installed plugin root as the server
-working directory, so the relative launcher path selects the cached package copy.
+Codex reads `.codex-plugin/plugin.json`, loads the workflows from `skills/`, and loads the MCP
+registration from `.mcp.json`. The registration starts `python3` with `bin/knowledge-cli mcp`,
+forwards `SHMIT_KNOWLEDGE_ROOT` from the client environment, and sets the installed plugin root as
+the server working directory. The relative launcher path selects the cached package copy.
 
 ## Knowledge MCP tools
 
@@ -71,7 +72,7 @@ the `python3` environment that starts Codex. Set `SHMIT_OWL_JAR` before the Code
 
 Build the DSH entry with `npm run build`. The `prepare` script builds it for source installation.
 Check the package payload with `npm pack --dry-run --json`; it must contain `dist/`, `src/`,
-`skills/`, `bin/`, `plugin.json`, `mcp.json`, and `package.json`.
+`skills/`, `bin/`, `.codex-plugin/plugin.json`, `.mcp.json`, and `package.json`.
 
 The MCP behaviors in this document map to `tests/test_mcp.py`. Run the mapped tests with:
 

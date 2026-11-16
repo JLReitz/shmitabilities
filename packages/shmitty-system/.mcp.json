@@ -1,5 +1,4 @@
 {
-  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
   "mcpServers": {
     "shmitty-knowledge": {
       "type": "stdio",
@@ -7,7 +6,8 @@
       "args": [
         "bin/knowledge-cli",
         "mcp"
-      ]
+      ],
+      "env_vars": ["SHMIT_KNOWLEDGE_ROOT"]
     }
   }
 }

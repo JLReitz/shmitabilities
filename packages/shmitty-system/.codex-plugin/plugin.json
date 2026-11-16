@@ -1,0 +1,7 @@
+{
+  "name": "shmitty-system",
+  "version": "0.1.0",
+  "description": "Shmitty workflow skills and knowledge commands.",
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
+}

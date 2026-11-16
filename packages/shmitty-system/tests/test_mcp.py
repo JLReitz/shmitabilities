@@ -13,7 +13,8 @@ import pytest
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 LAUNCHER = PACKAGE_ROOT / "bin" / "knowledge-cli"
-MANIFEST = PACKAGE_ROOT / "mcp.json"
+PLUGIN_MANIFEST = PACKAGE_ROOT / ".codex-plugin" / "plugin.json"
+MCP_MANIFEST = PACKAGE_ROOT / ".mcp.json"
 PROTOCOL_VERSION = "2025-11-25"
 TOOL_NAMES = {
     "knowledge_read",
@@ -161,19 +162,22 @@ def initialize(client):
 
 
 def test_manifest_launches_installed_relative_path():
-    manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    plugin = json.loads(PLUGIN_MANIFEST.read_text(encoding="utf-8"))
+    manifest = json.loads(MCP_MANIFEST.read_text(encoding="utf-8"))
 
-    assert manifest["$schema"] == (
-        "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json"
-    )
+    assert plugin["skills"] == "./skills/"
+    assert plugin["mcpServers"] == "./.mcp.json"
     server = manifest["mcpServers"]["shmitty-knowledge"]
     assert server == {
         "type": "stdio",
         "command": "python3",
         "args": ["bin/knowledge-cli", "mcp"],
+        "env_vars": ["SHMIT_KNOWLEDGE_ROOT"],
+        "cwd": ".",
     }
     package = json.loads((PACKAGE_ROOT / "package.json").read_text(encoding="utf-8"))
-    assert "mcp.json" in package["files"]
+    assert ".codex-plugin/plugin.json" in package["files"]
+    assert ".mcp.json" in package["files"]
 
 
 def test_tool_catalog_matches_documented_contract(client):
