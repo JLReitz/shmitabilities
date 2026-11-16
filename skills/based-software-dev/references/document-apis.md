@@ -9,10 +9,10 @@ Document every public callable. Document a nonpublic callable when its name and 
 Write each applicable part in this order:
 
 1. **Summary**: State the observable purpose in one sentence.
-2. **Details**: State preconditions, postconditions, caller-visible side effects, ownership, lifetime, and other contract information that applies to the callable as a whole.
+2. **Details**: State preconditions, postconditions, caller-visible side effects, ownership, lifetime, and other contract information that applies to the callable as a whole. For a stateful query, list the operations that set, clear, or preserve the queried state.
 3. **Parameters**: List caller-supplied parameters in declaration order. State each parameter's purpose and any valid range, unit, direction, ownership, mutation, nullability, or default behavior that the signature does not express. Put implicit-receiver constraints in the details.
-4. **Successful result**: State the meaning of a returned or yielded value. Identify the condition for each discrete success value when the value selects different outcomes.
-5. **Failure outcomes**: State each caller-visible error value, exception, panic, or safety condition and the condition that produces it.
+4. **Successful result**: State the meaning of a returned or yielded value. State the conditions for both values of a Boolean result and for each success value of a status result.
+5. **Failure outcomes**: State the condition that produces each caller-visible failure status, error value, exception, panic, or safety condition.
 6. **Example**: Include one example when the preceding contract does not make correct use clear.
 
 Omit a part that does not apply. Do not repeat parameter types, return types, default expressions, or other information already stated completely by the signature.

@@ -24,7 +24,7 @@ Revise the plan, standing documents, and mapped tests together when development 
 
 ## Scope and design
 
-Apply YAGNI to the plan and standing-document outcomes. Implement only the behavior required now. Keep extension points only where a confirmed requirement or likely change gives them a clear use.
+Apply YAGNI to the plan and standing-document outcomes. Implement only the behavior required now. Keep extension points only where a confirmed requirement or likely change gives them a clear use. Remove code paths that callers cannot reach.
 
 Compare viable approaches and their tradeoffs in the plan. Prefer the simplest approach that satisfies the confirmed standing-document outcomes and preserves a clear path for a stated later extension. Keep changes within the confirmed plan. Add related behavior only when a standing document requires it.
 
@@ -34,15 +34,29 @@ Read [Based object-oriented development](references/develop-oop.md) when creatin
 
 Prefer value semantics. Introduce reference identity only when confirmed behavior requires shared identity or shared mutation.
 
-### Resource ownership
+### State, failure, and resource ownership
 
-Tie each acquired resource to a scope or object lifetime when the language supports deterministic cleanup. Otherwise use the language's structured cleanup mechanism. Make ownership transfer explicit. Share ownership only when the resource contract requires it.
+Store each acquired resource in the object that controls its use, replacement, and release. Tie its release to that object's lifetime when the language supports deterministic cleanup. Otherwise use the language's structured cleanup mechanism
+
+Do not introduce a domain ownership wrapper when its only consumer already controls the complete resource lifecycle.
+
+Keep each state fact in the object that observes its defining evidence. Change it only at that evidence boundary and expose it through a query when other objects need it. Use operation results directly for local control flow. Do not mirror the state in another object.
+
+Report a condition from the object that observes its evidence. Choose its response in the narrowest object that owns the response’s full effect scope.
+
+Represent mutually exclusive states with one enumeration.
+
+Run a failure side effect when the failure state begins. Do not repeat the same side effect while the state persists.
+
+### Logic flow
+
+Derive routine termination conditions from available data. Use a fixed value only when defined by contract.
 
 ### Compatibility
 
 Preserve external interfaces that callers use when modifying existing code. Treat names, signatures, data formats, behavior, and error behavior as interface contracts where callers depend on them. When a required change conflicts with an interface in use, provide a compatible transition or make the interface change explicit for the caller.
 
-Validate platform, representation, and ABI assumptions at the earliest boundary supported by the language.
+Validate representation and ABI assumptions at the earliest boundary supported by the language.
 
 ### Logging
 
@@ -69,5 +83,19 @@ Parenthesize each operand of a compound Boolean condition.
 Make an intentionally discarded return value explicit with the language's established syntax.
 
 Keep the lines that complete one local operation contiguous. Separate adjacent source sections with one blank line in declarations, implementations, and tests.
+
+### Comments and API documentation
+
+Read [API documentation](references/document-apis.md) when creating or modifying an API documentation comment or docstring.
+
+Document each operation at the caller-visible level. State its purpose, inputs, results, errors, and required ordering.
+
+Describe guarantees as behavior. Name a system call, flag, library function, or command sequence only when it is part of the caller's contract.
+
+At an implementation site, comment only a non-obvious constraint, invariant, ordering requirement, external behavior, or decision that explains the implementation.
+
+Use protocol terms and code identifiers. Do not introduce a private name for a mechanism.
+
+Place ordering and invariant comments immediately before the block they govern.
 
 Apply `based-document-author` to standing documents, comments, docstrings, log messages, and other human-facing or agent-facing prose.

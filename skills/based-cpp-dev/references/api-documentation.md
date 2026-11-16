@@ -2,6 +2,8 @@
 
 Apply the shared API documentation contract from based-software-dev. Use Doxygen syntax for C and C++ documentation comments.
 
+Place API Doxygen on declarations. Place implementation rationale and deferred-work TODOs on the source operation that implements the behavior, not on public declarations or data-member documentation.
+
 ## Layout
 
 1. Write the summary with `@brief`.
