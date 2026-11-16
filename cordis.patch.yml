@@ -6,3 +6,12 @@
         includeDefaultRoots: false
         customSkillDirs:
           - !!js process.getBuiltinModule('node:path').join(process.getBuiltinModule('node:path').dirname(process.getBuiltinModule('node:module').createRequire(baseUrl).resolve('@jlreitz/shmitabilities/package.json')), 'skills')
+    - id: shmitty-system-path
+      name: !!js process.getBuiltinModule('node:path').join(process.getBuiltinModule('node:path').dirname(process.getBuiltinModule('node:module').createRequire(baseUrl).resolve('@jlreitz/shmitabilities/package.json')), 'packages/shmitty-system/dist/dsh/index.js')
+    - id: shmitty-system-skills
+      name: '@deepseek-ai/dsh-skill-filesystem'
+      config:
+        providerName: shmitty-system
+        includeDefaultRoots: false
+        customSkillDirs:
+          - !!js process.getBuiltinModule('node:path').join(process.getBuiltinModule('node:path').dirname(process.getBuiltinModule('node:module').createRequire(baseUrl).resolve('@jlreitz/shmitabilities/package.json')), 'packages/shmitty-system/skills')

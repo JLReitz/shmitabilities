@@ -16,11 +16,16 @@
 	"license": "MIT",
 	"files": [
 		"skills/",
+		"packages/shmitty-system/",
+		".codex-plugin/",
 		"cordis.patch.yml"
 	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/jlreitz/shmitabilities"
+	},
+	"exports": {
+		"./package.json": "./package.json"
 	},
 	"bin": {},
 	"bundledDependencies": [],
@@ -31,7 +36,9 @@
 		"vitest": "^1.0.0"
 	},
 	"pi": {
-		"extensions": [],
+		"extensions": [
+			"./packages/shmitty-system"
+		],
 		"skills": [
 			"./skills"
 		]

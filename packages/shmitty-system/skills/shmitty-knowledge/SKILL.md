@@ -1,7 +1,7 @@
 ---
 name: shmitty-knowledge
 description: Use, add to, and maintain a knowledge base of source-faithful references and cited concepts.
-allowed-tools: Bash(scripts/knowledge-cli:*)
+allowed-tools: Bash(knowledge-cli:*)
 ---
 
 # Knowledge Format

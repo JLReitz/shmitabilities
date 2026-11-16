@@ -1,0 +1,8 @@
+{
+  "name": "shmitabilities",
+  "version": "0.0.0.69",
+  "description": "Based development skills.",
+  "skills": [
+    "./skills"
+  ]
+}

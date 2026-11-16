@@ -1,0 +1,72 @@
+{
+  "name": "@jlreitz/shmitty-system",
+  "version": "0.1.0",
+  "description": "Shmitty skills and knowledge commands for Codex, Pi, and DSH.",
+  "keywords": [
+    "pi-package",
+    "dsh",
+    "skills"
+  ],
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "./dist/dsh/index.js",
+  "types": "./dist/dsh/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/dsh/index.d.ts",
+      "default": "./dist/dsh/index.js"
+    },
+    "./core": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "bin/knowledge-cli",
+    "bin/knowledge_cli/*.py",
+    "bin/requirements-ontology.txt",
+    "skills/",
+    "src/",
+    "dist/",
+    "cordis.patch.yml",
+    "plugin.json",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*"
+  },
+  "peerDependenciesMeta": {
+    "@earendil-works/pi-coding-agent": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.0.0"
+  },
+  "pi": {
+    "extensions": [
+      "./src/pi-shmitty-system/index.ts"
+    ],
+    "skills": [
+      "./skills"
+    ]
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "bin": {
+    "knowledge-cli": "./bin/knowledge-cli"
+  }
+}

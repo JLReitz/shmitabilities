@@ -3,16 +3,16 @@
 Run the launcher from the skill directory:
 
 ```bash
-scripts/knowledge-cli investment <concept-path> [--root <tree-root>]
-scripts/knowledge-cli confidence <concept-path> [--root <tree-root>] [-a|--all]
-scripts/knowledge-cli connections <concept-path> [--root <tree-root>]
-scripts/knowledge-cli verify <document-path> [--root <tree-root>]
-scripts/knowledge-cli read <document-path> [<document-path> ...] [--root <tree-root>]
-scripts/knowledge-cli search [--tag <tag>]... [--type Concept|Reference] [--subtype <subtype>] [--root <tree-root>]
-scripts/knowledge-cli ontology terms [--root <tree-root>]
-scripts/knowledge-cli ontology facts [--root <tree-root>]
-scripts/knowledge-cli ontology requirements [--root <tree-root>]
-scripts/knowledge-cli migrate --root <tree-root> [--apply]
+knowledge-cli investment <concept-path> [--root <tree-root>]
+knowledge-cli confidence <concept-path> [--root <tree-root>] [-a|--all]
+knowledge-cli connections <concept-path> [--root <tree-root>]
+knowledge-cli verify <document-path> [--root <tree-root>]
+knowledge-cli read <document-path> [<document-path> ...] [--root <tree-root>]
+knowledge-cli search [--tag <tag>]... [--type Concept|Reference] [--subtype <subtype>] [--root <tree-root>]
+knowledge-cli ontology terms [--root <tree-root>]
+knowledge-cli ontology facts [--root <tree-root>]
+knowledge-cli ontology requirements [--root <tree-root>]
+knowledge-cli migrate --root <tree-root> [--apply]
 ```
 
 Check for an environment-defined root with `echo $SHMIT_KNOWLEDGE_ROOT`, if not available then `--root` must be set. An explicit `--root` takes precedence. If neither is provided, the command exits with an error.

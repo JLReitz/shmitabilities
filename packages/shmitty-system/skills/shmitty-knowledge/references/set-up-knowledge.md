@@ -5,7 +5,7 @@
 3. Create `ontology.ttl` at the root. Start with the prefixes and Shared vocabulary that apply throughout the tree. Use `@prefix sk: <urn:shmitty:knowledge:> .` when the module uses `sk:role` or `sk:plainTag`. An empty Turtle module is sufficient until the first topic needs shared terms.
 4. Create `sources/index.md` and `tools/index.md` as navigation documents. Add their contents links when source domains and tools are added. Keep ontology modules out of these directories.
 5. Create the first topic when there is knowledge to place. Add `<topic>/index.md` as a Topic Concept with a `topic_tag` in its tags, and add `<topic>/ontology.ttl` declaring the matching class. Give the class a meaningful axiom or requirement. Add the topic to the root navigation, then follow [Add knowledge](add-knowledge.md) for its Concepts and References.
-6. Run `scripts/knowledge-cli ontology terms --root <tree-root>` from the skill directory to check that the root ontology loads. Run `scripts/knowledge-cli verify <document-path> --root <tree-root>` for each new knowledge document. Use [Evaluate and verify knowledge](knowledge-cli.md) for the remaining checks.
+6. Run `knowledge-cli ontology terms --root <tree-root>` from the skill directory to check that the root ontology loads. Run `knowledge-cli verify <document-path> --root <tree-root>` for each new knowledge document. Use [Evaluate and verify knowledge](knowledge-cli.md) for the remaining checks.
 
 The initial tree has this shape:
 

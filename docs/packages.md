@@ -7,20 +7,34 @@ reads the shared settings file. A capability package interprets the values it us
 ## Default client resources
 
 ```text
-Root package installation
-  | Pi: pi.skills                     | DSH: dsh.bundle.patch
-  v                                   v
-Pi skill loader               DSH filesystem skill provider
-  | reads skills/                     | scans skills/
-  +--------------> skills/ <----------+
+Root package (default)            shmitty-system (individual)
+├── based skills                   ├── Shmitty skills
+└── Shmitty skills + bin/          └── knowledge-cli + bin/
+    ├── Codex: based skills           ├── Codex: Shmitty skills
+    ├── Pi: package paths             ├── Pi: package manifest
+    └── DSH: root patch              └── DSH: package patch
 ```
 
-The root `package.json` registers `skills/` for Pi and declares a DSH bundle patch in
-`cordis.patch.yml`. Pi reads `pi.skills` when the root is installed as a local package. DSH
-applies the patch when the root is added to a profile; the patch registers a filesystem skill
-provider for the same directory. Both clients then load the skill files from this checkout.
-The default capability package set is empty. Install capability packages separately when their
-behavior is required; see [Client installation and loading](dependencies.md#client-installation-and-loading).
+The root `package.json` includes `packages/shmitty-system/`, registers both skill
+families for Pi, and loads the package's Pi extension. The root DSH patch registers both
+skill providers and the Shmitty PATH plugin. The root Codex compatibility manifest lists only `./skills`; its based skills are separate
+from the standalone `packages/shmitty-system` portable Codex plugin, which discovers its
+own `skills/`. Register both Codex plugins to load both families.
+For Pi and DSH, install either the root bundle or `shmitty-system` to load Shmitty skills
+and `knowledge-cli`; installing both in one scope may register duplicate entries.
+
+For Codex, `.agents/plugins/marketplace.json` is the repository catalog. Its `./` and
+`./packages/shmitty-system` paths resolve from the checkout root. Register a checkout once
+with `codex plugin marketplace add /absolute/path/to/checkout`, then install
+`shmitabilities@shmitabilities` and `shmitty-system@shmitabilities` separately with
+`codex plugin add`. Codex caches each installed plugin; changing the checkout does not
+change an existing cached copy until it is refreshed or reinstalled. Codex does not
+append a plugin `bin/` directory to the shell PATH. The current Codex plugin exposes
+skills; a packaged MCP server is needed to expose knowledge operations as native
+Codex tools. The catalog lives in
+Git, so another checkout can use the same registrations without recreating a personal
+marketplace file. The root npm package file list does not include this repository catalog;
+use the standalone manifests or a distribution marketplace for installed packages.
 
 ```text
 Capability entry

@@ -68,8 +68,9 @@ dsh --profile <profile> --dump-config
 
 Grant Pi project trust before checking the skill catalog. In the DSH config dump, find the
 `shmitabilities-skills` row and its `customSkillDirs` path, then check the skill catalog in a
-session. This root bundle selects no capability packages. Install each selected capability as
-described below.
+session. The root bundle supplies both based and Shmitty skills and adds the Shmitty `bin/`
+directory to PATH in Pi and DSH. Install `packages/shmitty-system` by itself when only
+the Shmitty package is wanted.
 
 ## Shared Node packages
 
@@ -173,13 +174,13 @@ and opt-out environment variable.
 ### Knowledge ontology tooling
 
 The ontology commands use the Python packages in
-`skills/shmitty-knowledge/scripts/requirements-ontology.txt`, a Java runtime,
+`packages/shmitty-system/bin/requirements-ontology.txt`, a Java runtime,
 and the packaged HermiT OWL API JAR. Install the Python packages in the
 environment that runs `knowledge-cli`. Use JPype1 1.5.2 with Java 8.
 
 ```bash
 python3 -m venv .venv
-.venv/bin/python -m pip install -r skills/shmitty-knowledge/scripts/requirements-ontology.txt
+.venv/bin/python -m pip install -r packages/shmitty-system/bin/requirements-ontology.txt
 ```
 
 Activate the environment before using the `knowledge-cli` launcher, or run the
