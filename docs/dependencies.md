@@ -173,18 +173,19 @@ and opt-out environment variable.
 
 ### Knowledge ontology tooling
 
-The ontology commands use the Python packages in
+The ontology commands and MCP tools use the Python packages in
 `packages/shmitty-system/bin/requirements-ontology.txt`, a Java runtime,
 and the packaged HermiT OWL API JAR. Install the Python packages in the
-environment that runs `knowledge-cli`. Use JPype1 1.5.2 with Java 8.
+environment that runs `knowledge-cli`. The Codex plugin starts the `python3` found by the Codex
+process, so activate the prepared environment before starting Codex. Use JPype1 1.5.2 with Java 8.
 
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install -r packages/shmitty-system/bin/requirements-ontology.txt
 ```
 
-Activate the environment before using the `knowledge-cli` launcher, or run the
-launcher with `.venv/bin/python`.
+Activate the environment before using the `knowledge-cli` launcher or starting Codex. A direct CLI
+call can also run the launcher with `.venv/bin/python`.
 
 Download the [packaged HermiT JAR](https://github.com/owlcs/hermit-reasoner/wiki/HermiT-FAQ)
 to a stable local location and set `SHMIT_OWL_JAR` to its absolute path. The

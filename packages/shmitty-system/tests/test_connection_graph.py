@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "bin"))
 
 from knowledge_cli.connections import collect_connections, render_connections
 from knowledge_cli.document import load_document

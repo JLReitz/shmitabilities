@@ -33,6 +33,7 @@
     "src/",
     "dist/",
     "cordis.patch.yml",
+    "mcp.json",
     "plugin.json",
     "README.md"
   ],

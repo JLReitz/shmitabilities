@@ -6,7 +6,7 @@ import sys
 import unittest
 from shutil import copyfile
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "bin"))
 
 from knowledge_cli.errors import KnowledgeError
 from knowledge_cli.ontology import build_snapshot, load_ontology

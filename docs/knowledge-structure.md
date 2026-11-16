@@ -72,4 +72,4 @@ Ontology validation uses the Python RDF and OWL packages and the packaged
 HermiT JAR. [Ontology dependencies](dependencies.md#knowledge-ontology-tooling)
 lists installation and verification commands.
 
-The CLI is implemented in `packages/shmitty-system/bin/knowledge_cli/`. Its focused filesystem tests are in `packages/shmitty-system/bin/tests/test_structure.py`. Install [ontology tooling](dependencies.md#knowledge-ontology-tooling), then run `python3 -m unittest discover -s packages/shmitty-system/bin/tests -p 'test_structure.py'` from the repository root to validate topic contents, connection traversal, and source and tool ancestor context.
+The CLI is implemented in `packages/shmitty-system/bin/knowledge_cli/`. Its focused filesystem tests are in `packages/shmitty-system/tests/test_structure.py`. Install [ontology tooling](dependencies.md#knowledge-ontology-tooling), then run `python3 -m unittest discover -s packages/shmitty-system/tests -p 'test_structure.py'` from the repository root to validate topic contents, connection traversal, and source and tool ancestor context.

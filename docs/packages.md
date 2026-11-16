@@ -17,9 +17,11 @@ Root package (default)            shmitty-system (individual)
 
 The root `package.json` includes `packages/shmitty-system/`, registers both skill
 families for Pi, and loads the package's Pi extension. The root DSH patch registers both
-skill providers and the Shmitty PATH plugin. The root Codex compatibility manifest lists only `./skills`; its based skills are separate
+skill providers and the Shmitty PATH plugin. The root Codex compatibility manifest lists only
+`./skills`; its based skills are separate
 from the standalone `packages/shmitty-system` portable Codex plugin, which discovers its
-own `skills/`. Register both Codex plugins to load both families.
+own `skills/` and packaged knowledge MCP server. Register both Codex plugins to load both families
+and the native knowledge tools.
 For Pi and DSH, install either the root bundle or `shmitty-system` to load Shmitty skills
 and `knowledge-cli`; installing both in one scope may register duplicate entries.
 
@@ -29,9 +31,10 @@ with `codex plugin marketplace add /absolute/path/to/checkout`, then install
 `shmitabilities@shmitabilities` and `shmitty-system@shmitabilities` separately with
 `codex plugin add`. Codex caches each installed plugin; changing the checkout does not
 change an existing cached copy until it is refreshed or reinstalled. Codex does not
-append a plugin `bin/` directory to the shell PATH. The current Codex plugin exposes
-skills; a packaged MCP server is needed to expose knowledge operations as native
-Codex tools. The catalog lives in
+append a plugin `bin/` directory to the shell PATH. The standalone plugin starts
+`python3 bin/knowledge-cli mcp` from its cached root and exposes named read-only knowledge tools.
+The selected `python3` environment must contain the dependencies listed under
+[Knowledge ontology tooling](dependencies.md#knowledge-ontology-tooling). The catalog lives in
 Git, so another checkout can use the same registrations without recreating a personal
 marketplace file. The root npm package file list does not include this repository catalog;
 use the standalone manifests or a distribution marketplace for installed packages.

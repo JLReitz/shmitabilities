@@ -121,7 +121,9 @@ requirements represent unanswered relationship questions.
 
 The tree root configures confidence, investment, and unmatched-term policy. Root and topic
 `ontology.ttl` modules carry Shared vocabulary, Requirement existence restrictions, and Inference
-axioms. `knowledge-cli` reads, checks, evaluates, and explicitly migrates a selected tree.
+axioms. `knowledge-cli` reads, checks, evaluates, and explicitly migrates a selected tree. Codex
+calls the read, search, connection, confidence, investment, verification, and ontology operations
+through the packaged `shmitty-knowledge` MCP server. Migration remains available through the CLI.
 
 `knowledge-cli` uses `PyYAML==6.0.3`, `rdflib==7.6.0`, `owlrl==7.6.2`, and `JPype1==1.5.2`. Its
 ontology commands also require Java 8 and the packaged HermiT OWL API JAR selected by

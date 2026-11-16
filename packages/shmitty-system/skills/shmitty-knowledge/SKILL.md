@@ -1,7 +1,15 @@
 ---
 name: shmitty-knowledge
 description: Use, add to, and maintain a knowledge base of source-faithful references and cited concepts.
-allowed-tools: Bash(knowledge-cli:*)
+allowed-tools:
+  - Bash(knowledge-cli:*)
+  - knowledge_read
+  - knowledge_search
+  - knowledge_connections
+  - knowledge_confidence
+  - knowledge_investment
+  - knowledge_verify
+  - knowledge_ontology
 ---
 
 # Knowledge Format
@@ -307,6 +315,7 @@ Consumers accept missing optional fields, unknown extension fields, unknown subt
 
 ## Operations
 
+- [Call knowledge through MCP](references/knowledge-mcp.md)
 - [Set up knowledge](references/set-up-knowledge.md)
 - [Use knowledge](references/use-knowledge.md)
 - [Add knowledge](references/add-knowledge.md)
