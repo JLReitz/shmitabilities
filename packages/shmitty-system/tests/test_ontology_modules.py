@@ -179,6 +179,25 @@ class OntologyModuleTests(unittest.TestCase):
         with self.assertRaisesRegex(KnowledgeError, "owl:imports"):
             load_views(self.root, [self.root / "index.md"])
 
+    def test_identical_property_domain_and_range_is_error(self):
+        (self.root / "ontology.ttl").write_text(
+            PREFIXES
+            + "ex:A a owl:Class . ex:B a owl:Class .\n"
+            + "ex:first a owl:ObjectProperty .\n"
+            + "ex:second a owl:ObjectProperty .\n"
+            + axiom("ex:first", "rdfs:domain", "ex:A", "Shared")
+            + axiom("ex:first", "rdfs:range", "ex:B", "Shared")
+            + axiom("ex:second", "rdfs:domain", "ex:A", "Shared")
+            + axiom("ex:second", "rdfs:range", "ex:B", "Shared"),
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            KnowledgeError,
+            "first.*second.*identical domain and range",
+        ):
+            build_snapshot(self.root)
+
     def test_nested_topic_class_has_shared_parent(self):
         parent = self.root / "parent"
         child = parent / "child"

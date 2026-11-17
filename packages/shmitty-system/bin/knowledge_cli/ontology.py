@@ -6,7 +6,7 @@ expressions it cannot map to explicit Concept links.
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, MutableMapping, Optional, Set, Tuple
 from urllib.parse import unquote
 
 from .connections import document_tags, implicit_index_targets, tree_path
@@ -61,6 +61,10 @@ class OntologySnapshot:
             len(requirements) - fulfilled,
             len(self.qualifying_links.get(concept.resolve(), set())),
         )
+
+
+ScopeKey = Tuple[Tuple[Path, ...], Optional[Path]]
+ScopeCache = MutableMapping[ScopeKey, OntologySnapshot]
 
 
 def _rdf_modules():
@@ -171,6 +175,41 @@ def tag_classification(root: Path, document: Document):
         else:
             unmatched.append(tag)
     return tuple(matched), tuple(declared_plain), tuple(unmatched)
+
+
+def term_tag_matches(root: Path, document: Document) -> Tuple[TermMatch, ...]:
+    """Return the ontology term matched by each tag in one document.
+
+    Args:
+        root: Knowledge tree root.
+        document: Document whose effective ontology supplies term definitions.
+
+    Returns:
+        One match for each tag that names a class, property, or individual.
+
+    Raises:
+        KnowledgeError: The effective ontology or a tag match is invalid.
+    """
+    rdf, _ = _rdf_modules()
+    shared, _, _ = ontology_modules.load_views(root, (document.path,))
+    kinds = _term_kinds(shared, rdf)
+    labels: Dict[str, Set[str]] = {}
+    for term, label in shared.subject_objects(rdf.RDFS.label):
+        labels.setdefault(str(term), set()).add(str(label))
+    matches = []
+    for tag in document_tags(document):
+        iri, tier = _match(tag, kinds, labels, document.path)
+        if iri:
+            matches.append(
+                TermMatch(
+                    document.path.resolve(),
+                    tag,
+                    iri,
+                    ", ".join(sorted(kinds[iri])),
+                    tier,
+                )
+            )
+    return tuple(matches)
 
 
 def _explicit_links(root: Path, concept: Document) -> Set[Path]:
@@ -362,10 +401,11 @@ def _build_snapshot_scoped(root: Path, endpoints, structural_source=None) -> Ont
     vocabulary, el_graph, rl_graph = ontology_modules.load_views(
         root, concepts or (root / "index.md",)
     )
-    ontology_helper.validate(root, concepts or (root / "index.md",))
     authored_rl = rl_graph.copy() if hasattr(rl_graph, "copy") else rdf.Graph()
     authored_rl += rl_graph
     kinds = _term_kinds(vocabulary, rdf)
+    _validate_property_signatures(kinds, authored_rl, rdf)
+    ontology_helper.validate(root, concepts or (root / "index.md",))
     matches: List[TermMatch] = []
     tags_by_path: Dict[Path, Set[str]] = {}
     for path, concept in concepts.items():
@@ -633,9 +673,95 @@ def _build_snapshot_scoped(root: Path, endpoints, structural_source=None) -> Ont
     return OntologySnapshot(tuple(matches), facts, tuple(records), qualifying)
 
 
-def build_snapshot(root: Path) -> OntologySnapshot:
-    """Analyze each Concept and direct link under endpoint-scoped ontologies."""
+def _scoped_snapshot(
+    root: Path,
+    endpoints,
+    structural_source=None,
+    scope_cache: Optional[ScopeCache] = None,
+) -> OntologySnapshot:
+    """Build or reuse one endpoint-scoped ontology snapshot.
+
+    Args:
+        root: Knowledge tree root.
+        endpoints: Documents whose effective ontology defines the scope.
+        structural_source: Optional topic whose child connection is tested.
+        scope_cache: Optional command-scoped endpoint analysis cache.
+
+    Returns:
+        The endpoint-scoped ontology snapshot.
+    """
+    resolved_endpoints = tuple(dict.fromkeys(
+        Path(path).resolve() for path in endpoints
+    ))
+    resolved_structural = (
+        Path(structural_source).resolve()
+        if structural_source is not None
+        else None
+    )
+    key = (resolved_endpoints, resolved_structural)
+
+    def build() -> OntologySnapshot:
+        if resolved_structural is None:
+            return _build_snapshot_scoped(root, resolved_endpoints)
+        return _build_snapshot_scoped(
+            root,
+            resolved_endpoints,
+            resolved_structural,
+        )
+
+    if scope_cache is None:
+        return build()
+    if key not in scope_cache:
+        scope_cache[key] = build()
+    return scope_cache[key]
+
+
+def _validate_property_signatures(kinds, graph, rdf) -> None:
+    signatures: Dict[Tuple[Tuple[str, ...], Tuple[str, ...]], List[str]] = {}
+    for prop, kind in kinds.items():
+        if "property" not in kind:
+            continue
+        domains = tuple(sorted({
+            str(value)
+            for value in graph.objects(rdf.URIRef(prop), rdf.RDFS.domain)
+        }))
+        ranges = tuple(sorted({
+            str(value)
+            for value in graph.objects(rdf.URIRef(prop), rdf.RDFS.range)
+        }))
+        if domains and ranges:
+            signatures.setdefault((domains, ranges), []).append(prop)
+    duplicates = []
+    for (domains, ranges), properties in signatures.items():
+        if len(properties) < 2:
+            continue
+        duplicates.append(
+            ", ".join(sorted(properties))
+            + " have identical domain and range: domain "
+            + ", ".join(domains)
+            + "; range "
+            + ", ".join(ranges)
+        )
+    if duplicates:
+        raise KnowledgeError("; ".join(sorted(duplicates)))
+
+
+def build_snapshot(
+    root: Path,
+    scope_cache: Optional[ScopeCache] = None,
+) -> OntologySnapshot:
+    """Analyze each Concept and direct link under endpoint-scoped ontologies.
+
+    Args:
+        root: Knowledge tree root.
+        scope_cache: Optional command-scoped endpoint analysis cache.
+
+    Returns:
+        The complete ontology snapshot for the knowledge tree.
+    """
     root = root.resolve()
+    if scope_cache is None:
+        scope_cache = {}
     ontology_modules.validate_topics(root)
     concepts = {}
     for path in root.rglob("*.md"):
@@ -646,7 +772,11 @@ def build_snapshot(root: Path) -> OntologySnapshot:
         if document.metadata.get("type") == "Concept":
             concepts[path.resolve()] = document
     if not concepts:
-        return _build_snapshot_scoped(root, (root / "index.md",))
+        return _scoped_snapshot(
+            root,
+            (root / "index.md",),
+            scope_cache=scope_cache,
+        )
     terms = set()
     fact_links = {}
     requirements = {}
@@ -659,7 +789,11 @@ def build_snapshot(root: Path) -> OntologySnapshot:
         )
         for target in (None, *targets):
             endpoints = (source,) if target is None else (source, target)
-            snapshot = _build_snapshot_scoped(root, endpoints)
+            snapshot = _scoped_snapshot(
+                root,
+                endpoints,
+                scope_cache=scope_cache,
+            )
             terms.update(item for item in snapshot.terms if item.concept == source)
             for fact in snapshot.facts:
                 key = (fact.subject, fact.predicate, fact.object, fact.derived)
@@ -680,8 +814,11 @@ def build_snapshot(root: Path) -> OntologySnapshot:
                 )
                 requirements.setdefault(key, set()).update(item.links)
         for target in structural_targets:
-            snapshot = _build_snapshot_scoped(
-                root, (source, target), structural_source=source
+            snapshot = _scoped_snapshot(
+                root,
+                (source, target),
+                structural_source=source,
+                scope_cache=scope_cache,
             )
             for path, edges in snapshot.qualifying_links.items():
                 qualifying.setdefault(path, set()).update(edges)

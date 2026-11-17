@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Optional, Set, Tuple
+from typing import Dict, MutableMapping, Optional, Set, Tuple
 
 from .connections import (
     ConnectionGraph,
@@ -51,9 +51,21 @@ def combine_confidence(coverage: float, linked_average: float) -> float:
 
 
 def evaluate_confidence(
-    root: Path, document: Document
+    root: Path,
+    document: Document,
+    scope_cache: Optional[MutableMapping] = None,
 ) -> ConfidenceEvaluation:
-    graph = collect_connections(root, document)
+    """Evaluate recursive confidence for one Concept.
+
+    Args:
+        root: Knowledge tree root.
+        document: Concept whose confidence is evaluated.
+        scope_cache: Optional command-scoped endpoint analysis cache.
+
+    Returns:
+        The connection graph and confidence of each reached Concept.
+    """
+    graph = collect_connections(root, document, scope_cache)
     scores: Dict[Path, float] = {}
     evaluating: Set[Path] = set()
 

@@ -10,7 +10,7 @@ from .connections import collect_connections, render_connections
 from .document import load_document
 from .errors import KnowledgeError
 from .investment import as_datetime, evaluate, load_policy
-from .ontology import build_snapshot
+from .ontology import OntologySnapshot, ScopeCache, build_snapshot
 from .paths import resolve_document_path
 from .reading import expand_read, render_read
 from .search import matching_documents, render_search
@@ -105,9 +105,69 @@ def verification_report(
     root: Path, document: str, as_of: Optional[str] = None
 ) -> Tuple[str, bool]:
     """Render verification findings and return whether the document is valid."""
-    selected = load_document(resolve_document_path(root, Path(document)))
+    return verification_reports(root, (document,), as_of)
+
+
+def verification_reports(
+    root: Path,
+    documents: Sequence[str],
+    as_of: Optional[str] = None,
+) -> Tuple[str, bool]:
+    """Render verification findings for documents with one ontology snapshot.
+
+    Args:
+        root: Knowledge tree root.
+        documents: Document paths to verify in report order.
+        as_of: Optional ISO 8601 evaluation time.
+
+    Returns:
+        The concatenated TSV reports and whether every document is valid.
+
+    Raises:
+        KnowledgeError: A document path or evaluation time is invalid.
+    """
+    scope_cache: ScopeCache = {}
+    try:
+        snapshot = build_snapshot(root, scope_cache)
+        ontology_error = None
+    except KnowledgeError as exc:
+        snapshot = None
+        ontology_error = str(exc)
     evaluated = evaluation_time(as_of)
-    findings = verify(root, selected, evaluated)
+    reports = []
+    valid = True
+    for document in documents:
+        report, document_valid = _verification_report(
+            root,
+            document,
+            evaluated,
+            ontology_error,
+            snapshot,
+            scope_cache,
+        )
+        reports.append(report)
+        valid = valid and document_valid
+    return "".join(reports), valid
+
+
+def _verification_report(
+    root: Path,
+    document: str,
+    evaluated: datetime,
+    ontology_error: Optional[str],
+    snapshot: Optional[OntologySnapshot],
+    scope_cache: ScopeCache,
+) -> Tuple[str, bool]:
+    selected = load_document(resolve_document_path(root, Path(document)))
+    findings = verify(
+        root,
+        selected,
+        evaluated,
+        ontology_checked=True,
+        ontology_error=ontology_error,
+        ontology_snapshot=snapshot,
+        ontology_scope_cache=scope_cache,
+    )
     errors = [finding for finding in findings if finding.severity == "error"]
     lines = [
         row(("field", "value")),

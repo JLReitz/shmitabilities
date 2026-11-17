@@ -21,6 +21,7 @@ from knowledge_cli.confidence import (
 from knowledge_cli.connections import collect_connections, render_connections
 from knowledge_cli.document import load_document
 from knowledge_cli.investment import connection_score, evaluate, load_policy
+from knowledge_cli.ontology import OntologySnapshot
 from knowledge_cli.paths import markdown_targets
 from knowledge_cli.reading import expand_read, render_read
 from knowledge_cli.validation import verify
@@ -787,7 +788,7 @@ See [second](../sources/example.com/source.md).
             )
         )
 
-    def test_required_confidence_accepts_open_concept(self):
+    def test_required_confidence_rejects_empty_zero_confidence_concept(self):
         index = self.root / "index.md"
         text = index.read_text(encoding="utf-8").replace(
             'knowledge_format_version: "1.0"\n',
@@ -795,10 +796,13 @@ See [second](../sources/example.com/source.md).
         )
         index.write_text(text, encoding="utf-8")
         document = load_document(self.concept(body=""))
-        self.assertEqual(
-            self.verify_path(document.path),
-            [],
-        )
+        findings = self.verify_path(document.path)
+
+        self.assertTrue(any(
+            finding.field == "confidence"
+            and "zero confidence" in finding.message
+            for finding in findings
+        ))
 
     def test_zero_confidence_is_allowed_when_confidence_is_not_required(self):
         document = load_document(self.concept(body="Unsupported claim."))
@@ -831,6 +835,51 @@ See [second](../sources/example.com/source.md).
             ["verify", "bundle-a/target.md", "--root", str(self.root)]
         )
         self.assertEqual(args.root, self.root)
+
+    def test_verify_accepts_multiple_documents_and_builds_one_snapshot(self):
+        first = self.concept()
+        second = self.root / "bundle-a/other.md"
+        second.write_text(
+            second.read_text(encoding="utf-8")
+            + "See [source](/sources/example.com/source.md).\n",
+            encoding="utf-8",
+        )
+        index = self.root / "index.md"
+        index.write_text(
+            index.read_text(encoding="utf-8").replace(
+                'knowledge_format_version: "1.0"\n',
+                'knowledge_format_version: "1.0"\n'
+                "confidence:\n"
+                "  required: true\n",
+            ),
+            encoding="utf-8",
+        )
+        output = StringIO()
+
+        snapshot = OntologySnapshot((), (), (), {})
+        with patch(
+            "knowledge_cli.operations.build_snapshot",
+            return_value=snapshot,
+        ) as build, patch(
+            "knowledge_cli.ontology._build_snapshot_scoped",
+            return_value=snapshot,
+        ) as scoped:
+            with redirect_stdout(output):
+                status = main([
+                    "verify",
+                    str(first.relative_to(self.root)),
+                    str(second.relative_to(self.root)),
+                    "--root",
+                    str(self.root),
+                    "--as-of",
+                    "2024-01-11T00:00:00Z",
+                ])
+
+        self.assertEqual(status, 0)
+        self.assertEqual(build.call_count, 1)
+        self.assertEqual(scoped.call_count, 6)
+        self.assertIn(f"document\t{first}", output.getvalue())
+        self.assertIn(f"document\t{second}", output.getvalue())
 
     def test_confidence_accepts_all_flag(self):
         args = parser().parse_args(

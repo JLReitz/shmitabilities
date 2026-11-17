@@ -14,7 +14,13 @@ from .connections import (
 from .document import Document, load_document
 from .errors import KnowledgeError
 from .investment import as_datetime, history_inputs, load_policy
-from .ontology import build_snapshot, tag_classification
+from .ontology import (
+    OntologySnapshot,
+    ScopeCache,
+    build_snapshot,
+    tag_classification,
+    term_tag_matches,
+)
 from .paths import (
     markdown_path_destinations,
     markdown_targets,
@@ -61,7 +67,63 @@ def reference_root(root: Path, path: Path) -> Path:
     return root.resolve() / relative.parts[0]
 
 
-def tag_findings(root: Path, document: Document) -> List[Finding]:
+def _individual_tag_findings(
+    root: Path,
+    document: Document,
+    snapshot: Optional[OntologySnapshot],
+) -> List[Finding]:
+    if document.metadata.get("type") != "Concept":
+        return []
+    if snapshot is None:
+        current_matches = term_tag_matches(root, document)
+    else:
+        current_matches = tuple(
+            item
+            for item in snapshot.terms
+            if item.concept == document.path.resolve()
+        )
+    individual_tags = {
+        item.term: item.tag
+        for item in current_matches
+        if item.kind == "individual"
+    }
+    if not individual_tags:
+        return []
+    concepts = {individual: [] for individual in individual_tags}
+    if snapshot is not None:
+        for item in snapshot.terms:
+            if item.term in concepts and item.kind == "individual":
+                concepts[item.term].append(item.concept)
+    else:
+        for path in root.rglob("*.md"):
+            try:
+                candidate = load_document(path)
+                if candidate.metadata.get("type") != "Concept":
+                    continue
+                candidate_matches = term_tag_matches(root, candidate)
+            except KnowledgeError:
+                continue
+            for item in candidate_matches:
+                if item.term in concepts and item.kind == "individual":
+                    concepts[item.term].append(candidate.path.resolve())
+    findings = []
+    for individual, paths in concepts.items():
+        unique_paths = sorted(set(paths))
+        if len(unique_paths) > 1:
+            findings.append(Finding(
+                "tags",
+                f"individual tag {individual_tags[individual]} appears on "
+                "multiple Concepts: "
+                + ", ".join(str(path) for path in unique_paths),
+            ))
+    return findings
+
+
+def tag_findings(
+    root: Path,
+    document: Document,
+    snapshot: Optional[OntologySnapshot] = None,
+) -> List[Finding]:
     try:
         tags = document_tags(document)
         required = topical_tags(root, document)
@@ -84,8 +146,19 @@ def tag_findings(root: Path, document: Document) -> List[Finding]:
         matched, _, unmatched = tag_classification(root, document)
         if document.metadata.get("type") == "Concept":
             if not set(matched).intersection(terms):
-                findings.append(Finding("tags", "Concept requires an ontology-matched term tag"))
-        ontology_policy = load_document(root / "index.md").metadata.get("ontology", {})
+                findings.append(Finding(
+                    "tags",
+                    "Concept requires an ontology-matched term tag",
+                ))
+            findings.extend(_individual_tag_findings(
+                root,
+                document,
+                snapshot,
+            ))
+        ontology_policy = load_document(root / "index.md").metadata.get(
+            "ontology",
+            {},
+        )
         if not isinstance(ontology_policy, dict):
             raise KnowledgeError("ontology policy must be a mapping")
         policy = ontology_policy.get("term_tags")
@@ -420,14 +493,49 @@ def index_contents_findings(root: Path, document: Document) -> List[Finding]:
     return findings
 
 
-def verify(root: Path, document: Document, as_of: datetime) -> List[Finding]:
+def verify(
+    root: Path,
+    document: Document,
+    as_of: datetime,
+    ontology_checked: bool = False,
+    ontology_error: Optional[str] = None,
+    ontology_snapshot: Optional[OntologySnapshot] = None,
+    ontology_scope_cache: Optional[ScopeCache] = None,
+) -> List[Finding]:
+    """Return conformance findings for one knowledge document.
+
+    Args:
+        root: Knowledge tree root.
+        document: Document to verify.
+        as_of: Evaluation time for history and investment policies.
+        ontology_checked: Whether the caller already built the tree snapshot.
+        ontology_error: Snapshot error from the caller's build.
+        ontology_snapshot: Snapshot from the caller's successful build.
+        ontology_scope_cache: Command-scoped endpoint analysis cache.
+
+    Returns:
+        Each error and warning found for the document.
+    """
+    if ontology_scope_cache is None:
+        ontology_scope_cache = {}
+    if ontology_checked:
+        if ontology_error is not None:
+            snapshot_finding = Finding("ontology", ontology_error)
+        else:
+            snapshot_finding = None
+    else:
+        try:
+            ontology_snapshot = build_snapshot(root, ontology_scope_cache)
+            snapshot_finding = None
+        except KnowledgeError as exc:
+            snapshot_finding = Finding("ontology", str(exc))
     findings: List[Finding] = metadata_findings(document) + tag_findings(
-        root, document
+        root,
+        document,
+        ontology_snapshot,
     )
-    try:
-        build_snapshot(root)
-    except KnowledgeError as exc:
-        findings.append(Finding("ontology", str(exc)))
+    if snapshot_finding is not None:
+        findings.append(snapshot_finding)
     try:
         load_policy(root)
     except KnowledgeError as exc:
@@ -558,14 +666,17 @@ def verify(root: Path, document: Document, as_of: datetime) -> List[Finding]:
         findings.append(Finding("history", str(exc)))
     try:
         if (
-            document.concept_body.strip()
-            and confidence_required(root)
-            and evaluate_confidence(root, document).score(document) == 0.0
+            confidence_required(root)
+            and evaluate_confidence(
+                root,
+                document,
+                ontology_scope_cache,
+            ).score(document) == 0.0
         ):
             findings.append(
                 Finding(
                     "confidence",
-                    "non-open Concept has zero confidence while "
+                    "Concept has zero confidence while "
                     "confidence.required is true",
                 )
             )

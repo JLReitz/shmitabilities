@@ -26,6 +26,7 @@ class TermTagPolicyTests(unittest.TestCase):
         self.root = Path(self.directory.name)
         (self.root / "ontology.ttl").write_text(
             PREFIXES + 'ex:Tree a owl:Class .\n'
+            'ex:Aster a owl:NamedIndividual .\n'
             'sk:plainTag a owl:AnnotationProperty .\n'
             'ex:vocabulary a owl:Ontology ; sk:plainTag "Plain" .\n',
             encoding="utf-8",
@@ -67,6 +68,43 @@ class TermTagPolicyTests(unittest.TestCase):
                 findings = tag_findings(self.root, document)
                 unmatched = [item for item in findings if "unmatched ontology" in item.message]
                 self.assertEqual([item.severity for item in unmatched], [severity] if severity else [])
+
+    def test_individual_tag_on_multiple_concepts_is_error(self):
+        first = self.root / "first.md"
+        second = self.root / "second.md"
+        for path in (first, second):
+            path.write_text(
+                "---\ntype: Concept\ntags: [Tree, Aster]\n---\nConcept.\n",
+                encoding="utf-8",
+            )
+
+        findings = tag_findings(self.root, load_document(first))
+
+        self.assertTrue(any(
+            item.severity == "error"
+            and "individual tag Aster appears on multiple Concepts" in item.message
+            and str(second) in item.message
+            for item in findings
+        ))
+
+    def test_individual_tag_on_reference_is_accepted(self):
+        concept = self.root / "concept.md"
+        concept.write_text(
+            "---\ntype: Concept\ntags: [Tree, Aster]\n---\nConcept.\n",
+            encoding="utf-8",
+        )
+        reference = self.root / "reference.md"
+        reference.write_text(
+            "---\ntype: Reference\ntags: [Aster]\n---\nReference.\n",
+            encoding="utf-8",
+        )
+
+        findings = tag_findings(self.root, load_document(concept))
+
+        self.assertFalse(any(
+            "individual tag Aster appears on multiple Concepts" in item.message
+            for item in findings
+        ))
 
 
 if __name__ == "__main__":

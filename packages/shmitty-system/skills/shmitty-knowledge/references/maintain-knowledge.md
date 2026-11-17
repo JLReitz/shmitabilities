@@ -2,7 +2,8 @@
 
 - Verify the document, inspect its connections, and evaluate investment with [knowledge-cli](./knowledge-cli.md)
     - Resolve each missing topical or term tag, prohibited or missing link, invalid history value, and consistency-policy error before investment evaluation.
-- Treat confidence as the evidence gate. Add support for each non-open Concept whose confidence is `0.0`, or make it an open Concept by emptying its body.
+- Treat confidence as the evidence gate. Add support for each Concept whose confidence is `0.0`, or replace it with an open requirement.
+- Migrate a legacy tree by hand: move `references/` to `sources/` and package References to `tools/`; rewrite `/references/` links and the `references` topical tag; merge `vocabulary.ttl`, `requirements.ttl`, and `axioms.ttl` into role-annotated `ontology.ttl` modules; add `topic_tag` and a topic module to each topic; replace each open Concept with an open requirement.
 - Raise investment by finding persistent References whose term tags cover more of each Concept's term tag set.
 - Decompose a broad topic into narrower concepts when its sources support distinct sets of claims. Give each concept one coherent claim set, cite it at the fullest valid coverage, and link related concepts through the topic tree.
 - Follow procedure when [adding knowledge](./add-knowledge.md)

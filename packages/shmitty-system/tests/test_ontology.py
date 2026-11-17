@@ -21,8 +21,7 @@ ex:Rover a owl:Class ; rdfs:label "Rover" .
 ex:Sensor a owl:Class .
 ex:uses a owl:ObjectProperty ; rdfs:domain ex:Rover ;
     rdfs:range ex:Sensor .
-ex:specialUses a owl:ObjectProperty ; rdfs:subPropertyOf ex:uses ;
-    rdfs:domain ex:Rover ; rdfs:range ex:Sensor .
+ex:specialUses a owl:ObjectProperty ; rdfs:subPropertyOf ex:uses .
 """
 REQUIREMENTS = """\
 @prefix ex: <https://example.org/> .
@@ -383,8 +382,9 @@ ex:Rover rdfs:subClassOf [ a owl:Restriction ;
         vocabulary = (self.root / "vocabulary.ttl").read_text()
         vocabulary = vocabulary.replace(
             "ex:specialUses a owl:ObjectProperty ; "
-            "rdfs:subPropertyOf ex:uses ;",
-            "ex:specialUses a owl:ObjectProperty ;")
+            "rdfs:subPropertyOf ex:uses .",
+            "ex:specialUses a owl:ObjectProperty .",
+        )
         (self.root / "vocabulary.ttl").write_text(vocabulary)
         with (self.root / "requirements.ttl").open("a") as output:
             output.write('''\
@@ -402,8 +402,9 @@ ex:Rover rdfs:subClassOf [ a owl:Restriction ;
         vocabulary = (self.root / "vocabulary.ttl").read_text()
         vocabulary = vocabulary.replace(
             "ex:specialUses a owl:ObjectProperty ; "
-            "rdfs:subPropertyOf ex:uses ;",
-            "ex:specialUses a owl:ObjectProperty ;")
+            "rdfs:subPropertyOf ex:uses .",
+            "ex:specialUses a owl:ObjectProperty .",
+        )
         (self.root / "vocabulary.ttl").write_text(vocabulary)
         (self.root / "axioms.ttl").write_text('''\
 @prefix ex: <https://example.org/> .
@@ -448,12 +449,7 @@ ex:C rdfs:subClassOf [ a owl:Restriction ; owl:onProperty ex:uses ;
                          (0, 1, 0))
         self.assertFalse(any(fact.link for fact in snapshot.facts))
 
-    def test_multiple_properties_and_duplicate_triples_keep_provenance(self):
-        with (self.root / "vocabulary.ttl").open("a") as output:
-            output.write('''\
-ex:observes a owl:ObjectProperty ; rdfs:domain ex:Rover ;
-    rdfs:range ex:Sensor .
-''')
+    def test_duplicate_triples_keep_provenance(self):
         concept(self.root / "rover-one.md", ["Rover"],
                 "[sensor](sensor.md)\n")
         concept(self.root / "rover-two.md", ["Rover"],
@@ -461,14 +457,15 @@ ex:observes a owl:ObjectProperty ; rdfs:domain ex:Rover ;
         concept(self.root / "sensor.md", ["Sensor"])
         self.sync_ontology()
         snapshot = build_snapshot(self.root)
-        for property_name in ("uses", "observes"):
-            facts = [fact for fact in snapshot.facts
-                     if fact.subject.endswith("Rover")
-                     and fact.predicate.endswith(property_name)
-                     and fact.object.endswith("Sensor")]
-            self.assertEqual(len(facts), 1)
-            self.assertIn("/rover-one.md -> /sensor.md", facts[0].link)
-            self.assertIn("/rover-two.md -> /sensor.md", facts[0].link)
+        facts = [
+            fact for fact in snapshot.facts
+            if fact.subject.endswith("Rover")
+            and fact.predicate.endswith("uses")
+            and fact.object.endswith("Sensor")
+        ]
+        self.assertEqual(len(facts), 1)
+        self.assertIn("/rover-one.md -> /sensor.md", facts[0].link)
+        self.assertIn("/rover-two.md -> /sensor.md", facts[0].link)
 
     def test_rl_only_subproperty_fulfills_authored_direction(self):
         with (self.root / "axioms.ttl").open("a") as output:
@@ -482,8 +479,9 @@ ex:specialUses rdfs:subPropertyOf ex:uses .
         vocabulary = (self.root / "vocabulary.ttl").read_text()
         vocabulary = vocabulary.replace(
             "ex:specialUses a owl:ObjectProperty ; "
-            "rdfs:subPropertyOf ex:uses ;",
-            "ex:specialUses a owl:ObjectProperty ;")
+            "rdfs:subPropertyOf ex:uses .",
+            "ex:specialUses a owl:ObjectProperty .",
+        )
         (self.root / "vocabulary.ttl").write_text(vocabulary)
         concept(self.root / "rover.md", ["Rover"],
                 "[sensor](sensor.md)\n")

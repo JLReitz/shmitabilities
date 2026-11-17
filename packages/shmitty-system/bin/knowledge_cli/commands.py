@@ -12,7 +12,7 @@ from .operations import (
     read_report,
     search_report,
     select_root,
-    verification_report,
+    verification_reports,
 )
 from .tsv import row
 
@@ -28,11 +28,14 @@ def parser() -> argparse.ArgumentParser:
             help="knowledge tree root (defaults to SHMIT_KNOWLEDGE_ROOT)",
         )
 
-    for name in ("investment", "verify"):
-        command = subcommands.add_parser(name)
-        command.add_argument("document", type=Path)
-        add_root(command)
-        command.add_argument("--as-of")
+    investment = subcommands.add_parser("investment")
+    investment.add_argument("document", type=Path)
+    add_root(investment)
+    investment.add_argument("--as-of")
+    verify = subcommands.add_parser("verify")
+    verify.add_argument("documents", nargs="+", type=Path)
+    add_root(verify)
+    verify.add_argument("--as-of")
     read = subcommands.add_parser("read")
     read.add_argument("documents", nargs="+", type=Path)
     add_root(read)
@@ -121,8 +124,8 @@ def main(argv=None) -> int:
                 end="",
             )
             return 0
-        report, valid = verification_report(
-            root, str(args.document), args.as_of
+        report, valid = verification_reports(
+            root, tuple(str(path) for path in args.documents), args.as_of
         )
         print(report, end="")
         return 0 if valid else 1

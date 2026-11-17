@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, MutableMapping, Optional, Set, Tuple
 
 from .document import Document, load_document
 from .errors import KnowledgeError
@@ -139,7 +139,24 @@ def consumable_targets(root: Path, source: Document) -> Tuple[Path, ...]:
     return tuple(sorted(targets))
 
 
-def collect_connections(root: Path, concept: Document) -> ConnectionGraph:
+def collect_connections(
+    root: Path,
+    concept: Document,
+    scope_cache: Optional[MutableMapping] = None,
+) -> ConnectionGraph:
+    """Collect authored and ontology-derived document connections.
+
+    Args:
+        root: Knowledge tree root.
+        concept: Concept at which traversal starts.
+        scope_cache: Optional command-scoped endpoint analysis cache.
+
+    Returns:
+        The recursive connection graph from the selected Concept.
+
+    Raises:
+        KnowledgeError: The selected document or a connection is invalid.
+    """
     if concept.metadata.get("type") != "Concept":
         raise KnowledgeError(
             f"{concept.path}: connections apply only to Concept documents"
@@ -152,7 +169,10 @@ def collect_connections(root: Path, concept: Document) -> ConnectionGraph:
     concept_links: Dict[Path, Tuple[Path, ...]] = {}
     reference_links: Dict[Path, Tuple[Path, ...]] = {}
     connections: List[Connection] = []
-    from .ontology import _build_snapshot_scoped
+    from .ontology import _scoped_snapshot
+
+    if scope_cache is None:
+        scope_cache = {}
 
     semantic: Dict[Tuple[Path, Path], Set[Tuple[str, str, str]]] = {}
     if (root / "ontology.ttl").exists():
@@ -168,7 +188,11 @@ def collect_connections(root: Path, concept: Document) -> ConnectionGraph:
             for target_path in all_concepts:
                 if source_path == target_path:
                     continue
-                snapshot = _build_snapshot_scoped(root, (source_path, target_path))
+                snapshot = _scoped_snapshot(
+                    root,
+                    (source_path, target_path),
+                    scope_cache=scope_cache,
+                )
                 source_terms = {
                     match.term for match in snapshot.terms
                     if match.concept == source_path

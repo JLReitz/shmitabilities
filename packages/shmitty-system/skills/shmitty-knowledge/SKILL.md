@@ -30,7 +30,8 @@ This format stores knowledge as UTF-8 Markdown files with YAML frontmatter.
 - **Reference**: A source-faithful document about one external resource.
 - **Resource**: The external source identified by a reference document's `resource` URL.
 - **Concept**: Analysis or knowledge supported by references or linked concepts.
-- **Open concept**: A Concept with an empty body and no supported claim yet.
+- **Open requirement**: An ontology existence requirement that has no fulfilling link. It records an unanswered question.
+- **Subject Concept**: The one Concept whose subject is a named individual. It contains that individual's tag.
 - **Citation**: A concept-to-reference link with a declared support level.
 - **Document ID**: The tree-relative document path without the `.md` suffix.
 
@@ -87,6 +88,16 @@ Entity declarations and labels enter the Shared view without role annotations. A
 Each topic Concept declares `topic_tag` as one of its tags. It must match one class in the topic's effective ontology, and that class must be declared in the topic's own module. A nested topic class must have a Shared authored `rdfs:subClassOf` relationship to its immediate parent topic class. Top-level topics have no parent class because the root index is a support document.
 
 Authored tags match ontology terms by exact, case-sensitive `rdfs:label` first and IRI local name second. Match topical tags too. Named individuals use the same rule. Ambiguous names and multiple taggable kinds are verification errors. Declare an intentional plain tag with a repeated `sk:plainTag` literal on an `owl:Ontology` in the effective `ontology.ttl`; declare `sk:plainTag` as an `owl:AnnotationProperty` with IRI `urn:shmitty:knowledge:plainTag`. Resolve ontology terms before plain tags. Set root index `ontology.term_tags` to `required` for unmatched term-tag errors or `warn` for warnings; omit it to disable unmatched-tag reporting. Every Concept still requires an ontology-matched class, property, or named-individual term tag. Explicit Concept body links assert matching directed property relationships. RL facts can add class and property context; inverse and chain-derived facts do not fulfill a required authored link. Report requirements with `knowledge-cli ontology requirements`. An open requirement affects connection investment and does not invalidate a Concept.
+
+A topical tag or class tag adds the document to the class. An individual tag makes the document node the individual: every link from the document becomes a statement about the individual. Put each individual tag on its Subject Concept only; other Concepts link to the Subject Concept.
+
+Every descendant of a topic is a member of each ancestor topic class, so a topic class means "knowledge about X". Put requirements on a class that only one document contains, such as the class of the thing that a topic index describes. A Topic Concept contains a class tag in addition to its `topic_tag`.
+
+A module that uses a class from another topic declares it without a label: `:ControlDevice a owl:Class .`
+
+A link asserts each property whose domain and range match its endpoints. Give each relationship a distinct range class. Keep generic structural words as plain tags and name each relationship with its own property, such as `:switchesRadioThrough`.
+
+`ontology.term_tags` applies to References. Declare their term tags as plain tags in the root module. Use the templates in [Ontology modules](references/ontology-modules.md).
 
 ## Knowledge documents
 
@@ -178,7 +189,9 @@ Every direct body link whose resolved target has `type: Reference`, including `i
 
 Use prose near each link to identify the claim it supports. Use Markdown footnotes when claim-level attribution is repeated or would otherwise be ambiguous; keep the footnote target as the reference document path.
 
-An open concept has valid frontmatter and an empty body. A topic Concept's body includes its abstract and table of contents. Only an open concept may have confidence `0.0`; implicit child connections can give an open topic Concept positive confidence. Every non-open Concept MUST have positive confidence from direct Reference coverage, linked Concepts, or both.
+A topic Concept's body includes its abstract and table of contents. Every Concept MUST have positive confidence from direct Reference coverage, linked Concepts, or both.
+
+Record an unanswered question as an open requirement: declare the filler class and the property, state the question in the property's `rdfs:comment`, and add the existence restriction with role `Requirement`. Do not create a Concept for the missing answer.
 
 Concept frontmatter also requires `history`:
 
@@ -226,7 +239,7 @@ when investment.connection.target is set:
   investment = confidence * consistency * connection
 ```
 
-Confidence is the evidence gate for usable knowledge. A non-open Concept MUST have confidence greater than `0.0`; treat zero confidence as an unresolved knowledge gap and either add support or make the Concept open. Confidence scores the support that directly linked References and linked Concepts provide. Citation coverage is the local union coverage of original-text term tags. Linked-concept confidence is the average confidence of outbound Concept links, evaluated recursively. Divide their sum by two only when both values are nonzero. An empty average is `0.0`.
+Confidence is the evidence gate for usable knowledge. A Concept MUST have confidence greater than `0.0`; treat zero confidence as an unresolved knowledge gap and either add support or replace the Concept with an open requirement. Confidence scores the support that directly linked References and linked Concepts provide. Citation coverage is the local union coverage of original-text term tags. Linked-concept confidence is the average confidence of outbound Concept links, evaluated recursively. Divide their sum by two only when both values are nonzero. An empty average is `0.0`.
 
 Evaluate each Concept once per command. Cache completed confidence values and reuse them when another link reaches the same Concept. When a link reaches a Concept that is currently being evaluated, exclude that link from the linked-confidence average to stop the cycle. Use `knowledge-cli confidence` to inspect these scores.
 
@@ -249,7 +262,7 @@ investment:
 ---
 ```
 
-Set `confidence.required` to `true` to make verification reject a non-open Concept with confidence `0.0`. An absent or false value leaves this gate disabled.
+Set `confidence.required` to `true` to make verification reject a Concept with confidence `0.0`. An absent or false value leaves this gate disabled.
 
 Use `second`, `minute`, `hour`, or `day` as `time_unit`. Set `alpha`, `beta`, and `horizon` to positive numbers. Interpret `beta` and `horizon` in `time_unit`.
 
@@ -309,7 +322,9 @@ Record changes within a directory scope to `log.md`. Use date groups in descendi
 4. Each Concept or Reference body and table-of-contents link resolves to a consumable Concept or Reference document; neither type links to external URLs or infrastructure, Reference links remain within their `sources/` or `tools/` hierarchy, and each internal filepath has one destination declaration per document.
 5. Each `index.md` and `log.md` follows its defined form, each topic directory contains a topic Concept, and each Source or Tool directory contains one correctly scoped Reference `index.md`. Every index-abstract link targets a consumable document outside the index directory. Each index table of contents links every file and child directory at that level except `index.md` and `log.md`.
 6. Each concept history starts with a valid `created` and contains ordered update timestamps at or before evaluation time.
-7. When root `confidence.required` is `true`, each non-open Concept has confidence greater than `0.0`; only an open Concept may have confidence `0.0`.
+7. When root `confidence.required` is `true`, each Concept has confidence greater than `0.0`.
+8. Each individual tag appears on one Concept.
+9. Each property has a distinct explicitly declared domain and range pair.
 
 Consumers accept missing optional fields, unknown extension fields, unknown subtype values, and missing navigation indexes. Consumers preserve readable content when optional metadata is incomplete and report conformance errors at the document and field where they occur.
 
