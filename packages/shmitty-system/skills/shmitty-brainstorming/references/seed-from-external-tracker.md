@@ -1,10 +1,10 @@
 # Seed from an external tracker
 
-When the user names items in an external tracker, mirror them in the system's task tracker before you model the idea.
+When the user names items in an external task tracker, mirror them in the local task tracker before you model the idea.
 
-Map brainstorm, external, and system tracker types:
+Map brainstorm, external, and local tracker types:
 
-| Tracker type | System type | Brainstorm role |
+| External type | Local type | Brainstorm role |
 |---|---|---|
 | Epic | Epic | Parent of the mirrored item |
 | Story | Story | Idea model, mirrored item |

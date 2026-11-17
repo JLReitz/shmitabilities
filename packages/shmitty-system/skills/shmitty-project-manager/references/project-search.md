@@ -1,5 +1,6 @@
 # Search for a project
 
-1. Resolve the managed agent root with the account-context knowledge discovery. Search below it for client registration directories, then identify their workspace roots. Include nested workspaces.
-2. Search at and below each relevant workspace root for directories named `.agents/tasks/`, identify project roots as the parent of the `.agents/` directory including when `.agents/tasks/` is empty. Confirm each identified root with `git rev-parse --show-toplevel` from that directory and require the result to equal the identified root.
-3. Check for the shared knowledge tree at `{workspace-root}/.agents/knowledge`. Report candidates when a name matches more than one project; do not infer ownership from a directory name alone.
+1. Inspect each symbolic link under `${HOME}/.agents/workspaces/` and treat its resolved target as a workspace root. Reject a link whose target resolves to `${HOME}`. Require the target to contain `.agents/tasks/`.
+2. Select the workspace whose resolved root contains the current location or the requested project. Report candidates when a name or location matches more than one workspace.
+3. Locate Git repositories at or below that workspace root, excluding `{workspace-root}/worktrees/`. From each candidate project root, require `git rev-parse --show-toplevel` to return the candidate root. Include the workspace root when it is a Git repository.
+4. Match a project by its verified repository root. Do not infer project ownership from a directory name, task document, external tracker item, or local tracker item.

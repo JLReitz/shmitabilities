@@ -7,7 +7,7 @@ description: Use when the user has a rough, unformed idea they want to sharpen i
 
 A big idea has manifested and the finished result may not be clear yet.
 
-Develop that idea through iterative steps, record them with the workspace's task tracker, then resolve them one at a time. If a tracker is not configured, stop and ask the user how to track the work.
+Develop that idea through iterative steps, record them with the local task tracker, then resolve them one at a time.
 
 This is dedicated **planning**; each ticket resolves a choice, and the plan is complete when no gaps remain, with nothing left to decide before implementing.
 
@@ -17,13 +17,13 @@ Brainstorming produces decisions, evidence, and shared understanding. It does no
 
 ## Identify ideas and tickets
 
-Refer to ideas and tickets by title in user-facing prose. Use task tracker relationships to inspect the current ticket connections.
+Refer to ideas and tickets by title in user-facing prose. Use local task tracker relationships to inspect the current ticket connections.
 
 ## Model the idea
 
 Use a **story** when the idea has one coherent outcome that an actor can observe and accept as a usable increment. A story may require multiple implementation steps. Use a **feature** when the idea is a broader capability with multiple independently acceptable outcomes.
 
-Start each brainstorm by creating the idea model as the selected story or feature in the configured task tracker. Use `shmitty-project-manager` to organize `idea.md` and its topic indexes. Link `idea.md` from the idea model's description and make the other tickets children of the idea model.
+Start each brainstorm by creating the idea model as the selected story or feature in the local task tracker. Use `shmitty-project-manager` to organize `idea.md` and its topic indexes. Link `idea.md` from the idea model's description and make the other tickets children of the idea model.
 
 ### Layout
 
@@ -95,7 +95,7 @@ Each ticket is a child of the idea model and is sized for one agent session.
 
 ### Layout
 
-Apply to the ticket itself; use the task tracker's native fields for these sections when available. Otherwise, prepend "[<type>] - " to the ticket title when the type is not native, and append Comments and Answer to that ticket's description body. Do not move these sections to task documents.
+Apply to the ticket itself; use the local task tracker's native fields for these sections when available. Otherwise, prepend "[<type>] - " to the ticket title when the type is not native, and append Comments and Answer to that ticket's description body. Do not move these sections to task documents.
 
 ```markdown
 # Description

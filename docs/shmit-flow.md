@@ -1,8 +1,8 @@
 # Shmitty workflows
 
-The Shmitty skills connect project discovery, planning, evidence, durable knowledge, and Git work.
-The project workflow enters through `shmitty-project-manager`, then invokes only the skills needed
-for the current work.
+The Shmitty skills connect workspace and project discovery, planning, evidence, durable knowledge,
+and Git work. The workflow enters through `shmitty-project-manager`, then invokes only the skills
+needed for the current work.
 
 ## Flow graph
 
@@ -10,8 +10,8 @@ for the current work.
             ┌─────────────────────────┐ ┌───────────────────────┐
             │ shmitty-project-manager │ │ shmitty-brainstorming │
             └─────┬───────────┬───────┘ └──────────┬────────────┘
-                  │ project   │                    │ factual           
-                  │ root      │                    │ questions
+                  │ current   │                    │ factual
+                  │ branch    │                    │ questions
                   ▼           │                    ▼
 ┌─────────────────────────┐   │     ┌──────────────────┐
 │ shmitty-version-control │   │     │ shmitty-research │
@@ -29,63 +29,68 @@ the project workflow, not a requirement to start every factual query with projec
 
 ## Workspace artifacts
 
-A **workspace root** contains the client registration directories for one agent workspace. A
-**project root** is the root of a Git repository at or below that workspace root. A workspace can
-contain multiple projects, and a project can start at the workspace root.
+A **workspace root** is a directory other than `${HOME}` that contains `.agents/` and every
+project in one agent workspace. A symbolic link at
+`${HOME}/.agents/workspaces/<workspace-name>` identifies the root and provides a stable navigation
+entry. A **project root** is the root of a Git repository at or below that workspace root. A
+workspace can contain multiple projects, and a project can start at the workspace root.
 
-The workspace contains one knowledge tree. Each project contains its own task documents and task
-worktrees.
+The workspace contains one knowledge tree, one task-document directory, and one worktree parent.
+Each project is a Git repository.
 
 ```text
-{workspace-root}/
-├── .agents/
-│   └── knowledge/                 shared knowledge tree
-├── {project-a}/
-│   ├── .git/
-│   └── .agents/
-│       ├── tasks/                 project-a task documents and project marker
-│       └── worktrees/             project-a Git task worktrees
-└── {project-b}/
-    ├── .git/
-    └── .agents/
-        ├── tasks/                 project-b task documents and project marker
-        └── worktrees/             project-b Git task worktrees
+${HOME}/.agents/workspaces/
+└── <workspace-name> ─────────────► {workspace-root}/
+                                     ├── .agents/
+                                     │   ├── knowledge/   shared knowledge tree
+                                     │   └── tasks/       shared task documents
+                                     ├── worktrees/       planned-work Git worktrees
+                                     ├── {project-a}/
+                                     │   └── .git/
+                                     └── {project-b}/
+                                         └── .git/
 ```
 
 Project-specific knowledge uses a bundle named for the project inside
 `{workspace-root}/.agents/knowledge`. Shared concepts and references can connect every project in
-the workspace.
+the workspace. When the workspace root is also a project root, its `.git/info/exclude` contains
+`/worktrees/`.
 
 ## Project workflow
 
-1. `shmitty-project-manager` finds `.agents/tasks/` directories below the workspace root. Each
-   directory marks the parent of its `.agents/` directory as a project root, including when the
-   tasks directory is empty. Git confirms the marked root.
-2. `shmitty-brainstorming` converts a rough idea into a tracker-backed idea model when design work
-   remains. The idea model contains decisions, evidence questions, empirical tasks, and executable
-   implementation steps.
-3. `shmitty-research` answers factual questions. `shmitty-knowledge` supplies existing evidence
+1. `shmitty-project-manager` resolves a registered workspace link, then verifies Git repositories
+   at or below that workspace root.
+2. `shmitty-project-manager` selects the work path. Work defined in the local task tracker gets a
+   task branch and a worktree under `{workspace-root}/worktrees/`; ad hoc work uses the current
+   working branch.
+3. `shmitty-brainstorming` converts a rough idea into a local-tracker-backed idea model when design
+   work remains. The idea model contains decisions, evidence questions, empirical tasks, and
+   executable implementation steps.
+4. `shmitty-research` answers factual questions. `shmitty-knowledge` supplies existing evidence
    before research and stores durable findings after research.
-4. `shmitty-version-control` creates a task branch and worktree for implementation, then produces
-   the final task commit.
-5. `shmitty-knowledge` retains reusable outcomes in the shared workspace tree. Project task
-   documents retain the project-specific plan and design context.
+5. `shmitty-version-control` performs the work and records progress commits on the selected branch.
+   `shmitty-project-manager` rebases and consolidates completed local-tracker work.
+6. `shmitty-knowledge` retains reusable outcomes in the shared workspace tree. Shared task
+   documents retain project-specific plan and design context.
 
 ## Skill responsibilities
 
 ### `shmitty-project-manager`
 
-`shmitty-project-manager` locates or creates a project and establishes its artifact boundaries. It
-confirms each `.agents/tasks/` marker with `git rev-parse --show-toplevel`, uses
-`{workspace-root}/.agents/knowledge`, and keeps task documents under
-`{project-root}/.agents/tasks/`.
+`shmitty-project-manager` creates or selects the workspace before setting up a project. It resolves
+workspace roots through `${HOME}/.agents/workspaces/`, confirms each project root with
+`git rev-parse --show-toplevel`, and treats the Git repository as the complete project boundary.
 
-Task topic directories follow tracker titles and parent relationships. Each topic has an
-`index.md`; long-lived content uses descriptive names such as `idea.md` and `design.md`. Tracker
+The workspace uses `{workspace-root}/.agents/knowledge` for knowledge and the single
+`{workspace-root}/.agents/tasks/` directory for every project's task documents. Task topic
+directories follow local tracker titles and parent relationships. Each topic has an `index.md`;
+long-lived content uses descriptive names such as `idea.md` and `design.md`. Local tracker
 descriptions link the documents needed by their items.
 
-Project setup keeps `/.agents/` ignored by Git. Requested `.agents` files can be tracked with an
-explicit force-add while the directory remains ignored by default.
+The manager distinguishes local task tracking from external task tracking. Workspace or project
+instructions select the local tracker that defines executable work, local IDs, relationships, and
+state. An external task tracker supplies linked source items and external state. The user supplies
+local tracking instructions when the workspace and project do not state them clearly.
 
 ### `shmitty-brainstorming`
 
@@ -132,37 +137,39 @@ installation and verification.
 
 ### `shmitty-version-control`
 
-`shmitty-version-control` isolates implementation in
-`{project-root}/.agents/worktrees/<task>/`. It obtains the project root from
-`shmitty-project-manager`. A configured task tracker can supply the task ID, parent task, branch
-lineage, and commit identity.
+`shmitty-version-control` performs work and records progress commits on the current working branch.
+It reads project material from the current worktree and resolves shared task documents and
+knowledge through `shmitty-project-manager`.
 
-The final branch is rebased onto the selected repository head and its task work is consolidated
-into one commit. Task documents remain under the project root. Shared knowledge remains under the
-workspace root.
+For work defined in the local task tracker, `shmitty-project-manager` creates
+`{workspace-root}/worktrees/<task-name>/`, invokes `shmitty-version-control`, then rebases the
+working branch and consolidates its task commits into one commit. Ad hoc work remains on the branch
+that was current when the request began.
 
-## External skill integration
+## Integration boundaries
 
-### Task tracking
+### Local and external task tracking
 
-A task-tracking skill integrates at the planning, document, and version-control boundaries.
-User or project provided instructions must select the tracker implementation and supply the
-contracts below.
+Workspace or project instructions select the **local task tracker** and state how agents use it.
+The local tracker defines work performed in the workspace. An **external task tracker** supplies
+items from another system; local tracking instructions define how those items link to or mirror
+local items.
 
-For `shmitty-brainstorming`, the tracker supplies:
+For `shmitty-brainstorming`, the local tracker supplies:
 
 - story or feature idea models;
 - task, question, decision, and step roles, either natively or through a stable mapping;
 - parent-child and blocking relationships;
 - ready-state queries, claims, status changes, comments, and answers;
-- external references for mirrored tickets.
+- external references for items mirrored from an external task tracker.
 
-For `shmitty-project-manager`, the tracker supplies stable titles, parent relationships, and item
-descriptions that can link `.agents/tasks/` documents. For `shmitty-version-control`, it supplies
-task IDs and parent tasks for branch and worktree lineage.
+For `shmitty-project-manager`, the local tracker supplies stable titles, parent relationships,
+local task IDs, and item descriptions that can link `.agents/tasks/` documents. The task title's
+kebab-case form names both the branch and its worktree directory.
+`shmitty-version-control` receives the selected branch and does not access either tracker.
 
-The tracker owns its database, connection, and lifecycle procedures. Shmitty owns the idea model,
-task-document layout, and Git workflow that consume tracker state.
+Each tracker integration owns its database, connection, and lifecycle procedures. Shmitty owns the
+idea model, workspace task-document layout, and Git workflow that consume local tracker state.
 
 ### Knowledge extensions
 

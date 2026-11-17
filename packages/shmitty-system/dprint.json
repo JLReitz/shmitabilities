@@ -1,0 +1,14 @@
+{
+  "lineWidth": 120,
+  "indentWidth": 4,
+  "useTabs": false,
+  "includes": ["src/**/*.ts", "tests/**/*.ts", "*.ts"],
+  "excludes": ["dist/**"],
+  "plugins": ["npm:@dprint/typescript"],
+  "typescript": {
+    "bracePosition": "nextLine",
+    "nextControlFlowPosition": "nextLine",
+    "quoteStyle": "alwaysDouble",
+    "useBraces": "always"
+  }
+}

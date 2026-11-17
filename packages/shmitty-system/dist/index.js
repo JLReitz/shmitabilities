@@ -1,5 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+export { formatShmittyContext, getShmittyContext, inspectShmittyContext, } from "./context.js";
 /** Append this package's bin directory to the current process PATH once. */
 export function appendBinToPath() {
     const bin = fileURLToPath(new URL("../bin/", import.meta.url));

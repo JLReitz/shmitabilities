@@ -1,10 +1,22 @@
 ---
 name: shmitty-version-control
-description: Manage task branches, worktrees, progress commits, and final history for work in Git projects.
+description: Perform project work and record progress commits on the current Git branch.
+allowed-tools:
+  - Bash(git:*)
 ---
 
 # Version control
 
-Complete all task work in a Git worktree. Use `shmitty-project-manager` to identify the project root and the configured task-tracker skill to resolve task IDs and parent tasks when the project tracks the work.
+1. Perform the task on the current working branch. Make follow-on commits in this worktree.
+2. Read tracked `.agents` material from the current project worktree. Use `shmitty-project-manager` to resolve the workspace root, then read task documents from `{workspace-root}/.agents/tasks/` and shared knowledge from `{workspace-root}/.agents/knowledge`.
+3. Commit progress with this message structure. Write a concise first line that summarizes the committed outcome. Write the overview as prose that states the required behavior or gap. Write the solution as one to three short bullets that state the resulting behavior and only the mechanisms needed to explain it.
 
-Before entering a task worktree, follow [outside a worktree](references/outside-a-worktree.md). After entering one, follow [within a worktree](references/within-a-worktree.md).
+```text
+Task title
+
+**Overview:**
+At most two sentences of prose, never bullets.
+
+**Solution:**
+- One sentence per entry for a detail the diff does not make obvious.
+```

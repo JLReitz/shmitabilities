@@ -2,9 +2,9 @@
 
 ## 1. Create the idea model
 
-Select the story or feature type per **Model the idea**, then create the idea in the configured task tracker and create its `idea.md`.
+Select the story or feature type per **Model the idea**, then create the idea in the local task tracker and create its `idea.md`.
 
-When the user names items in an external tracker, follow [Seed from an external tracker](seed-from-external-tracker.md) first.
+When the user names items in an external task tracker, follow [Seed from an external tracker](seed-from-external-tracker.md) first.
 
 ## 2. Detail the intended outcome
 

@@ -77,3 +77,25 @@ package that imports its compiled entry; see
 The [llamas-and-shmit package README](../packages/llamas-and-shmit/README.md) defines its
 settings, native llama.cpp catalog, Pi and DSH interfaces, router lifecycle, validation, and
 installation limits.
+
+## Shmitty filesystem context
+
+`@jlreitz/shmitty-system` contains one filesystem-context detector and native adapters for Codex,
+Pi, and DSH. The detector compares an absolute working directory with the absolute targets stored
+under `${HOME}/.agents/workspaces/`, then asks Git for the current project root and checkout kind.
+It returns workspace and project results separately.
+
+Codex invokes the detector from packaged `SessionStart` and `UserPromptSubmit` command hooks. Pi
+invokes it from `session_start`, `session_compact`, and `before_agent_start`. DSH invokes it through
+`session/created`, `compaction/end`, `working-directory/change`, and a dynamic system-prompt context
+provider. Client adapters own event registration, working-directory state, and context injection;
+the package core owns detection and guidance text.
+
+The workspace result identifies the innermost matching absolute root and its `.agents/tasks` path.
+A project result identifies its absolute root and main-checkout or linked-worktree state. A
+linked-worktree result directs the agent to use `shmitty-version-control` directly.
+
+Only symbolic links in the workspace registry are registrations; ordinary files and directories are
+ignored. An expected absent workspace or project result emits nothing for that result. An inspection failure
+prints to standard error and emits no model context. Codex command hooks also write nothing to
+standard output and return status `0`.

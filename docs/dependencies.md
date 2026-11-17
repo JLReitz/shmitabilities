@@ -74,6 +74,31 @@ the Shmitty package is wanted.
 
 ## Shared Node packages
 
+### Shmitty System hook development
+
+`packages/shmitty-system/package.json` declares TypeScript, Node.js types, dprint,
+`@dprint/typescript`, and Vitest for filesystem-context hook development. Install its development
+dependencies and run its checks from the package directory:
+
+```bash
+npm install
+npm run format:check
+npm run typecheck
+npm run typecheck:test
+npm test
+npm run build
+npm pack --dry-run --json
+```
+
+The package also requires Git at runtime for project-root and worktree inspection. Pi supplies
+`@earendil-works/pi-coding-agent`. DSH supplies `@deepseek-ai/cordis`,
+`@deepseek-ai/dsh-agent`, `@deepseek-ai/dsh-session`, `@deepseek-ai/dsh-system-prompt`, and
+`@deepseek-ai/dsh-working-directory`. The manifest declares these host APIs as optional peers and
+development dependencies. Validate each adapter against the selected installed client version
+because lifecycle event and context-injection APIs can change between releases.
+
+### Other shared packages
+
 `packages/shmit-core` and `packages/llamas-and-shmit` use Node.js, npm, TypeScript, dprint,
 `@dprint/typescript`, and Vitest. `shmit-core` supplies TOML parsing. `llamas-and-shmit` imports that package and declares
 the host APIs needed by its Pi and DSH interfaces. Read each manifest's `engines`,

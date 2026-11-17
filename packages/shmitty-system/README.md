@@ -21,6 +21,86 @@ Codex plugin ─ skills + MCP stdio ──► │                              �
 package contains the pinned Python requirement file. The selected Python environment and
 `SHMIT_OWL_JAR` supply the runtime dependencies.
 
+## Filesystem context
+
+Shmitty System reports the current filesystem context through one shared detector and native
+Codex, Pi, and DSH adapters.
+
+```text
+                                  absolute cwd
+                                       │
+                                       ▼
+                         ┌──────────────────────────┐
+                         │ Shared context detector  │
+                         └────────────┬─────────────┘
+               workspace links        │            Git inspection
+       ${HOME}/.agents/workspaces/    │      project root + Git directories
+                         ┌────────────┴─────────────┐
+                         ▼                          ▼
+              matching workspace roots    project checkout kind
+                         └────────────┬─────────────┘
+                                      │ formatted guidance
+                     ┌────────────────┼────────────────┐
+                     ▼                ▼                ▼
+               Codex hooks      Pi extension      DSH plugin
+```
+
+The detector accepts an absolute working directory and `${HOME}`. It compares the working
+directory with the absolute target stored by each symbolic link under
+`${HOME}/.agents/workspaces/`. Path-component containment defines a match. The result contains
+the matching root with the greatest path depth, so a nested workspace takes precedence over each
+workspace that contains it. Link aliases to the selected root produce one result.
+
+Each workspace result gives the absolute workspace root and directs the agent to
+`{workspace-root}/.agents/tasks` for task documents. The symbolic-link name is registry data and
+does not enter model context.
+
+Git supplies the project result. `git rev-parse --show-toplevel` gives the project root. Absolute
+`--git-dir` and `--git-common-dir` values classify equal directories as the main checkout and
+different directories as a linked worktree. Linked-worktree guidance directs the agent to use
+`shmitty-version-control` directly.
+
+When both results exist for a linked worktree, the formatted context is:
+
+```text
+Workspace root: {workspace-root}
+Find workspace task documents at {workspace-root}/.agents/tasks.
+
+Project root: {project-root}
+This is a linked worktree.
+Use the `shmitty-version-control` skill for work in this project.
+```
+
+When only one result exists, the context contains only its block and does not contain the blank
+line between blocks.
+
+Workspace and project results are independent. A successful inspection formats only identified
+results; an empty result produces an empty string. Only symbolic links in the workspace registry
+are registrations; ordinary files and directories are ignored. An unreadable registry or an
+unexpected Git error fails the complete inspection. Every adapter
+reports that failure to standard error, emits an empty model-context value, and continues the
+client session. A Codex command hook also returns status `0` and writes an empty standard-output
+stream.
+
+### Client lifecycle
+
+| Client event | Adapter state | Context action |
+|---|---|---|
+| Codex `SessionStart` | `${PLUGIN_DATA}/<session_id>` | Inspect, store the working directory, and emit |
+| Codex compact `SessionStart` | `${PLUGIN_DATA}/<session_id>` | Inspect and emit |
+| Codex `UserPromptSubmit` | Stored working directory comparison | Emit after the working directory changes |
+| Pi `session_start` | Extension runtime working directory | Inspect, store the working directory, and emit |
+| Pi `session_compact` | Extension runtime working directory | Inspect and emit |
+| Pi `before_agent_start` | Runtime working directory comparison | Emit after the working directory changes |
+| DSH `session/created` | Cordis session projection | Refresh dynamic context |
+| DSH `compaction/end` | Cordis session projection | Restore dynamic context |
+| DSH `working-directory/change` | Cordis session projection | Refresh dynamic context |
+
+Codex stores one normalized absolute working directory per `session_id` under `${PLUGIN_DATA}` and
+uses atomic replacement. Pi keeps the last normalized absolute working directory in its extension
+runtime. DSH reads the current session projection through a dynamic system-prompt context provider;
+Cordis suppresses unchanged context snapshots.
+
 Pi loads `src/pi-shmitty-system/index.ts` and `skills/` from `package.json`. DSH loads
 `dist/dsh/index.js` through `cordis.patch.yml` and registers a filesystem skill provider for
 `skills/`. Both entries append `bin/` to their process `PATH` once.
@@ -70,9 +150,15 @@ the `python3` environment that starts Codex. Set `SHMIT_OWL_JAR` before the Code
 
 ## Build and validation
 
-Build the DSH entry with `npm run build`. The `prepare` script builds it for source installation.
+Run `npm run format:check`, `npm run typecheck`, `npm run typecheck:test`, and `npm test` from
+`packages/shmitty-system/`. Build the DSH entry with `npm run build`. The `prepare` script builds
+it for source installation.
 Check the package payload with `npm pack --dry-run --json`; it must contain `dist/`, `src/`,
-`skills/`, `bin/`, `.codex-plugin/plugin.json`, `.mcp.json`, and `package.json`.
+`skills/`, `bin/`, `hooks/`, `.codex-plugin/plugin.json`, `.mcp.json`, and `package.json`.
+
+The TypeScript contract tests map the Filesystem context behavior. They exercise startup,
+compaction, directory changes, main checkouts, linked worktrees, nested workspaces, absent results,
+and inspection failures with a per-test temporary filesystem fixture.
 
 The MCP behaviors in this document map to `tests/test_mcp.py`. Run the mapped tests with:
 

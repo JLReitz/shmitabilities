@@ -1,14 +1,6 @@
 # Set up a project
 
-1. Select or create the agent workspace that will contain the project. Confirm its client registration directory and read its `AGENTS.md`. Use the project search procedure before creating a workspace for an existing project.
-2. Select a project root at or below the workspace root. Put its source under Git tracking there. Initialize a local repository if needed, add the intended source files, and verify them with `git ls-files` from the project root. A remote is optional. Preserve existing repository history and unrelated working-tree changes.
-3. Create or use the workspace's shared knowledge tree at `{workspace-root}/.agents/knowledge` with the `shmitty-knowledge` skill.
-4. Create `.agents/tasks/` and its human-facing `index.md` at the project root. Add a topic directory with its own `index.md` when the first long-horizon task document is needed. Add `/.agents/` to `.gitignore` at the project root and verify it with `git check-ignore -v .agents/tasks/` from there. When the project root equals the workspace root, also verify `.agents/knowledge/`.
-
-## Track requested agent files
-
-In a repository that contains `.agents/`, keep `/.agents/` in its `.gitignore`. Add only requested files with `git add -f -- <path>`, such as `git add -f -- .agents/hooks/setup.sh`. Confirm the staged paths with `git diff --cached --name-only`.
-
-To stop tracking a requested file while retaining it locally, run `git rm --cached -- <path>`. The `/.agents/` rule then ignores it again; verify with `git check-ignore -v -- <path>`.
-
-Read the workspace `AGENTS.md` for additional project requirements before declaring setup complete.
+1. Select an existing workspace with [project search](project-search.md). Complete [workspace setup](workspace-setup.md) before project setup.
+2. Select a project root at or below the workspace root. Preserve existing repository history and unrelated working-tree changes.
+3. From the selected root, require `git rev-parse --show-toplevel` to return that root. Initialize a Git repository there when it is not already a repository, then check the root again.
+4. Record the project as ready when the selected root is the Git repository root.

@@ -22,7 +22,7 @@ Post the answer and close the ticket.
 
 Create and wire newly precise tickets, and create or update **steps** per [Decompose the implementation](decompose-the-implementation.md). Move clarified entries from **Unformed questions** into tickets. Close newly out-of-scope tickets and list each under **Out of scope** with its ticket ID, title, and summary of the boundary.
 
-Re-read task tracker state before each dependency change. Edit the affected section of `idea.md`.
+Re-read local task tracker state before each dependency change. Edit the affected section of `idea.md`.
 
 ## 6. Work ready decisions
 

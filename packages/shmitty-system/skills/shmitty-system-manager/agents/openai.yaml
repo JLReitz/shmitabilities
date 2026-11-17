@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shmitty System Manager"
+  short_description: "Resolve host context and manage host packages"
+  default_prompt: "Use $shmitty-system-manager to resolve live host context or manage packages and source builds."
