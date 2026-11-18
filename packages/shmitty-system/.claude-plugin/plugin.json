@@ -1,0 +1,17 @@
+{
+  "name": "shmitty-system",
+  "version": "0.1.0",
+  "description": "Shmitty workflow skills and knowledge commands.",
+  "mcpServers": {
+    "shmitty-knowledge": {
+      "command": "python3",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/bin/knowledge-cli",
+        "mcp"
+      ],
+      "env": {
+        "SHMIT_KNOWLEDGE_ROOT": "${SHMIT_KNOWLEDGE_ROOT}"
+      }
+    }
+  }
+}

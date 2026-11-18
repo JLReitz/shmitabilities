@@ -43,6 +43,18 @@ Codex does not add a plugin's `bin/` directory to `PATH`. Install the standalone
 command package before using `shmitty-task-tracking` in Codex, then verify `task-cli --help`. Pi and
 DSH add the package `bin/` directory through their native package entries.
 
+For Claude Code, `.claude-plugin/marketplace.json` is the repository catalog. The root
+`.claude-plugin/plugin.json` and `packages/shmitty-system/.claude-plugin/plugin.json` are the
+plugin manifests; each plugin discovers its own `skills/`. Register a checkout once with
+`claude plugin marketplace add /absolute/path/to/checkout`, then install
+`shmitabilities@shmitabilities` and `shmitty-system@shmitabilities` separately with
+`claude plugin install`. A local directory marketplace reads plugins from the checkout.
+The `shmitty-system` manifest declares the `shmitty-knowledge` MCP server inline because
+the Codex `.mcp.json` uses Codex-only keys. Claude Code starts
+`python3 ${CLAUDE_PLUGIN_ROOT}/bin/knowledge-cli mcp` and forwards `SHMIT_KNOWLEDGE_ROOT`;
+the same [Knowledge ontology tooling](dependencies.md#knowledge-ontology-tooling)
+requirements apply. Check the connection with `claude mcp list`.
+
 ```text
 Capability entry
   │ request managed root + shared settings
