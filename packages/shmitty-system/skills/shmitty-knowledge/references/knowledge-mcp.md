@@ -22,7 +22,7 @@ Pass `tags`, `type`, and `subtype` to narrow `knowledge_search`. Pass `all: true
 
 ## Interpret the result
 
-`knowledge_read` returns complete Markdown. Every other tool returns a complete TSV report. Preserve the column headings when passing a report to another operation or agent.
+`knowledge_read` returns the complete Markdown report defined for `knowledge-cli read`. Its sanctioned execution YAML blocks provide the executable metadata and omit `reference_type`. Every other tool returns a complete TSV report. Preserve the column headings when passing a report to another operation or agent.
 
 A completed `knowledge_verify` call is successful even when its TSV contains `result<TAB>invalid`; use its finding rows to revise the document. A tool result with `isError: true` means the operation could not run or complete. Correct the reported root, path, dependency, or knowledge error before retrying.
 

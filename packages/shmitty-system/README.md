@@ -260,6 +260,11 @@ uses `SHMIT_KNOWLEDGE_ROOT`. A call fails when both are absent. Document paths c
 the selected root or absolute paths inside it. A directory resolves to its `index.md`; a path
 outside the selected root fails.
 
+The `knowledge_read` Markdown report includes an `Execution` YAML block for each sanctioned
+execution. A Command block contains `runtime`, `command`, `args`, `receipt`, and `attester`. A
+Computation block contains `commands`, `receipt`, and `attester`. The block omits
+`reference_type`; an absent Command `args` value appears as an empty list.
+
 `knowledge_verify` returns completed findings as a normal tool result, including
 `result<TAB>invalid`. A failure to run an operation returns its `KnowledgeError` text with
 `isError: true`. Malformed MCP requests and unknown tool names return JSON-RPC protocol errors.

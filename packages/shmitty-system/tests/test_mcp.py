@@ -217,6 +217,53 @@ def test_read_and_search_return_complete_existing_text(client, knowledge_root):
     assert read_text.endswith("Complete report sentinel.\n")
 
 
+def test_read_returns_sanctioned_execution_metadata(client, knowledge_root):
+    command = knowledge_root / "sources" / "example.com" / "command.md"
+    command.write_text(
+        """---
+type: Reference
+reference_type: Command
+title: Example command
+description: Reproduces example evidence.
+tags: [sources, example.com, test]
+resource: https://example.com/page
+resource_type: Webpage
+timestamp: 2026-01-01T00:00:00Z
+runtime: python3
+command: run-example --value "${value}"
+args:
+  - {name: value, type: string, required: true}
+receipt: [result]
+attester:
+  command: attest-example "${receipt_file}"
+  args:
+    - {name: receipt_file, type: path, required: true}
+---
+Example command body.
+""",
+        encoding="utf-8",
+    )
+
+    response = call_tool(
+        client,
+        40,
+        "knowledge_read",
+        {
+            "root": str(knowledge_root),
+            "documents": ["sources/example.com/command.md"],
+        },
+    )
+
+    text = response["result"]["content"][0]["text"]
+    assert response["result"].get("isError") is not True
+    assert "**Execution:**\n```yaml\nruntime: python3" in text
+    assert 'command: run-example --value "${value}"' in text
+    assert "args:\n- name: value" in text
+    assert "receipt:\n- result" in text
+    assert 'command: attest-example "${receipt_file}"' in text
+    assert "reference_type:" not in text
+
+
 def test_invalid_verification_is_normal_result(client, knowledge_root):
     response = call_tool(
         client,

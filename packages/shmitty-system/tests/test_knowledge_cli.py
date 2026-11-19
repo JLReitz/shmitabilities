@@ -913,6 +913,114 @@ See [second](../sources/example.com/source.md).
         )
         self.assertNotIn("`", output)
 
+    def test_read_renders_sanctioned_execution_metadata(self):
+        cases = (
+            (
+                "command.md",
+                """reference_type: Command
+runtime: python3
+command: run-command --value "${value}"
+receipt: [result]
+attester:
+  command: attest-command "${receipt_file}"
+  args:
+    - {name: receipt_file, type: path, required: true}
+""",
+                """**Execution:**
+```yaml
+runtime: python3
+command: run-command --value "${value}"
+args: []
+receipt:
+- result
+attester:
+  command: attest-command "${receipt_file}"
+  args:
+  - name: receipt_file
+    type: path
+    required: true
+```""",
+            ),
+            (
+                "computation.md",
+                """reference_type: Computation
+commands:
+  - runtime: python3
+    command: collect-data
+    args:
+      - {name: source, type: path, required: true}
+  - runtime: python3
+    command: summarize-data
+receipt: [summary]
+attester:
+  command: attest-summary "${receipt_file}"
+  args:
+    - {name: receipt_file, type: path, required: true}
+""",
+                """**Execution:**
+```yaml
+commands:
+- runtime: python3
+  command: collect-data
+  args:
+  - name: source
+    type: path
+    required: true
+- runtime: python3
+  command: summarize-data
+receipt:
+- summary
+attester:
+  command: attest-summary "${receipt_file}"
+  args:
+  - name: receipt_file
+    type: path
+    required: true
+```""",
+            ),
+        )
+        for filename, execution_metadata, expected in cases:
+            with self.subTest(filename=filename):
+                reference = self.write(
+                    f"sources/example.com/{filename}",
+                    f"""---
+type: Reference
+title: Sanctioned execution
+description: Reproduces test evidence.
+tags: [sources, example.com, test]
+resource: https://example.com/source
+resource_type: Webpage
+timestamp: 2024-01-01T00:00:00Z
+{execution_metadata}---
+Execution body.
+""",
+                )
+
+                stdout = StringIO()
+                with redirect_stdout(stdout):
+                    status = main([
+                        "read",
+                        str(reference.relative_to(self.root)),
+                        "--root",
+                        str(self.root),
+                    ])
+                output = stdout.getvalue()
+
+                self.assertEqual(status, 0)
+                self.assertIn(expected, output)
+                self.assertNotIn("reference_type:", output)
+
+    def test_read_omits_execution_block_for_ordinary_reference(self):
+        output = render_read(
+            self.root,
+            expand_read(
+                self.root,
+                [Path("sources/example.com/source.md")],
+            ),
+        )
+
+        self.assertNotIn("**Execution:**", output)
+
     def test_read_prepends_concept_index(self):
         self.concept(body="Concept body.")
         documents = expand_read(self.root, [Path("bundle-a/target.md")])

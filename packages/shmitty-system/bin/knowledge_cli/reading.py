@@ -1,6 +1,8 @@
 from dataclasses import replace
 from pathlib import Path
-from typing import Iterable, List, Set
+from typing import Any, Dict, Iterable, List, Optional, Set
+
+import yaml
 
 from .document import Document, load_document, load_index_for_read
 from .errors import KnowledgeError
@@ -111,6 +113,27 @@ def expand_read(root: Path, paths: Iterable[Path]) -> List[Document]:
     return result
 
 
+def _execution_metadata(document: Document) -> Optional[Dict[str, Any]]:
+    """Return the executable fields exposed by one sanctioned Reference."""
+    metadata = document.metadata
+    reference_type = metadata.get("reference_type")
+    if reference_type == "Command":
+        return {
+            "runtime": metadata.get("runtime"),
+            "command": metadata.get("command"),
+            "args": metadata.get("args", []),
+            "receipt": metadata.get("receipt"),
+            "attester": metadata.get("attester"),
+        }
+    if reference_type == "Computation":
+        return {
+            "commands": metadata.get("commands"),
+            "receipt": metadata.get("receipt"),
+            "attester": metadata.get("attester"),
+        }
+    return None
+
+
 def render_read(root: Path, documents: Iterable[Document]) -> str:
     sections = []
     for document in documents:
@@ -134,6 +157,20 @@ def render_read(root: Path, documents: Iterable[Document]) -> str:
         ]
         if document_type == "Reference":
             lines.append(str(document.metadata.get("resource", "")))
+            execution = _execution_metadata(document)
+            if execution is not None:
+                lines.extend(
+                    [
+                        "**Execution:**",
+                        "```yaml",
+                        yaml.safe_dump(
+                            execution,
+                            allow_unicode=True,
+                            sort_keys=False,
+                        ).strip(),
+                        "```",
+                    ]
+                )
         if document.body.strip():
             lines.append(document.body.strip("\n"))
         if document.has_index_separator:
