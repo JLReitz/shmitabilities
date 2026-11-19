@@ -1,8 +1,8 @@
 # Shmitty workflows
 
 The Shmitty skills connect workspace and project discovery, planning, evidence, durable knowledge,
-and Git work. The workflow enters through `shmitty-project-manager`, then invokes only the skills
-needed for the current work.
+task tracking, and Git work. External workspace or project instructions select the local task
+tracker. The workflow invokes only the skills needed for the current work.
 
 ## Flow graph
 
@@ -64,8 +64,9 @@ the workspace. When the workspace root is also a project root, its `.git/info/ex
    task branch and a worktree under `{workspace-root}/worktrees/`; ad hoc work uses the current
    working branch.
 3. `shmitty-brainstorming` converts a rough idea into a local-tracker-backed idea model when design
-   work remains. The idea model contains decisions, evidence questions, empirical tasks, and
-   executable implementation steps.
+   work remains. The externally selected tracker supplies its item and task-document operations.
+   The idea model contains decisions, evidence questions, empirical tasks, and executable
+   implementation steps.
 4. `shmitty-research` answers factual questions. `shmitty-knowledge` supplies existing evidence
    before research and stores durable findings after research.
 5. `shmitty-version-control` performs the work and records progress commits on the selected branch.
@@ -106,6 +107,20 @@ work as child tickets:
 Questions invoke `shmitty-research`. Decisions remain open until the user approves them. Steps
 stay blocked by the decisions that constrain them. Brainstorming finishes when the ready set is
 empty, the implementation plan exists, and open decisions do not block its steps.
+
+### `shmitty-task-tracking`
+
+`shmitty-task-tracking` is an optional file-native local tracker. External workspace or project
+instructions select it; Shmitty System does not choose it from package availability. It stores one
+strict task item at each non-root `.agents/tasks/**/index.md`, derives parent-child relationships
+from directory nesting, and stores blocking edges as exact root-relative dependency paths. Its
+`task-cli` reads the live graph for item reports, ready work, title-or-tag search, and the most
+recently touched task levels. People and agents edit the Markdown files directly.
+
+The skill owns this strict layout and its supporting documents. It does not change or enlist
+`shmitty-project-manager`, whose human-facing topic-index procedure remains independent. A
+workspace must not apply both layouts to one task tree. The Shmitty System package README defines
+the complete schema, command behavior, validation, scope, and compatibility contract.
 
 ### `shmitty-research`
 
@@ -162,14 +177,18 @@ For `shmitty-brainstorming`, the local tracker supplies:
 - parent-child and blocking relationships;
 - ready-state queries, claims, status changes, comments, and answers;
 - external references for items mirrored from an external task tracker.
+- its task-document creation and organization procedure.
 
 For `shmitty-project-manager`, the local tracker supplies stable titles, parent relationships,
 local task IDs, and item descriptions that can link `.agents/tasks/` documents. The task title's
 kebab-case form names both the branch and its worktree directory.
 `shmitty-version-control` receives the selected branch and does not access either tracker.
 
-Each tracker integration owns its database, connection, and lifecycle procedures. Shmitty owns the
-idea model, workspace task-document layout, and Git workflow that consume local tracker state.
+Each tracker integration owns its storage, connection, lifecycle, and task-document procedures.
+External workspace or project instructions select one integration. `beads-task-tracking` can use
+the independent `shmitty-project-manager` topic-document procedure;
+`shmitty-task-tracking` owns its strict Markdown graph. Shmitty owns the idea-model semantics and
+Git workflow that consume the selected tracker state.
 
 ### Knowledge extensions
 

@@ -1,11 +1,87 @@
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect } from "vitest";
 
 import { formatShmittyContext, inspectShmittyContext } from "../src/context.js";
 import { test } from "./fixtures/filesystem.js";
 
+interface WorkspaceRegistryEntry
+{
+    kind: "directory" | "symlink";
+    name: string;
+    target?: string[];
+    relative?: boolean;
+}
+
+interface WorkspaceContextCase
+{
+    name: string;
+    cwd: string[];
+    registry: WorkspaceRegistryEntry[] | null;
+    expected: string[] | null;
+}
+
+const workspaceContextCases = JSON.parse(readFileSync(
+    new URL("./fixtures/workspace-context-cases.json", import.meta.url),
+    "utf8",
+)) as WorkspaceContextCase[];
+
 describe("inspectShmittyContext", () =>
 {
+    test("matchesSharedWorkspaceResolutionCases", async ({ filesystem }) =>
+    {
+        for (const [index, contextCase] of workspaceContextCases.entries())
+        {
+            const prefix = `shared-case-${index}`;
+            const home = await filesystem.createDirectory(prefix, "home");
+            const cwd = await filesystem.createDirectory(prefix, ...contextCase.cwd);
+            if (contextCase.registry !== null)
+            {
+                const registry = await filesystem.createDirectory(
+                    prefix,
+                    "home",
+                    ".agents",
+                    "workspaces",
+                );
+                for (const entry of contextCase.registry)
+                {
+                    if (entry.kind === "directory")
+                    {
+                        await filesystem.createDirectory(
+                            prefix,
+                            "home",
+                            ".agents",
+                            "workspaces",
+                            entry.name,
+                        );
+                        continue;
+                    }
+
+                    const targetSegments = entry.target ?? [];
+                    const target = await filesystem.createDirectory(prefix, ...targetSegments);
+                    await filesystem.createSymlink(
+                        entry.relative ? path.relative(registry, target) : target,
+                        prefix,
+                        "home",
+                        ".agents",
+                        "workspaces",
+                        entry.name,
+                    );
+                }
+            }
+
+            const result = await inspectShmittyContext(cwd, home);
+            const expected = contextCase.expected === null
+                ? []
+                : [{
+                    root: filesystem.resolve(prefix, ...contextCase.expected),
+                    tasksRoot: filesystem.resolve(prefix, ...contextCase.expected, ".agents", "tasks"),
+                }];
+
+            expect(result.workspaces, contextCase.name).toEqual(expected);
+        }
+    });
+
     test("returnsInnermostWorkspaceWhenNestedLinksAndAliasesMatch", async ({ filesystem }) =>
     {
         const home = filesystem.resolve("home");

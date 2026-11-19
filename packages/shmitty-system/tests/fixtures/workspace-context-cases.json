@@ -1,0 +1,43 @@
+[
+  {
+    "name": "absolute registration",
+    "cwd": ["workspace", "project"],
+    "registry": [
+      {"kind": "symlink", "name": "workspace", "target": ["workspace"], "relative": false}
+    ],
+    "expected": ["workspace"]
+  },
+  {
+    "name": "relative registration and ordinary entry",
+    "cwd": ["workspace", "project"],
+    "registry": [
+      {"kind": "directory", "name": "ignored"},
+      {"kind": "symlink", "name": "workspace", "target": ["workspace"], "relative": true}
+    ],
+    "expected": ["workspace"]
+  },
+  {
+    "name": "nested registration wins over aliases",
+    "cwd": ["workspace", "nested", "project"],
+    "registry": [
+      {"kind": "symlink", "name": "outer", "target": ["workspace"], "relative": false},
+      {"kind": "symlink", "name": "inner", "target": ["workspace", "nested"], "relative": false},
+      {"kind": "symlink", "name": "inner-alias", "target": ["workspace", "nested"], "relative": true}
+    ],
+    "expected": ["workspace", "nested"]
+  },
+  {
+    "name": "missing registry",
+    "cwd": ["unregistered"],
+    "registry": null,
+    "expected": null
+  },
+  {
+    "name": "no matching registration",
+    "cwd": ["unregistered"],
+    "registry": [
+      {"kind": "symlink", "name": "workspace", "target": ["workspace"], "relative": false}
+    ],
+    "expected": null
+  }
+]

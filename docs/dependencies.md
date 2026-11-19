@@ -196,11 +196,34 @@ and opt-out environment variable.
 
 ## Manual installation
 
+### Shmitty Python CLI tooling
+
+`task-cli` and the frontmatter-backed `knowledge-cli` operations require Python 3.9 or later and
+the packages pinned by `packages/shmitty-system/bin/requirements.txt`. Install them in the Python
+environment that resolves the launchers. Pi and DSH add the package `bin/` directory to `PATH`;
+Codex uses the `python3` inherited by its process.
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r packages/shmitty-system/bin/requirements.txt
+```
+
+Activate that environment before running either launcher. Verify the minimal installation with an
+isolated registered-workspace fixture rather than the current workspace task tree:
+
+```bash
+.venv/bin/python packages/shmitty-system/bin/task-cli --help
+.venv/bin/python packages/shmitty-system/bin/knowledge-cli --help
+```
+
+The task command requires PyYAML but does not require the ontology libraries, Java, or HermiT.
+
 ### Knowledge ontology tooling
 
-The ontology commands and MCP tools use the Python packages in
-`packages/shmitty-system/bin/requirements-ontology.txt`, a Java runtime,
-and the packaged HermiT OWL API JAR. Install the Python packages in the
+The ontology commands and MCP tools extend the shared
+[Shmitty Python CLI tooling](#shmitty-python-cli-tooling) with the Python packages in
+`packages/shmitty-system/bin/requirements-ontology.txt`, a Java runtime, and the packaged HermiT
+OWL API JAR. The ontology requirements include the shared requirements. Install them in the
 environment that runs `knowledge-cli`. The Codex plugin starts the `python3` found by the Codex
 process, so activate the prepared environment before starting Codex. Use JPype1 1.5.2 with Java 8.
 
