@@ -9,7 +9,7 @@ reads the shared settings file. A capability package interprets the values it us
 ```text
 Root package (default)            shmitty-system (individual)
 ├── based skills                   ├── Shmitty skills
-└── Shmitty skills + bin/          └── knowledge-cli + bin/
+└── Shmitty skills + bin/          └── knowledge-cli + task-cli + bin/
     ├── Codex: based skills           ├── Codex: Shmitty skills
     ├── Pi: package paths             ├── Pi: package manifest
     └── DSH: root patch              └── DSH: package patch
@@ -22,8 +22,8 @@ skill providers and the Shmitty PATH plugin. The root Codex compatibility manife
 from the standalone `packages/shmitty-system` portable Codex plugin, which discovers its
 own `skills/` and packaged knowledge MCP server. Register both Codex plugins to load both families
 and the native knowledge tools.
-For Pi and DSH, install either the root bundle or `shmitty-system` to load Shmitty skills
-and `knowledge-cli`; installing both in one scope may register duplicate entries.
+For Pi and DSH, install either the root bundle or `shmitty-system` to load Shmitty skills,
+`knowledge-cli`, and `task-cli`; installing both in one scope may register duplicate entries.
 
 For Codex, `.agents/plugins/marketplace.json` is the repository catalog. Its `./` and
 `./packages/shmitty-system` paths resolve from the checkout root. Register a checkout once
@@ -38,6 +38,10 @@ The selected `python3` environment must contain the dependencies listed under
 Git, so another checkout can use the same registrations without recreating a personal
 marketplace file. The root npm package file list does not include this repository catalog;
 use the standalone manifests or a distribution marketplace for installed packages.
+
+Codex does not add a plugin's `bin/` directory to `PATH`. Install the standalone npm package as a
+command package before using `shmitty-task-tracking` in Codex, then verify `task-cli --help`. Pi and
+DSH add the package `bin/` directory through their native package entries.
 
 ```text
 Capability entry

@@ -1,7 +1,7 @@
 {
   "name": "@jlreitz/shmitty-system",
   "version": "0.1.0",
-  "description": "Shmitty skills and knowledge commands for Codex, Pi, and DSH.",
+  "description": "Shmitty workflow skills and knowledge and task commands for Codex, Pi, and DSH.",
   "keywords": [
     "pi-package",
     "dsh",
@@ -27,8 +27,13 @@
   },
   "files": [
     "bin/knowledge-cli",
+    "bin/task-cli",
     "bin/knowledge_cli/*.py",
+    "bin/task_cli/*.py",
+    "bin/shmitty_core/*.py",
+    "bin/requirements.txt",
     "bin/requirements-ontology.txt",
+    "pyproject.toml",
     "skills/",
     "src/",
     "dist/",
@@ -103,6 +108,7 @@
     }
   },
   "bin": {
-    "knowledge-cli": "./bin/knowledge-cli"
+    "knowledge-cli": "./bin/knowledge-cli",
+    "task-cli": "./bin/task-cli"
   }
 }

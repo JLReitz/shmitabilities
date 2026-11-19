@@ -217,6 +217,14 @@ isolated registered-workspace fixture rather than the current workspace task tre
 ```
 
 The task command requires PyYAML but does not require the ontology libraries, Java, or HermiT.
+Pi and DSH add the installed package's `bin/` directory to `PATH`. Codex plugin installation does
+not add command launchers to `PATH`; install the package as a command package from a stable source
+or distribution, then verify the launcher before using `shmitty-task-tracking`:
+
+```bash
+npm install --global /absolute/path/to/packages/shmitty-system
+task-cli --help
+```
 
 ### Knowledge ontology tooling
 

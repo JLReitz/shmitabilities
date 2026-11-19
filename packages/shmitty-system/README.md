@@ -286,8 +286,11 @@ the `python3` environment that starts Codex. Set `SHMIT_OWL_JAR` before the Code
 Run `npm run format:check`, `npm run typecheck`, `npm run typecheck:test`, and `npm test` from
 `packages/shmitty-system/`. Build the DSH entry with `npm run build`. The `prepare` script builds
 it for source installation.
+Check changed Python source with `ruff check` and `ruff format --check` under the package's
+`pyproject.toml`, then run the complete Python tests with the declared ontology environment.
 Check the package payload with `npm pack --dry-run --json`; it must contain `dist/`, `src/`,
-`skills/`, `bin/`, `hooks/`, `.codex-plugin/plugin.json`, `.mcp.json`, and `package.json`.
+`skills/`, both command launchers, all three Python packages, both requirements files, `hooks/`,
+`.codex-plugin/plugin.json`, `.mcp.json`, `pyproject.toml`, and `package.json`.
 
 The TypeScript contract tests map the Filesystem context behavior. They exercise startup,
 compaction, directory changes, main checkouts, linked worktrees, nested workspaces, absent results,
