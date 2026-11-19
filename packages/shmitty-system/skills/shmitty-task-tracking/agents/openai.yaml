@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shmitty Task Tracking"
+  short_description: "Track coordinated work in a Markdown task graph"
+  default_prompt: "Use $shmitty-task-tracking to inspect and update the selected Markdown task graph."

@@ -23,7 +23,7 @@ Refer to ideas and tickets by title in user-facing prose. Use local task tracker
 
 Use a **story** when the idea has one coherent outcome that an actor can observe and accept as a usable increment. A story may require multiple implementation steps. Use a **feature** when the idea is a broader capability with multiple independently acceptable outcomes.
 
-Start each brainstorm by creating the idea model as the selected story or feature in the local task tracker. Use `shmitty-project-manager` to organize `idea.md` and its topic indexes. Link `idea.md` from the idea model's description and make the other tickets children of the idea model.
+Start each brainstorm by creating the idea model as the selected story or feature in the local task tracker. Use the configured task-tracker skill to place `idea.md` with the tracked item and link it from that item. Make the other tickets children of the idea model.
 
 ### Layout
 
