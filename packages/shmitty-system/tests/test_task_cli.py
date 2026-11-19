@@ -244,7 +244,7 @@ def test_previous_scope_limits_candidate_levels(workspace):
 @pytest.mark.parametrize(
     ("path", "replacement", "message"),
     [
-        ("bad/index.md", "type: task", "title"),
+        ("bad/index.md", "title:", "title"),
         ("bad/index.md", "type: invalid", "type"),
         ("bad/index.md", "status: invalid", "status"),
         ("bad/index.md", "tags: [one, one]", "tags"),
