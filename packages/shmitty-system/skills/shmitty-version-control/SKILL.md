@@ -1,8 +1,8 @@
 ---
 name: shmitty-version-control
 description: Perform project work and record progress commits on the current Git branch.
-allowed-tools:
-  - Bash(git:*)
+compatibility: Requires Git and a registered Shmitty workspace.
+allowed-tools: Bash(git:*)
 ---
 
 # Version control

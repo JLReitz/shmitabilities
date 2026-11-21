@@ -1,6 +1,7 @@
 ---
 name: shmitty-research
 description: Research factual questions with current, source-backed evidence. Use when existing knowledge has a gap, needs verification, or sources conflict.
+compatibility: Requires shmitty-knowledge and network access to authoritative external sources.
 ---
 
 # Research conventions

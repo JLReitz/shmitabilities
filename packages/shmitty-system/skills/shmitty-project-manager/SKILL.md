@@ -1,9 +1,8 @@
 ---
 name: shmitty-project-manager
 description: Locate and set up agent workspaces and their Git projects, organize shared task documents, and route planned or ad hoc project work.
-allowed-tools:
-  - Bash(git:*)
-  - Bash(ln:*)
+compatibility: Requires Git, symbolic-link support, shmitty-knowledge, shmitty-version-control, and a configured local task-tracker.
+allowed-tools: Bash(git:*), Bash(ln:*)
 ---
 
 # Project management

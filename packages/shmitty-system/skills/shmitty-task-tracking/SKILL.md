@@ -1,15 +1,15 @@
 ---
 name: shmitty-task-tracking
 description: Track coordinated work as a strict Markdown graph in a registered Shmitty workspace when workspace or project instructions select this local tracker.
-allowed-tools:
-  - Bash(task-cli:*)
+compatibility: Requires Python 3.9+, PyYAML 6.0.3, task-cli on PATH, and a registered Shmitty workspace.
+allowed-tools: Bash(task-cli:*)
 ---
 
 # Shmitty task tracking
 
 Use this skill only when workspace or project instructions select `shmitty-task-tracking` as the local task tracker. Ask the user for local task-tracking instructions when that selection is unclear. Treat another named tracker as an external tracker and represent its items according to the selected local tracking instructions.
 
-Require `task-cli` on `PATH` with Python 3.9 or later and PyYAML, plus a registered Shmitty workspace.
+Complete [Set up task tracking](references/set-up-task-tracking.md) before using this skill.
 
 ## Vocabulary
 

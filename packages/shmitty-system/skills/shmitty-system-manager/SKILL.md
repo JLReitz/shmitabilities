@@ -1,6 +1,7 @@
 ---
 name: shmitty-system-manager
 description: Resolve live host context, manage packages and source builds, and maintain package references.
+compatibility: Requires shmitty-knowledge, host shell access, package-manager access, and network access for package retrieval.
 ---
 
 # System management

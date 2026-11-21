@@ -1,6 +1,7 @@
 ---
 name: shmitty-brainstorming
 description: Use when the user has a rough, unformed idea they want to sharpen into a tracker-backed idea model of open questions, conversations, and empirical tasks before implementation begins.
+compatibility: Requires the shmitty-research skill and a configured local task-tracker.
 ---
 
 # Brainstorm

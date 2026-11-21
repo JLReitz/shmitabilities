@@ -1,15 +1,8 @@
 ---
 name: shmitty-knowledge
 description: Use, add to, and maintain a knowledge base of source-faithful references and cited concepts.
-allowed-tools:
-  - Bash(knowledge-cli:*)
-  - knowledge_read
-  - knowledge_search
-  - knowledge_connections
-  - knowledge_confidence
-  - knowledge_investment
-  - knowledge_verify
-  - knowledge_ontology
+compatibility: Requires Python 3.9+, knowledge-cli on PATH or the shmitty-knowledge MCP server, PyYAML 6.0.3, rdflib 7.6.0, owlrl 7.6.2, JPype1 1.5.2, Java 8+, and SHMIT_OWL_JAR set to a packaged HermiT OWL API JAR.
+allowed-tools: Bash(knowledge-cli:*), mcp__shmitty-knowledge__knowledge_read, mcp__shmitty-knowledge__knowledge_search, mcp__shmitty-knowledge__knowledge_connections, mcp__shmitty-knowledge__knowledge_confidence, mcp__shmitty-knowledge__knowledge_investment, mcp__shmitty-knowledge__knowledge_verify, mcp__shmitty-knowledge__knowledge_ontology
 ---
 
 # Knowledge Format
